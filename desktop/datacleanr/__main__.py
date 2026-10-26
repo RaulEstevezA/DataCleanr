@@ -1,9 +1,12 @@
 """Entry point: `python -m datacleanr` or the `datacleanr` command."""
 
+import sys
+
 
 def main() -> None:
-    # The PySide6 interface will be started from here
-    print("DataCleanr desktop is in development.")
+    from .ui.app import run
+
+    sys.exit(run())
 
 
 if __name__ == "__main__":
