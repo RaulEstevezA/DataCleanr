@@ -29,6 +29,8 @@ class DatasetSummary(QFrame):
     redo = Signal()
     find_duplicates = Signal()
     export = Signal()
+    show_history = Signal()
+    load_profile = Signal()
     column_selected = Signal(int)
     sheet_selected = Signal(str)
 
@@ -52,6 +54,10 @@ class DatasetSummary(QFrame):
         self.export_button.clicked.connect(self.export)
         self.duplicates_button = QPushButton()
         self.duplicates_button.clicked.connect(self.find_duplicates)
+        self.history_button = QPushButton()
+        self.history_button.clicked.connect(self.show_history)
+        self.profile_button = QPushButton()
+        self.profile_button.clicked.connect(self.load_profile)
         self.undo_button = QPushButton()
         self.undo_button.clicked.connect(self.undo)
         self.redo_button = QPushButton()
@@ -72,11 +78,18 @@ class DatasetSummary(QFrame):
         title.addWidget(self.file_name)
         title.addWidget(self.privacy)
         title.addStretch()
-        title.addWidget(self.undo_button)
-        title.addWidget(self.redo_button)
-        title.addWidget(self.duplicates_button)
         title.addWidget(self.import_button)
         title.addWidget(self.export_button)
+        # Actions on their own row, grouped by purpose; they wrap instead of forcing a wide window
+        self.actions = FlowLayout(spacing=8)
+        for button in (
+            self.undo_button,
+            self.redo_button,
+            self.history_button,
+            self.duplicates_button,
+            self.profile_button,
+        ):
+            self.actions.addWidget(button)
         sheet_row = QHBoxLayout()
         sheet_row.addWidget(self.sheet_label)
         sheet_row.addWidget(self.sheet_combo)
@@ -91,6 +104,7 @@ class DatasetSummary(QFrame):
         layout.setSpacing(10)
         layout.addLayout(title)
         layout.addWidget(self.stats)
+        layout.addLayout(self.actions)
         layout.addWidget(self.sheet_row)
         layout.addWidget(self.columns_label)
         layout.addLayout(self.columns)
@@ -105,7 +119,9 @@ class DatasetSummary(QFrame):
         self.columns.clear()
         self._buttons = []
         for index in range(len(dataset.columns)):
-            button = QPushButton(column_label(dataset, index))
+            # Created as a child of the card: a parentless widget would briefly paint at (0, 0)
+            # with the default 640x480 size until the layout places it
+            button = QPushButton(column_label(dataset, index), self)
             button.setProperty("tag", True)
             button.setCheckable(True)
             button.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -129,6 +145,8 @@ class DatasetSummary(QFrame):
         self.redo_button.setToolTip(f"{t.redo} (Ctrl/Cmd+Shift+Z)")
         self.duplicates_button.setText(t.find_duplicates)
         self.export_button.setText(t.export)
+        self.history_button.setText(t.history)
+        self.profile_button.setText(t.load_profile)
         self.sheet_label.setText(t.sheet.upper())
         self.columns_label.setText(t.detected_columns.upper())
         if self._dataset:
@@ -150,6 +168,8 @@ class WorkspacePage(QWidget):
     redo = Signal()
     find_duplicates = Signal()
     export = Signal()
+    show_history = Signal()
+    load_profile = Signal()
     # Updated dataset, applied count, action id, profile step
     applied = Signal(object, int, str, object)
 
@@ -164,6 +184,8 @@ class WorkspacePage(QWidget):
         self.summary.redo.connect(self.redo)
         self.summary.find_duplicates.connect(self.find_duplicates)
         self.summary.export.connect(self.export)
+        self.summary.show_history.connect(self.show_history)
+        self.summary.load_profile.connect(self.load_profile)
 
         self.panel = TransformPanel(i18n)
         self.panel.applied.connect(self.applied)
@@ -222,12 +244,16 @@ class WorkspacePage(QWidget):
         self.model.set_dataset(dataset)
         self.select_column(column)
 
-    def set_history_state(self, can_undo: bool, can_redo: bool) -> None:
+    def set_history_state(self, can_undo: bool, can_redo: bool, steps: int) -> None:
         self.summary.undo_button.setEnabled(can_undo)
         self.summary.redo_button.setEnabled(can_redo)
+        self.summary.history_button.setEnabled(steps > 0)
 
-    def show_notice(self, text: str | None) -> None:
+    def show_notice(self, text: str | None, warning: bool = False) -> None:
         self.notice.setText(text or "")
+        self.notice.setProperty("role", "warning" if warning else "notice")
+        self.notice.style().unpolish(self.notice)
+        self.notice.style().polish(self.notice)
         self.notice.setVisible(bool(text))
 
     def select_column(self, column: int | None) -> None:

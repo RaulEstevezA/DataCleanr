@@ -5,9 +5,11 @@ from pathlib import Path
 from PySide6.QtGui import QAction, QKeySequence
 from PySide6.QtWidgets import (
     QButtonGroup,
+    QFileDialog,
     QHBoxLayout,
     QLabel,
     QMainWindow,
+    QMessageBox,
     QPushButton,
     QStackedWidget,
     QVBoxLayout,
@@ -15,7 +17,8 @@ from PySide6.QtWidgets import (
 )
 
 from ..core.dataset import Dataset, column_label, count_modified_cells
-from ..core.history import History, create_history, push_entry, redo, undo
+from ..core.history import History, create_history, go_to, push_entry, redo, undo
+from ..core.profile import ProfileError, parse_profile, run_profile
 from ..io.csv_file import CsvParseError
 from ..io.json_file import JsonImportError
 from ..io.loader import ExcelReadError, LoadedFile, UnsupportedFileError, load_file
@@ -24,7 +27,9 @@ from ..io.xml_file import XmlImportError
 from .background import run_in_background
 from .duplicates_dialog import DuplicatesDialog
 from .export_dialog import ExportDialog
+from .history_dialog import HistoryDialog
 from .i18n import MESSAGES, I18n
+from .profile_dialog import ProfileDialog
 from .session import CellsOperation, HistoryStep, ImportOperation, RemoveRowsOperation
 from .start_page import StartPage
 from .workspace import WorkspacePage
@@ -79,6 +84,8 @@ class MainWindow(QMainWindow):
         self.workspace.redo.connect(lambda: self.move_in_history(redo))
         self.workspace.find_duplicates.connect(self.find_duplicates)
         self.workspace.export.connect(self.export)
+        self.workspace.show_history.connect(self.show_history)
+        self.workspace.load_profile.connect(self.load_profile)
         self.pages = QStackedWidget()
         self.pages.addWidget(self.start_page)
         self.pages.addWidget(self.workspace)
@@ -146,7 +153,7 @@ class MainWindow(QMainWindow):
         sheets = [sheet.sheet for sheet in self.sheets] if self.sheets else None
         removed = len(original.rows) - len(current.rows)
         self.workspace.set_dataset(current, sheets, count_modified_cells(original, current), keep_column, removed)
-        self.workspace.set_history_state(self.history.can_undo, self.history.can_redo)
+        self.workspace.set_history_state(self.history.can_undo, self.history.can_redo, len(self.history.entries) - 1)
 
     def apply_cells(self, updated: Dataset, count: int, action: str, profile_step: dict) -> None:
         column = self.workspace.selected_column
@@ -176,6 +183,64 @@ class MainWindow(QMainWindow):
         self._refresh()
         self.workspace.show_notice(self._i18n.t.rows_removed(result.removed, result.filled))
 
+    def show_history(self) -> None:
+        if not self.history:
+            return
+        dialog = HistoryDialog(self._i18n, self.history, self)
+        dialog.exec()
+        if dialog.saved_path:
+            self.workspace.show_notice(self._i18n.t.profile_saved(str(dialog.saved_path)))
+        if dialog.go_to_index is not None and dialog.go_to_index != self.history.index:
+            self.move_in_history(lambda history: go_to(history, dialog.go_to_index))
+
+    def load_profile(self, path: Path | None = None) -> None:
+        if not self.dataset:
+            return
+        t = self._i18n.t
+        if path is None:
+            chosen, _ = QFileDialog.getOpenFileName(self, t.load_profile, "", "JSON (*.json)")
+            if not chosen:
+                return
+            path = Path(chosen)
+        try:
+            profile = parse_profile(path.read_text(encoding="utf-8"))
+        except ProfileError as error:
+            self.workspace.show_notice(t.profile_error[error.reason], warning=True)
+            return
+        except (OSError, UnicodeDecodeError):
+            self.workspace.show_notice(t.profile_error["invalid"], warning=True)
+            return
+        dataset = self.dataset
+        run_in_background(
+            lambda: run_profile(dataset, profile),
+            lambda results: self._preview_profile(profile, results),
+            lambda error: self.workspace.show_notice(t.profile_error["invalid"], warning=True),
+        )
+
+    def _preview_profile(self, profile, results) -> None:
+        dialog = ProfileDialog(self._i18n, profile, results, self)
+        if dialog.exec():
+            self.apply_profile_results(profile, results)
+
+    def apply_profile_results(self, profile, results) -> None:
+        applied = 0
+        for result in results:
+            if result.status != "applied" or result.count == 0:
+                continue
+            step = result.step
+            if step["type"] == "removeDuplicates":
+                operation = RemoveRowsOperation("exact", result.count, result.filled)
+            else:
+                action = {"transform": step.get("transform"), "replace": "custom", "map": "similar"}.get(
+                    step["type"], step["type"]
+                )
+                column = result.dataset.columns.index(step["column"])
+                operation = CellsOperation(column, action, result.count)
+            self.history = push_entry(self.history, HistoryStep(result.dataset, operation, step))
+            applied += 1
+        self._refresh()
+        self.workspace.show_notice(self._i18n.t.profile_applied(profile.name, applied))
+
     def move_in_history(self, move) -> None:
         if not self.history or self.pages.currentWidget() is not self.workspace:
             return
@@ -183,9 +248,26 @@ class MainWindow(QMainWindow):
         self._refresh(keep_column=True)
         self.workspace.show_notice(None)
 
+    @property
+    def has_changes(self) -> bool:
+        if not self.history:
+            return False
+        original, current = self.history.entries[0].dataset, self.dataset
+        return count_modified_cells(original, current) > 0 or len(current.rows) != len(original.rows)
+
+    def confirm_discard(self) -> bool:
+        if not self.has_changes:
+            return True
+        t = self._i18n.t
+        answer = QMessageBox.question(self, t.confirm_discard_title, t.confirm_discard)
+        return answer == QMessageBox.StandardButton.Yes
+
     def select_sheet(self, name: str) -> None:
         sheet = next((sheet for sheet in self.sheets or [] if sheet.sheet == name), None)
         if not sheet or not self.dataset:
+            return
+        if not self.confirm_discard():
+            self.workspace.summary.sheet_combo.setCurrentText(self.dataset.sheet or "")
             return
         try:
             self._show_dataset(sheet_to_dataset(sheet, self.dataset.file_name))
@@ -194,6 +276,8 @@ class MainWindow(QMainWindow):
             self.statusBar().showMessage(self._i18n.t.empty_sheet(name), 5000)
 
     def show_start(self) -> None:
+        if not self.confirm_discard():
+            return
         self.history = None
         self.sheets = None
         self.pages.setCurrentWidget(self.start_page)

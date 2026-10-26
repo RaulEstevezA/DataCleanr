@@ -62,4 +62,6 @@ class FlowLayout(QLayout):
         while self._items:
             item = self._items.pop()
             if widget := item.widget():
+                # Hidden now; the actual deletion happens later in the event loop
+                widget.hide()
                 widget.deleteLater()

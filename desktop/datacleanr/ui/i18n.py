@@ -138,6 +138,33 @@ class Messages:
     exporting: str
     save_as: str
     saved: Callable[[str], str]
+    history: str
+    history_title: Callable[[int], str]
+    history_import: Callable[[str], str]
+    history_cells: Callable[[str, str, int], str]
+    history_remove_exact: Callable[[int, int], str]
+    history_remove_similar: Callable[[int, int], str]
+    history_hint: str
+    history_go_to: str
+    profile_save_label: str
+    profile_default_name: str
+    profile_save: Callable[[int], str]
+    profile_not_replayable: Callable[[int], str]
+    profile_save_hint: str
+    profile_saved: Callable[[str], str]
+    load_profile: str
+    profile_title: Callable[[str], str]
+    profile_apply_hint: str
+    profile_skipped: str
+    profile_summary: Callable[[int, int], str]
+    profile_apply: Callable[[int], str]
+    profile_applied: Callable[[str, int], str]
+    profile_error: dict[str, str]
+    profile_step_cells: Callable[[str, str], str]
+    profile_step_map: Callable[[str, int], str]
+    profile_step_duplicates: Callable[[str], str]
+    confirm_discard_title: str
+    confirm_discard: str
 
 
 EN = Messages(
@@ -330,6 +357,56 @@ EN = Messages(
     exporting="Saving...",
     save_as="Save as...",
     saved=lambda path: f"Saved to {path}",
+    history="History",
+    history_title=lambda steps: f"History ({'1 step' if steps == 1 else f'{_en(steps)} steps'})",
+    history_import=lambda file: f"Import “{file}”",
+    history_cells=lambda action, column, count: (
+        f"{action} in “{column}” ({'1 cell' if count == 1 else f'{_en(count)} cells'})"
+    ),
+    history_remove_exact=lambda n, filled: (
+        f"Remove exact duplicates ({'1 row' if n == 1 else f'{_en(n)} rows'}"
+        + (f", {_en(filled)} filled" if filled else "")
+        + ")"
+    ),
+    history_remove_similar=lambda n, filled: (
+        f"Remove possible duplicates ({'1 row' if n == 1 else f'{_en(n)} rows'}"
+        + (f", {_en(filled)} filled" if filled else "")
+        + ")"
+    ),
+    history_hint="Double-click a step, or select it and press the button, to go back to it.",
+    history_go_to="Go to this step",
+    profile_save_label="Save the steps as a cleaning profile",
+    profile_default_name="My cleaning profile",
+    profile_save=lambda n: "Save profile (1 step)" if n == 1 else f"Save profile ({_en(n)} steps)",
+    profile_not_replayable=lambda n: (
+        f"{'1 step' if n == 1 else f'{_en(n)} steps'} cannot be saved in a profile "
+        "(possible duplicates need a person to confirm them)."
+    ),
+    profile_save_hint=(
+        "A profile repeats each step on a whole column; changes rejected row by row are not remembered. "
+        "Duplicates keep the first row. Profiles also work in the web version."
+    ),
+    profile_saved=lambda path: f"Profile saved to {path}",
+    load_profile="Apply profile",
+    profile_title=lambda name: f"Profile “{name}”",
+    profile_apply_hint=(
+        "Each step is checked against the current data before applying anything. Every applied step is added to "
+        "the history, so it can be undone."
+    ),
+    profile_skipped="Skipped: column not found",
+    profile_summary=lambda effective, total: f"{_en(effective)} of {_en(total)} steps will change data",
+    profile_apply=lambda n: "Apply 1 step" if n == 1 else f"Apply {_en(n)} steps",
+    profile_applied=lambda name, n: f"Profile “{name}” applied ({'1 step' if n == 1 else f'{_en(n)} steps'}).",
+    profile_error={
+        "invalid": "This file is not a DataCleanr profile.",
+        "version": "This profile was created with a newer version of DataCleanr.",
+        "step": "The profile has an invalid step.",
+    },
+    profile_step_cells=lambda action, column: f"{action} in “{column}”",
+    profile_step_map=lambda column, n: f"Replace values in “{column}” ({'1 rule' if n == 1 else f'{_en(n)} rules'})",
+    profile_step_duplicates=lambda columns: f"Remove exact duplicates comparing {columns}",
+    confirm_discard_title="Unsaved changes",
+    confirm_discard="You have changes that have not been exported. Discard them?",
 )
 
 ES = Messages(
@@ -531,6 +608,58 @@ ES = Messages(
     exporting="Guardando...",
     save_as="Guardar como...",
     saved=lambda path: f"Guardado en {path}",
+    history="Historial",
+    history_title=lambda steps: f"Historial ({'1 paso' if steps == 1 else f'{_es(steps)} pasos'})",
+    history_import=lambda file: f"Importar «{file}»",
+    history_cells=lambda action, column, count: (
+        f"{action} en «{column}» ({'1 celda' if count == 1 else f'{_es(count)} celdas'})"
+    ),
+    history_remove_exact=lambda n, filled: (
+        f"Eliminar duplicados exactos ({'1 fila' if n == 1 else f'{_es(n)} filas'}"
+        + (f", {_es(filled)} rellenadas" if filled else "")
+        + ")"
+    ),
+    history_remove_similar=lambda n, filled: (
+        f"Eliminar posibles duplicados ({'1 fila' if n == 1 else f'{_es(n)} filas'}"
+        + (f", {_es(filled)} rellenadas" if filled else "")
+        + ")"
+    ),
+    history_hint="Haz doble clic en un paso, o selecciónalo y pulsa el botón, para volver a él.",
+    history_go_to="Ir a este paso",
+    profile_save_label="Guardar los pasos como perfil de limpieza",
+    profile_default_name="Mi perfil de limpieza",
+    profile_save=lambda n: "Guardar perfil (1 paso)" if n == 1 else f"Guardar perfil ({_es(n)} pasos)",
+    profile_not_replayable=lambda n: (
+        f"{'1 paso no se puede' if n == 1 else f'{_es(n)} pasos no se pueden'} guardar en un perfil "
+        "(los posibles duplicados necesitan que una persona los confirme)."
+    ),
+    profile_save_hint=(
+        "Un perfil repite cada paso sobre la columna entera; los cambios rechazados fila a fila no se recuerdan. "
+        "En los duplicados se conserva la primera fila. Los perfiles también funcionan en la versión web."
+    ),
+    profile_saved=lambda path: f"Perfil guardado en {path}",
+    load_profile="Aplicar perfil",
+    profile_title=lambda name: f"Perfil «{name}»",
+    profile_apply_hint=(
+        "Antes de aplicar nada se comprueba cada paso con los datos actuales. Cada paso aplicado entra en el "
+        "historial, así que se puede deshacer."
+    ),
+    profile_skipped="Se salta: no existe la columna",
+    profile_summary=lambda effective, total: f"{_es(effective)} de {_es(total)} pasos cambiarán datos",
+    profile_apply=lambda n: "Aplicar 1 paso" if n == 1 else f"Aplicar {_es(n)} pasos",
+    profile_applied=lambda name, n: f"Perfil «{name}» aplicado ({'1 paso' if n == 1 else f'{_es(n)} pasos'}).",
+    profile_error={
+        "invalid": "Este archivo no es un perfil de DataCleanr.",
+        "version": "Este perfil se creó con una versión más nueva de DataCleanr.",
+        "step": "El perfil tiene un paso no válido.",
+    },
+    profile_step_cells=lambda action, column: f"{action} en «{column}»",
+    profile_step_map=lambda column, n: (
+        f"Sustituir valores en «{column}» ({'1 regla' if n == 1 else f'{_es(n)} reglas'})"
+    ),
+    profile_step_duplicates=lambda columns: f"Eliminar duplicados exactos comparando {columns}",
+    confirm_discard_title="Cambios sin exportar",
+    confirm_discard="Tienes cambios sin exportar. ¿Descartarlos?",
 )
 
 MESSAGES = {"en": EN, "es": ES}
