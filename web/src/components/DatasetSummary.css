@@ -1,0 +1,41 @@
+.dataset-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dataset-summary__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dataset-summary__file {
+  font-size: 1.125rem;
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.dataset-summary__stats {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.dataset-summary__label {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.dataset-summary__columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

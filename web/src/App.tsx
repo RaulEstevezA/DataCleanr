@@ -1,19 +1,44 @@
+import { useState } from 'react'
 import './App.css'
 import { AppFooter } from './components/AppFooter.tsx'
 import { AppHeader } from './components/AppHeader.tsx'
+import { DatasetSummary } from './components/DatasetSummary.tsx'
+import { FileImport } from './components/FileImport.tsx'
 import { useI18n } from './i18n/useI18n.ts'
+import { parseCsvFile } from './lib/csv.ts'
+import type { Dataset } from './lib/dataset.ts'
 
 function App() {
   const { t } = useI18n()
+  const [dataset, setDataset] = useState<Dataset | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function handleFile(file: File) {
+    if (!file.name.toLowerCase().endsWith('.csv')) {
+      setError(t.errorNotCsv)
+      return
+    }
+    setLoading(true)
+    setError(null)
+    try {
+      setDataset(await parseCsvFile(file))
+    } catch {
+      setError(t.errorParse)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="app">
       <AppHeader />
       <main className="app__main">
-        <section className="panel panel--empty">
-          <h1>{t.emptyTitle}</h1>
-          <p>{t.emptyDescription}</p>
-        </section>
+        {dataset ? (
+          <DatasetSummary dataset={dataset} onReset={() => setDataset(null)} />
+        ) : (
+          <FileImport onFile={handleFile} loading={loading} error={error} />
+        )}
       </main>
       <AppFooter />
     </div>
