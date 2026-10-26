@@ -202,7 +202,7 @@ class MainWindow(QMainWindow):
             return
         dialog = ExportDialog(self._i18n, self.dataset, self)
         if dialog.exec() and dialog.saved_path:
-            self.workspace.show_notice(self._i18n.t.saved(str(dialog.saved_path)))
+            self.workspace.show_notice(self._i18n.t.saved(", ".join(str(p) for p in dialog.saved_paths)))
 
     def apply_removal(self, result) -> None:
         operation = RemoveRowsOperation(result.mode, result.removed, result.filled)

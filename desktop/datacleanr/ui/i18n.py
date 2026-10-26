@@ -138,6 +138,14 @@ class Messages:
     exporting: str
     save_as: str
     saved: Callable[[str], str]
+    export_split: str
+    export_required: str
+    split_counts: Callable[[int, int], str]
+    split_single_part: str
+    export_split_csv_hint: str
+    export_split_xlsx_hint: str
+    sheet_complete: str
+    sheet_incomplete: str
     history: str
     history_title: Callable[[int], str]
     history_import: Callable[[str], str]
@@ -357,6 +365,17 @@ EN = Messages(
     exporting="Saving...",
     save_as="Save as...",
     saved=lambda path: f"Saved to {path}",
+    export_split="Separate complete and incomplete rows",
+    export_required="Required columns (a row is complete when all of them have a value):",
+    split_counts=lambda complete, incomplete: (
+        f"{'1 complete row' if complete == 1 else f'{_en(complete)} complete rows'} · "
+        f"{'1 incomplete row' if incomplete == 1 else f'{_en(incomplete)} incomplete rows'}"
+    ),
+    split_single_part="One of the parts is empty, so only the other one will be exported.",
+    export_split_csv_hint="Two files are saved next to the name you choose, ending in _complete and _incomplete.",
+    export_split_xlsx_hint="One Excel file with two sheets: “Complete” and “Incomplete”.",
+    sheet_complete="Complete",
+    sheet_incomplete="Incomplete",
     history="History",
     history_title=lambda steps: f"History ({'1 step' if steps == 1 else f'{_en(steps)} steps'})",
     history_import=lambda file: f"Import “{file}”",
@@ -608,6 +627,17 @@ ES = Messages(
     exporting="Guardando...",
     save_as="Guardar como...",
     saved=lambda path: f"Guardado en {path}",
+    export_split="Separar filas completas e incompletas",
+    export_required="Columnas obligatorias (una fila está completa cuando todas tienen valor):",
+    split_counts=lambda complete, incomplete: (
+        f"{'1 fila completa' if complete == 1 else f'{_es(complete)} filas completas'} · "
+        f"{'1 fila incompleta' if incomplete == 1 else f'{_es(incomplete)} filas incompletas'}"
+    ),
+    split_single_part="Una de las dos partes está vacía, así que solo se exportará la otra.",
+    export_split_csv_hint="Se guardan dos archivos junto al nombre que elijas, terminados en _complete y _incomplete.",
+    export_split_xlsx_hint="Un archivo Excel con dos hojas: «Completas» e «Incompletas».",
+    sheet_complete="Completas",
+    sheet_incomplete="Incompletas",
     history="Historial",
     history_title=lambda steps: f"Historial ({'1 paso' if steps == 1 else f'{_es(steps)} pasos'})",
     history_import=lambda file: f"Importar «{file}»",

@@ -45,7 +45,7 @@ def test_write_and_read_back_without_shifting_or_losing_values(tmp_path):
         [0, 1, 2],
     )
     path = tmp_path / "out.xlsx"
-    write_workbook(dataset, ["number", "date", "number", "boolean", "text", "text"], path)
+    write_workbook([("Data", dataset)], ["number", "date", "number", "boolean", "text", "text"], path)
 
     back = sheet_to_dataset(read_workbook(path)[0], "out.xlsx")
     assert back.sheet == "Data"

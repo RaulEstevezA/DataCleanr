@@ -114,6 +114,16 @@ def serialize_csv(dataset: Dataset, delimiter: str | None = None) -> str:
     return UTF8_BOM + "\r\n".join(lines)
 
 
-def clean_file_name(file_name: str, extension: str = "csv") -> str:
-    """ "clientes.csv" (or .xlsx, .json, .xml) -> "clientes_clean.csv" (or .xlsx)."""
-    return re.sub(r"(\.(csv|xlsx|json|xml))?$", f"_clean.{extension}", file_name, count=1, flags=re.IGNORECASE)
+def clean_file_name(file_name: str, extension: str = "csv", part: str | None = None) -> str:
+    """ "clientes.csv" (or .xlsx, .json, .xml) -> "clientes_clean.csv" (or .xlsx).
+
+    With a part: "clientes_clean_complete.csv". Suffixes are in English so file names don't
+    depend on the language (same as the web version).
+    """
+    suffix = f"_clean_{part}" if part else "_clean"
+    return re.sub(r"(\.(csv|xlsx|json|xml))?$", f"{suffix}.{extension}", file_name, count=1, flags=re.IGNORECASE)
+
+
+def part_path(path: Path, part: str) -> Path:
+    """ "/x/clientes_clean.csv" -> "/x/clientes_clean_complete.csv": the parts go next to the chosen file."""
+    return path.with_name(f"{path.stem}_{part}{path.suffix}")

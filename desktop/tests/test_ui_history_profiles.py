@@ -41,6 +41,7 @@ def test_saved_profile_matches_the_web_format(window, tmp_path):
 
 
 def test_apply_profile_adds_one_history_step_per_change(window, tmp_path):
+    window._i18n.set_language("es")
     case = load_cases("profile.json")["run"][0]
     header = ";".join(case["columns"])
     body = "\n".join(";".join(row) for row in case["rows"])

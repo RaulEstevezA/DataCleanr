@@ -49,3 +49,10 @@ def test_round_trip_keeps_every_value():
 )
 def test_clean_file_name(name, extension, expected):
     assert clean_file_name(name, extension) == expected
+
+
+def test_part_file_names(tmp_path):
+    from datacleanr.io.csv_file import part_path
+
+    assert clean_file_name("clientes.csv", "csv", "complete") == "clientes_clean_complete.csv"
+    assert part_path(tmp_path / "clientes_clean.csv", "incomplete") == tmp_path / "clientes_clean_incomplete.csv"

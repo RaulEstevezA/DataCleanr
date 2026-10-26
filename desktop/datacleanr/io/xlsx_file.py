@@ -76,13 +76,17 @@ def sheet_to_dataset(sheet: XlsxSheet, file_name: str) -> Dataset:
     )
 
 
-def write_workbook(dataset: Dataset, types: list[ColumnType], path: Path) -> None:
-    """Writes an .xlsx file with each column converted to its chosen type. The header is bold
-    and frozen so it stays visible while scrolling in Excel."""
+def write_workbook(sheets: list[tuple[str, Dataset]], types: list[ColumnType], path: Path) -> None:
+    """Writes an .xlsx file, one sheet per (name, dataset), with each column converted to its
+    chosen type. The header is bold and frozen so it stays visible while scrolling in Excel."""
     workbook = Workbook()
-    sheet = workbook.active
-    sheet.title = dataset.sheet or "Data"
+    workbook.remove(workbook.active)
+    for name, dataset in sheets:
+        _write_sheet(workbook.create_sheet(name), dataset, types)
+    workbook.save(path)
 
+
+def _write_sheet(sheet, dataset: Dataset, types: list[ColumnType]) -> None:
     for c, name in enumerate(dataset.columns, start=1):
         _write_text(sheet.cell(row=1, column=c), name).font = Font(bold=True)
 
@@ -99,7 +103,6 @@ def write_workbook(dataset: Dataset, types: list[ColumnType], path: Path) -> Non
                 _write_text(cell, value)
 
     sheet.freeze_panes = "A2"
-    workbook.save(path)
 
 
 def _write_text(cell, value: str):
