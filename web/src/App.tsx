@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import './App.css'
 import { AppFooter } from './components/AppFooter.tsx'
 import { AppHeader } from './components/AppHeader.tsx'
@@ -7,11 +7,14 @@ import { DatasetSummary } from './components/DatasetSummary.tsx'
 import { FileImport } from './components/FileImport.tsx'
 import { TransformPanel } from './components/TransformPanel.tsx'
 import { useI18n } from './i18n/useI18n.ts'
-import { parseCsvFile } from './core/csv.ts'
-import type { Dataset } from './core/dataset.ts'
+import { cleanFileName, parseCsvFile, serializeCsv } from './core/csv.ts'
+import { columnLabel, countModifiedCells, type Dataset } from './core/dataset.ts'
+import { downloadTextFile } from './utils/download.ts'
 
 function App() {
   const { t, language } = useI18n()
+  // The original is kept untouched until export; edits always produce a new `dataset`
+  const [original, setOriginal] = useState<Dataset | null>(null)
   const [dataset, setDataset] = useState<Dataset | null>(null)
   const [selectedColumn, setSelectedColumn] = useState<number | null>(null)
   const [loading, setLoading] = useState(false)
@@ -26,7 +29,9 @@ function App() {
     setLoading(true)
     setError(null)
     try {
-      setDataset(await parseCsvFile(file))
+      const loaded = await parseCsvFile(file)
+      setOriginal(loaded)
+      setDataset(loaded)
       setSelectedColumn(null)
       setNotice(null)
     } catch {
@@ -36,6 +41,11 @@ function App() {
     }
   }
 
+  const modifiedCells = useMemo(
+    () => (original && dataset ? countModifiedCells(original, dataset) : 0),
+    [original, dataset],
+  )
+
   function selectColumn(index: number) {
     setSelectedColumn(index)
     setNotice(null)
@@ -44,8 +54,21 @@ function App() {
   function handleApply(updated: Dataset, appliedCount: number) {
     setDataset(updated)
     if (selectedColumn !== null) {
-      setNotice(t.changesApplied(appliedCount.toLocaleString(language), updated.columns[selectedColumn]))
+      setNotice(t.changesApplied(appliedCount.toLocaleString(language), columnLabel(updated, selectedColumn)))
     }
+  }
+
+  function handleExport() {
+    if (!dataset) return
+    downloadTextFile(serializeCsv(dataset), cleanFileName(dataset.fileName), 'text/csv;charset=utf-8')
+  }
+
+  function handleReset() {
+    if (modifiedCells > 0 && !window.confirm(t.confirmDiscard)) return
+    setOriginal(null)
+    setDataset(null)
+    setSelectedColumn(null)
+    setNotice(null)
   }
 
   return (
@@ -56,9 +79,11 @@ function App() {
           <div className="app__workspace">
             <DatasetSummary
               dataset={dataset}
+              modifiedCells={modifiedCells}
               selectedColumn={selectedColumn}
               onSelectColumn={selectColumn}
-              onReset={() => setDataset(null)}
+              onExport={handleExport}
+              onReset={handleReset}
             />
             {selectedColumn !== null && (
               <TransformPanel

@@ -1,6 +1,6 @@
 import { useId, useMemo, useState } from 'react'
 import { applyColumnChanges, previewColumnChanges } from '../core/changes.ts'
-import type { Dataset } from '../core/dataset.ts'
+import { columnLabel, type Dataset } from '../core/dataset.ts'
 import { createReplaceTransform, type ReplaceOptions } from '../core/replace.ts'
 import { transformIds, transforms, type TransformId } from '../core/transforms.ts'
 import { useI18n } from '../i18n/useI18n.ts'
@@ -71,7 +71,7 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
 
   return (
     <section className="panel transform-panel">
-      <h2 className="transform-panel__title">{t.cleanColumn(dataset.columns[column])}</h2>
+      <h2 className="transform-panel__title">{t.cleanColumn(columnLabel(dataset, column))}</h2>
 
       <div className="transform-panel__options" role="group" aria-label={t.transformLabel}>
         {transformIds.map((id) => (

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Dataset } from '../core/dataset.ts'
+import { columnLabel, type Dataset } from '../core/dataset.ts'
 import { useI18n } from '../i18n/useI18n.ts'
 import './DataTable.css'
 
@@ -28,10 +28,10 @@ export function DataTable({ dataset, selectedColumn, onSelectColumn }: DataTable
           <thead>
             <tr>
               <th className="data-table__index">#</th>
-              {dataset.columns.map((column, i) => (
+              {dataset.columns.map((_, i) => (
                 <th key={i} aria-selected={i === selectedColumn}>
                   <button type="button" onClick={() => onSelectColumn(i)}>
-                    {column}
+                    {columnLabel(dataset, i)}
                   </button>
                 </th>
               ))}

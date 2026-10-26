@@ -11,7 +11,7 @@ Las funciones comunes a ambas versiones se especifican en `shared/test-cases/` (
 - [x] Seleccionar columna
 - [x] Transformaciones: trim, minúsculas, mayúsculas, Title Case, colapsar espacios
 - [x] Vista previa `original → propuesto` antes de aplicar
-- [ ] Exportar CSV limpio
+- [x] Exportar CSV limpio
 - [ ] Despliegue en el portfolio (`raulesteveza.github.io/tools/DataCleanr/`)
 
 ## Más adelante

@@ -12,6 +12,16 @@
   gap: 12px;
 }
 
+.dataset-summary__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dataset-summary__modified {
+  color: var(--success);
+}
+
 .dataset-summary__file {
   font-size: 1.125rem;
   font-weight: 600;
