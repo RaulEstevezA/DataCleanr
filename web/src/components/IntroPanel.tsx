@@ -1,11 +1,11 @@
 import type { ReactNode } from 'react'
 import { useI18n } from '../i18n/useI18n.ts'
+import { detectPlatform, downloadUrl, RELEASES_URL } from '../utils/desktopDownload.ts'
 import './IntroPanel.css'
 
 const TOOLS_URL = 'https://raulesteveza.github.io/tools/'
 const SOURCE_URL = 'https://github.com/RaulEstevezA/DataCleanr'
-// Installers will be published as GitHub Releases; until then the button is shown disabled
-const DESKTOP_DOWNLOAD_URL: string | null = null
+const platform = detectPlatform(navigator)
 
 /** Presentation card shown before a file is loaded, styled like the portfolio's project windows. */
 export function IntroPanel({ children }: { children: ReactNode }) {
@@ -31,14 +31,14 @@ export function IntroPanel({ children }: { children: ReactNode }) {
       {children}
 
       <div className="intro__actions">
-        {DESKTOP_DOWNLOAD_URL ? (
-          <a className="button" href={DESKTOP_DOWNLOAD_URL} target="_blank" rel="noopener">
-            {t.introDownload}
+        {platform ? (
+          <a className="button" href={downloadUrl(platform)}>
+            {t.introDownloadFor(platform)}
           </a>
         ) : (
-          <button type="button" className="button" disabled title={t.introDownloadSoon}>
-            {t.introDownload} ({t.introSoon})
-          </button>
+          <a className="button" href={RELEASES_URL} target="_blank" rel="noopener">
+            {t.introDownload}
+          </a>
         )}
         <a className="button" href={SOURCE_URL} target="_blank" rel="noopener">
           {t.introCode}
@@ -47,6 +47,21 @@ export function IntroPanel({ children }: { children: ReactNode }) {
           {t.introAllTools}
         </a>
       </div>
+
+      <p className="intro__download-note">
+        {t.introDownloadNote}{' '}
+        <a href={t.introHowToOpenUrl} target="_blank" rel="noopener">
+          {t.introHowToOpen}
+        </a>
+        {platform && (
+          <>
+            {' · '}
+            <a href={RELEASES_URL} target="_blank" rel="noopener">
+              {t.introOtherPlatforms}
+            </a>
+          </>
+        )}
+      </p>
     </section>
   )
 }
