@@ -2,11 +2,12 @@ import { useId, useMemo, useState } from 'react'
 import { normalizeAmount, type AmountOptions } from '../core/amount.ts'
 import { applyColumnChanges, previewColumnChanges } from '../core/changes.ts'
 import { columnLabel, rowNumber, type Dataset } from '../core/dataset.ts'
+import type { CellAction } from '../core/operation.ts'
 import { DEFAULT_TWO_DIGIT_YEAR_LIMIT, normalizeDate, type DateOptions } from '../core/date.ts'
 import type { PhoneOptions } from '../core/phone.ts'
 import { createReplaceTransform, type ReplaceOptions } from '../core/replace.ts'
 import { groupSimilarValues, type SimilarOptions } from '../core/similar.ts'
-import { transformIds, transforms, type TransformId } from '../core/transforms.ts'
+import { transformIds, transforms } from '../core/transforms.ts'
 import { useStoredState } from '../hooks/useStoredState.ts'
 import { useI18n } from '../i18n/useI18n.ts'
 import { AmountForm } from './AmountForm.tsx'
@@ -19,7 +20,7 @@ import './TransformPanel.css'
 // Rendering thousands of rows at once would freeze the page
 const MAX_PREVIEW_ROWS = 200
 
-type Selection = TransformId | 'custom' | 'phone' | 'date' | 'amount' | 'similar'
+type Selection = CellAction
 
 // Pairwise comparison grows with the square of distinct values: beyond this the page would freeze
 const MAX_DISTINCT_FOR_SIMILAR = 3000
@@ -51,7 +52,7 @@ const initialReplace: ReplaceOptions = { find: '', replacement: '', wholeCell: t
 interface TransformPanelProps {
   dataset: Dataset
   column: number
-  onApply: (dataset: Dataset, appliedCount: number) => void
+  onApply: (dataset: Dataset, appliedCount: number, action: CellAction) => void
 }
 
 export function TransformPanel({ dataset, column, onApply }: TransformPanelProps) {
@@ -189,7 +190,8 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
   }
 
   function apply() {
-    onApply(applyColumnChanges(dataset, column, accepted), accepted.length)
+    if (!transformId) return
+    onApply(applyColumnChanges(dataset, column, accepted), accepted.length, transformId)
     setTransformId(null)
     setReplace(initialReplace)
     setGroupChoices(null)

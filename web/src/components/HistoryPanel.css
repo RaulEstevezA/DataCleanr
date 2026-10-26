@@ -1,0 +1,54 @@
+.history {
+  padding: 12px 24px;
+}
+
+.history summary {
+  color: var(--muted);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.history__steps {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 12px 0 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.history__step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: none;
+  color: var(--text);
+  font-size: 0.8125rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.history__step:hover {
+  background: var(--surface-raised);
+}
+
+.history__step[aria-current='step'] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.history__step[data-undone] {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.history__number {
+  min-width: 2ch;
+  color: var(--muted);
+  font-family: var(--mono);
+  text-align: right;
+}

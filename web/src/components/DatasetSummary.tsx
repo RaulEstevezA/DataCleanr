@@ -9,6 +9,10 @@ interface DatasetSummaryProps {
   selectedColumn: number | null
   onSelectColumn: (index: number) => void
   onFindDuplicates: () => void
+  canUndo: boolean
+  canRedo: boolean
+  onUndo: () => void
+  onRedo: () => void
   onExport: () => void
   onReset: () => void
 }
@@ -20,6 +24,10 @@ export function DatasetSummary({
   selectedColumn,
   onSelectColumn,
   onFindDuplicates,
+  canUndo,
+  canRedo,
+  onUndo,
+  onRedo,
   onExport,
   onReset,
 }: DatasetSummaryProps) {
@@ -40,6 +48,12 @@ export function DatasetSummary({
           </p>
         </div>
         <div className="dataset-summary__actions">
+          <button type="button" className="button" disabled={!canUndo} onClick={onUndo} title={t.undoShortcut}>
+            {t.undo}
+          </button>
+          <button type="button" className="button" disabled={!canRedo} onClick={onRedo} title={t.redoShortcut}>
+            {t.redo}
+          </button>
           <button type="button" className="button" onClick={onFindDuplicates}>
             {t.findDuplicates}
           </button>

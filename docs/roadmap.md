@@ -25,6 +25,6 @@ Las funciones comunes a ambas versiones se especifican en `shared/test-cases/` (
 - [x] Normalización de fechas
 - [x] Normalización de importes
 - Perfiles/reglas de limpieza
-- Historial de transformaciones, undo/redo
+- [x] Historial de transformaciones, undo/redo
 - Versión desktop en Python
 - Instaladores desktop (Windows/macOS/Linux) publicados en GitHub Releases, con enlace de descarga desde la versión web

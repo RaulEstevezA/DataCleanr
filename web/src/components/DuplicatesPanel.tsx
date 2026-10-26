@@ -26,7 +26,7 @@ interface Group {
 
 interface DuplicatesPanelProps {
   dataset: Dataset
-  onRemove: (dataset: Dataset, removedCount: number) => void
+  onRemove: (dataset: Dataset, removedCount: number, mode: Mode) => void
   onClose: () => void
 }
 
@@ -232,7 +232,7 @@ export function DuplicatesPanel({ dataset, onRemove, onClose }: DuplicatesPanelP
               type="button"
               className="button button--primary"
               disabled={toRemove.size === 0}
-              onClick={() => onRemove(removeRows(dataset, toRemove), toRemove.size)}
+              onClick={() => onRemove(removeRows(dataset, toRemove), toRemove.size, mode)}
             >
               {t.duplicatesRemove(toRemove.size)}
             </button>
