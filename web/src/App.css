@@ -12,6 +12,12 @@
   padding: 24px;
 }
 
+.app__workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 @media (max-width: 600px) {
   .app__main {
     padding: 16px;

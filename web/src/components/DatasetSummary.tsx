@@ -4,10 +4,12 @@ import './DatasetSummary.css'
 
 interface DatasetSummaryProps {
   dataset: Dataset
+  selectedColumn: number | null
+  onSelectColumn: (index: number) => void
   onReset: () => void
 }
 
-export function DatasetSummary({ dataset, onReset }: DatasetSummaryProps) {
+export function DatasetSummary({ dataset, selectedColumn, onSelectColumn, onReset }: DatasetSummaryProps) {
   const { t, language } = useI18n()
   const format = (n: number) => n.toLocaleString(language)
 
@@ -27,8 +29,15 @@ export function DatasetSummary({ dataset, onReset }: DatasetSummaryProps) {
       <h3 className="dataset-summary__label">{t.detectedColumns}</h3>
       <ul className="dataset-summary__columns">
         {dataset.columns.map((column, i) => (
-          <li key={i} className="tag">
-            {column}
+          <li key={i}>
+            <button
+              type="button"
+              className="tag"
+              aria-pressed={i === selectedColumn}
+              onClick={() => onSelectColumn(i)}
+            >
+              {column}
+            </button>
           </li>
         ))}
       </ul>

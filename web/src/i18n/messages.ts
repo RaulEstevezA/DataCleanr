@@ -13,6 +13,11 @@ const en = {
   rowCount: (n: string) => `${n} rows`,
   columnCount: (n: string) => `${n} columns`,
   detectedColumns: 'Detected columns',
+  emptyCell: 'empty',
+  pagination: 'Pagination',
+  previous: 'Previous',
+  next: 'Next',
+  rowRange: (from: string, to: string, total: string) => `Rows ${from}–${to} of ${total}`,
   license: 'MIT License',
   sourceCode: 'Source code',
 }
@@ -34,6 +39,11 @@ const es: Messages = {
   rowCount: (n: string) => `${n} filas`,
   columnCount: (n: string) => `${n} columnas`,
   detectedColumns: 'Columnas detectadas',
+  emptyCell: 'vacío',
+  pagination: 'Paginación',
+  previous: 'Anterior',
+  next: 'Siguiente',
+  rowRange: (from: string, to: string, total: string) => `Filas ${from}–${to} de ${total}`,
   license: 'Licencia MIT',
   sourceCode: 'Código fuente',
 }
