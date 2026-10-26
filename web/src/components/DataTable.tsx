@@ -12,14 +12,13 @@ interface DataTableProps {
 }
 
 export function DataTable({ dataset, selectedColumn, onSelectColumn }: DataTableProps) {
-  const { t, language } = useI18n()
+  const { t } = useI18n()
   const [page, setPage] = useState(0)
 
   const totalRows = dataset.rows.length
   const pageCount = Math.max(1, Math.ceil(totalRows / PAGE_SIZE))
   const start = page * PAGE_SIZE
   const visibleRows = dataset.rows.slice(start, start + PAGE_SIZE)
-  const format = (n: number) => n.toLocaleString(language)
 
   return (
     <section className="panel data-table">
@@ -57,7 +56,7 @@ export function DataTable({ dataset, selectedColumn, onSelectColumn }: DataTable
             {t.previous}
           </button>
           <span>
-            {t.rowRange(format(start + 1), format(start + visibleRows.length), format(totalRows))}
+            {t.rowRange(start + 1, start + visibleRows.length, totalRows)}
           </span>
           <button
             type="button"

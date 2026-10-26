@@ -2,6 +2,9 @@ import type { DateFormat, DateInputOrder } from '../core/date.ts'
 import type { PhoneFormat } from '../core/phone.ts'
 import type { TransformId } from '../core/transforms.ts'
 
+const formatEn = (n: number) => n.toLocaleString('en')
+const formatEs = (n: number) => n.toLocaleString('es')
+
 const en = {
   tagline: 'Clean, normalize and unify tabular data',
   privacyNotice: 'Processed locally. Your files are never sent to a server.',
@@ -13,18 +16,18 @@ const en = {
   importHint: 'or drag and drop it here',
   importAnother: 'Import another file',
   exportCsv: 'Export clean CSV',
-  modifiedCells: (n: string) => `${n} cells modified`,
+  modifiedCells: (n: number) => (n === 1 ? '1 cell modified' : `${formatEn(n)} cells modified`),
   confirmDiscard: 'You have changes that have not been exported. Discard them and import another file?',
   errorNotCsv: 'Only CSV files are supported for now.',
   errorParse: 'The file could not be read. Check that it is a valid, non-empty CSV.',
-  rowCount: (n: string) => `${n} rows`,
-  columnCount: (n: string) => `${n} columns`,
+  rowCount: (n: number) => (n === 1 ? '1 row' : `${formatEn(n)} rows`),
+  columnCount: (n: number) => (n === 1 ? '1 column' : `${formatEn(n)} columns`),
   detectedColumns: 'Detected columns',
   emptyCell: 'empty',
   pagination: 'Pagination',
   previous: 'Previous',
   next: 'Next',
-  rowRange: (from: string, to: string, total: string) => `Rows ${from}–${to} of ${total}`,
+  rowRange: (from: number, to: number, total: number) => `Rows ${formatEn(from)}–${formatEn(to)} of ${formatEn(total)}`,
   cleanColumn: (column: string) => `Clean column “${column}”`,
   transformLabel: 'Transformation',
   transformNames: {
@@ -54,7 +57,10 @@ const en = {
     'Numbers that already have a prefix (+33, +44...) keep their country. In national format, foreign numbers stay international so their country is not lost.',
   phoneLoading: 'Loading phone number rules...',
   phoneLoadError: 'Phone number rules could not be loaded. Check your connection and try again.',
-  normalizeIssues: (n: string) => `${n} values could not be normalized and will be left unchanged. Review them by hand.`,
+  normalizeIssues: (n: number) =>
+    n === 1
+      ? '1 value could not be normalized and will be left unchanged. Review it by hand.'
+      : `${formatEn(n)} values could not be normalized and will be left unchanged. Review them by hand.`,
   normalizeDate: 'Normalize dates',
   dateInputOrder: 'How are dates written in this column?',
   dateOrderNames: {
@@ -73,13 +79,15 @@ const en = {
   original: 'Original',
   proposed: 'Proposed',
   toggleAll: 'Accept or reject all changes',
-  acceptRow: (row: string) => `Accept change in row ${row}`,
-  previewTruncated: (shown: string, total: string) =>
-    `Showing the first ${shown} of ${total} changes. Hidden changes are accepted.`,
-  changesSelected: (accepted: string, total: string) => `${accepted} of ${total} changes selected`,
+  acceptRow: (row: number) => `Accept change in row ${formatEn(row)}`,
+  previewTruncated: (shown: number, total: number) =>
+    `Showing the first ${formatEn(shown)} of ${formatEn(total)} changes. Hidden changes are accepted.`,
+  changesSelected: (accepted: number, total: number) =>
+    `${formatEn(accepted)} of ${formatEn(total)} ${total === 1 ? 'change' : 'changes'} selected`,
   cancel: 'Cancel',
-  applyChanges: (n: string) => `Apply ${n} changes`,
-  changesApplied: (n: string, column: string) => `${n} changes applied to “${column}”.`,
+  applyChanges: (n: number) => (n === 1 ? 'Apply 1 change' : `Apply ${formatEn(n)} changes`),
+  changesApplied: (n: number, column: string) =>
+    n === 1 ? `1 change applied to “${column}”.` : `${formatEn(n)} changes applied to “${column}”.`,
   license: 'MIT License',
   sourceCode: 'Source code',
 }
@@ -97,18 +105,18 @@ const es: Messages = {
   importHint: 'o arrástralo aquí',
   importAnother: 'Importar otro archivo',
   exportCsv: 'Exportar CSV limpio',
-  modifiedCells: (n: string) => `${n} celdas modificadas`,
+  modifiedCells: (n: number) => (n === 1 ? '1 celda modificada' : `${formatEs(n)} celdas modificadas`),
   confirmDiscard: 'Tienes cambios sin exportar. ¿Descartarlos e importar otro archivo?',
   errorNotCsv: 'De momento solo se admiten archivos CSV.',
   errorParse: 'No se ha podido leer el archivo. Comprueba que sea un CSV válido y no esté vacío.',
-  rowCount: (n: string) => `${n} filas`,
-  columnCount: (n: string) => `${n} columnas`,
+  rowCount: (n: number) => (n === 1 ? '1 fila' : `${formatEs(n)} filas`),
+  columnCount: (n: number) => (n === 1 ? '1 columna' : `${formatEs(n)} columnas`),
   detectedColumns: 'Columnas detectadas',
   emptyCell: 'vacío',
   pagination: 'Paginación',
   previous: 'Anterior',
   next: 'Siguiente',
-  rowRange: (from: string, to: string, total: string) => `Filas ${from}–${to} de ${total}`,
+  rowRange: (from: number, to: number, total: number) => `Filas ${formatEs(from)}–${formatEs(to)} de ${formatEs(total)}`,
   cleanColumn: (column: string) => `Limpiar columna «${column}»`,
   transformLabel: 'Transformación',
   transformNames: {
@@ -138,7 +146,10 @@ const es: Messages = {
     'Los números que ya tienen prefijo (+33, +44...) mantienen su país. En formato nacional, los extranjeros se dejan en internacional para no perder su país.',
   phoneLoading: 'Cargando reglas de teléfonos...',
   phoneLoadError: 'No se han podido cargar las reglas de teléfonos. Revisa tu conexión e inténtalo de nuevo.',
-  normalizeIssues: (n: string) => `${n} valores no se pueden normalizar y se dejarán sin cambios. Revísalos a mano.`,
+  normalizeIssues: (n: number) =>
+    n === 1
+      ? '1 valor no se puede normalizar y se dejará sin cambios. Revísalo a mano.'
+      : `${formatEs(n)} valores no se pueden normalizar y se dejarán sin cambios. Revísalos a mano.`,
   normalizeDate: 'Normalizar fechas',
   dateInputOrder: '¿Cómo están escritas las fechas en esta columna?',
   dateOrderNames: {
@@ -157,13 +168,15 @@ const es: Messages = {
   original: 'Original',
   proposed: 'Propuesto',
   toggleAll: 'Aceptar o rechazar todos los cambios',
-  acceptRow: (row: string) => `Aceptar cambio en la fila ${row}`,
-  previewTruncated: (shown: string, total: string) =>
-    `Se muestran los primeros ${shown} de ${total} cambios. Los cambios no mostrados se aceptan.`,
-  changesSelected: (accepted: string, total: string) => `${accepted} de ${total} cambios seleccionados`,
+  acceptRow: (row: number) => `Aceptar cambio en la fila ${formatEs(row)}`,
+  previewTruncated: (shown: number, total: number) =>
+    `Se muestran los primeros ${formatEs(shown)} de ${formatEs(total)} cambios. Los cambios no mostrados se aceptan.`,
+  changesSelected: (accepted: number, total: number) =>
+    `${formatEs(accepted)} de ${formatEs(total)} ${total === 1 ? 'cambio seleccionado' : 'cambios seleccionados'}`,
   cancel: 'Cancelar',
-  applyChanges: (n: string) => `Aplicar ${n} cambios`,
-  changesApplied: (n: string, column: string) => `${n} cambios aplicados en «${column}».`,
+  applyChanges: (n: number) => (n === 1 ? 'Aplicar 1 cambio' : `Aplicar ${formatEs(n)} cambios`),
+  changesApplied: (n: number, column: string) =>
+    n === 1 ? `1 cambio aplicado en «${column}».` : `${formatEs(n)} cambios aplicados en «${column}».`,
   license: 'Licencia MIT',
   sourceCode: 'Código fuente',
 }

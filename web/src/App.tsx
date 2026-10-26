@@ -12,7 +12,7 @@ import { columnLabel, countModifiedCells, type Dataset } from './core/dataset.ts
 import { downloadTextFile } from './utils/download.ts'
 
 function App() {
-  const { t, language } = useI18n()
+  const { t } = useI18n()
   // The original is kept untouched until export; edits always produce a new `dataset`
   const [original, setOriginal] = useState<Dataset | null>(null)
   const [dataset, setDataset] = useState<Dataset | null>(null)
@@ -54,7 +54,7 @@ function App() {
   function handleApply(updated: Dataset, appliedCount: number) {
     setDataset(updated)
     if (selectedColumn !== null) {
-      setNotice(t.changesApplied(appliedCount.toLocaleString(language), columnLabel(updated, selectedColumn)))
+      setNotice(t.changesApplied(appliedCount, columnLabel(updated, selectedColumn)))
     }
   }
 

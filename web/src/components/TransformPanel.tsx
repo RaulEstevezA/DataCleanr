@@ -42,7 +42,7 @@ interface TransformPanelProps {
 }
 
 export function TransformPanel({ dataset, column, onApply }: TransformPanelProps) {
-  const { t, language } = useI18n()
+  const { t } = useI18n()
   const [transformId, setTransformId] = useState<Selection | null>(null)
   const [replace, setReplace] = useState<ReplaceOptions>(initialReplace)
   const [phoneOptions, setPhoneOptions] = useStoredState('datacleanr.phoneOptions', defaultPhoneOptions)
@@ -84,7 +84,6 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
   )
   const ids = useId()
   const accepted = changes.filter((change) => !rejected.has(change.row))
-  const format = (n: number) => n.toLocaleString(language)
 
   function selectTransform(id: Selection) {
     setTransformId(id)
@@ -180,7 +179,7 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
       )}
       {issues.length > 0 && (
         <details className="transform-panel__issues">
-          <summary>{t.normalizeIssues(format(issues.length))}</summary>
+          <summary>{t.normalizeIssues(issues.length)}</summary>
           <ul>
             {issues.slice(0, MAX_PREVIEW_ROWS).map(({ row, value }) => (
               <li key={row}>
@@ -274,7 +273,7 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
                       <td>
                         <input
                           type="checkbox"
-                          aria-label={t.acceptRow(format(change.row + 1))}
+                          aria-label={t.acceptRow(change.row + 1)}
                           checked={isAccepted}
                           onChange={() => toggleRow(change.row)}
                         />
@@ -297,18 +296,18 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
           </div>
           {changes.length > MAX_PREVIEW_ROWS && (
             <p className="transform-panel__info">
-              {t.previewTruncated(format(MAX_PREVIEW_ROWS), format(changes.length))}
+              {t.previewTruncated(MAX_PREVIEW_ROWS, changes.length)}
             </p>
           )}
           <div className="transform-panel__actions">
             <span className="transform-panel__info">
-              {t.changesSelected(format(accepted.length), format(changes.length))}
+              {t.changesSelected(accepted.length, changes.length)}
             </span>
             <button type="button" className="button" onClick={() => setTransformId(null)}>
               {t.cancel}
             </button>
             <button type="button" className="button button--primary" disabled={accepted.length === 0} onClick={apply}>
-              {t.applyChanges(format(accepted.length))}
+              {t.applyChanges(accepted.length)}
             </button>
           </div>
         </>

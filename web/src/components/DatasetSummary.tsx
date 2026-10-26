@@ -19,8 +19,7 @@ export function DatasetSummary({
   onExport,
   onReset,
 }: DatasetSummaryProps) {
-  const { t, language } = useI18n()
-  const format = (n: number) => n.toLocaleString(language)
+  const { t } = useI18n()
 
   return (
     <section className="panel dataset-summary">
@@ -28,10 +27,10 @@ export function DatasetSummary({
         <div>
           <h2 className="dataset-summary__file">{dataset.fileName}</h2>
           <p className="dataset-summary__stats">
-            {t.rowCount(format(dataset.rows.length))} · {t.columnCount(format(dataset.columns.length))} ·{' '}
+            {t.rowCount(dataset.rows.length)} · {t.columnCount(dataset.columns.length)} ·{' '}
             {dataset.encoding.toUpperCase()}
             {modifiedCells > 0 && (
-              <span className="dataset-summary__modified"> · {t.modifiedCells(format(modifiedCells))}</span>
+              <span className="dataset-summary__modified"> · {t.modifiedCells(modifiedCells)}</span>
             )}
           </p>
         </div>
