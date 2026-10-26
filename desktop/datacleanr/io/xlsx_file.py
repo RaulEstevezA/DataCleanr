@@ -1,4 +1,4 @@
-"""Excel (.xlsx) import. Mirrors web/src/core/xlsx.ts (the web reads with read-excel-file).
+"""Excel (.xlsx) import and export. Mirrors web/src/core/xlsx.ts and xlsxSheet.ts.
 
 Every cell becomes text, following shared/test-cases/xlsx.json.
 """
@@ -7,9 +7,11 @@ import datetime
 from dataclasses import dataclass
 from pathlib import Path
 
-from openpyxl import load_workbook
+from openpyxl import Workbook, load_workbook
+from openpyxl.styles import Font
 
 from ..core.dataset import Dataset
+from ..core.export import ColumnType, parse_excel_date, to_typed_cell
 from ..core.jsnumber import js_number_to_string
 
 
@@ -72,3 +74,36 @@ def sheet_to_dataset(sheet: XlsxSheet, file_name: str) -> Dataset:
         rows=normalized,
         row_ids=list(range(len(normalized))),
     )
+
+
+def write_workbook(dataset: Dataset, types: list[ColumnType], path: Path) -> None:
+    """Writes an .xlsx file with each column converted to its chosen type. The header is bold
+    and frozen so it stays visible while scrolling in Excel."""
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.title = dataset.sheet or "Data"
+
+    for c, name in enumerate(dataset.columns, start=1):
+        _write_text(sheet.cell(row=1, column=c), name).font = Font(bold=True)
+
+    for r, row in enumerate(dataset.rows, start=2):
+        for c, value in enumerate(row, start=1):
+            typed = to_typed_cell(value, types[c - 1])
+            cell = sheet.cell(row=r, column=c)
+            if typed.type == "number" or typed.type == "boolean":
+                cell.value = typed.value
+            elif typed.type == "date":
+                cell.value = parse_excel_date(value)
+                cell.number_format = "yyyy-mm-dd hh:mm:ss" if " " in value else "yyyy-mm-dd"
+            elif typed.type == "text":
+                _write_text(cell, value)
+
+    sheet.freeze_panes = "A2"
+    workbook.save(path)
+
+
+def _write_text(cell, value: str):
+    cell.value = value
+    # openpyxl turns text starting with "=" into a formula; force plain text so "=1+1" stays as written
+    cell.data_type = "s"
+    return cell
