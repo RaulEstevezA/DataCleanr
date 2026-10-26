@@ -5,17 +5,17 @@ import { AppHeader } from './components/AppHeader.tsx'
 import { DataTable } from './components/DataTable.tsx'
 import { DatasetSummary } from './components/DatasetSummary.tsx'
 import { DuplicatesPanel } from './components/DuplicatesPanel.tsx'
+import { ExportPanel } from './components/ExportPanel.tsx'
 import { FileImport } from './components/FileImport.tsx'
 import { HistoryPanel, type HistoryStep } from './components/HistoryPanel.tsx'
 import { TransformPanel } from './components/TransformPanel.tsx'
 import type { Messages } from './i18n/messages.ts'
 import { useI18n } from './i18n/useI18n.ts'
-import { cleanFileName, parseCsvFile, serializeCsv } from './core/csv.ts'
+import { parseCsvFile } from './core/csv.ts'
 import { columnLabel, countModifiedCells, type Dataset } from './core/dataset.ts'
 import { canRedo, canUndo, createHistory, currentEntry, goTo, pushEntry, redo, undo, type History } from './core/history.ts'
 import type { CellAction } from './core/operation.ts'
 import { EmptySheetError, sheetToDataset, type XlsxSheet } from './core/xlsx.ts'
-import { downloadTextFile } from './utils/download.ts'
 import { readWorkbook } from './utils/readWorkbook.ts'
 
 function App() {
@@ -27,7 +27,8 @@ function App() {
   const [error, setError] = useState<string | null>(null)
   // Stored as a function of the messages so it follows language changes
   const [notice, setNotice] = useState<((t: Messages) => string) | null>(null)
-  const [showDuplicates, setShowDuplicates] = useState(false)
+  // Dataset-level panels; only one is open at a time, and never together with a column panel
+  const [panel, setPanel] = useState<'duplicates' | 'export' | null>(null)
   // All sheets of the imported Excel file, to switch between them; null for CSV
   const [sheets, setSheets] = useState<XlsxSheet[] | null>(null)
 
@@ -37,7 +38,7 @@ function App() {
   function startWith(loaded: Dataset) {
     setHistory(createHistory<HistoryStep>({ dataset: loaded, operation: { kind: 'import' } }))
     setSelectedColumn(null)
-    setShowDuplicates(false)
+    setPanel(null)
     setNotice(null)
   }
 
@@ -117,19 +118,19 @@ function App() {
 
   function selectColumn(index: number) {
     setSelectedColumn(index)
-    setShowDuplicates(false)
+    setPanel(null)
     setNotice(null)
   }
 
   function openDuplicates() {
-    setShowDuplicates(true)
+    setPanel('duplicates')
     setSelectedColumn(null)
     setNotice(null)
   }
 
   function handleRemoveRows(updated: Dataset, removedCount: number, mode: 'exact' | 'similar') {
     addStep({ dataset: updated, operation: { kind: 'removeRows', mode, count: removedCount } })
-    setShowDuplicates(false)
+    setPanel(null)
     setNotice(() => (m: Messages) => m.rowsRemoved(removedCount))
   }
 
@@ -140,9 +141,10 @@ function App() {
     setNotice(() => (m: Messages) => m.changesApplied(appliedCount, column))
   }
 
-  function handleExport() {
-    if (!dataset) return
-    downloadTextFile(serializeCsv(dataset), cleanFileName(dataset.fileName), 'text/csv;charset=utf-8')
+  function openExport() {
+    setPanel('export')
+    setSelectedColumn(null)
+    setNotice(null)
   }
 
   function handleReset() {
@@ -150,7 +152,7 @@ function App() {
     setHistory(null)
     setSheets(null)
     setSelectedColumn(null)
-    setShowDuplicates(false)
+    setPanel(null)
     setNotice(null)
   }
 
@@ -173,16 +175,17 @@ function App() {
               canRedo={canRedo(history)}
               onUndo={() => moveInHistory(undo)}
               onRedo={() => moveInHistory(redo)}
-              onExport={handleExport}
+              onExport={openExport}
               onReset={handleReset}
             />
             <HistoryPanel history={history} onGoTo={(index) => moveInHistory((h) => goTo(h, index))} />
-            {showDuplicates && (
+            {panel === 'export' && <ExportPanel key={history.index} dataset={dataset} onClose={() => setPanel(null)} />}
+            {panel === 'duplicates' && (
               <DuplicatesPanel
                 key={history.index}
                 dataset={dataset}
                 onRemove={handleRemoveRows}
-                onClose={() => setShowDuplicates(false)}
+                onClose={() => setPanel(null)}
               />
             )}
             {selectedColumn !== null && (

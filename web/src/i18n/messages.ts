@@ -1,4 +1,5 @@
 import type { AmountFormat, DecimalSeparator } from '../core/amount.ts'
+import type { ColumnType } from '../core/export.ts'
 import type { DateFormat, DateInputOrder } from '../core/date.ts'
 import type { PhoneFormat } from '../core/phone.ts'
 import type { TransformId } from '../core/transforms.ts'
@@ -58,7 +59,24 @@ const en = {
   duplicatesSummary: (groups: number, rows: number) =>
     `${groups === 1 ? '1 group' : `${formatEn(groups)} groups`} · ${rows === 1 ? '1 row' : `${formatEn(rows)} rows`} will be removed`,
   duplicatesRemove: (n: number) => (n === 1 ? 'Remove 1 row' : `Remove ${formatEn(n)} rows`),
-  exportCsv: 'Export clean CSV',
+  exportCsv: 'Export',
+  exportTitle: 'Export',
+  exportFormat: 'File format',
+  exportDelimiter: 'Column separator',
+  delimiterNames: { ';': 'Semicolon ( ; ), Excel in Spanish', ',': 'Comma ( , ), international', '\t': 'Tab' },
+  exportCsvHint: 'Saved as UTF-8 so accents display correctly in Excel and databases.',
+  exportTypesHint:
+    'Choose how each column is saved. The suggestion fits every value of the column; values that cannot be converted without losing information (007, 1234,56, 13/07/2024...) are saved as text.',
+  exportColumn: 'Column',
+  exportType: 'Save as',
+  exportExample: 'Example',
+  exportTypeOf: (column: string) => `Type of “${column}”`,
+  exportSuggested: 'suggested',
+  columnTypeNames: { text: 'Text', number: 'Number', date: 'Date', boolean: 'True/False' } satisfies Record<ColumnType, string>,
+  exportFallbacks: (n: number) => (n === 1 ? '1 value will stay as text' : `${formatEn(n)} values will stay as text`),
+  exportError: 'The file could not be created. Try again.',
+  exporting: 'Creating file...',
+  download: 'Download',
   modifiedCells: (n: number) => (n === 1 ? '1 cell modified' : `${formatEn(n)} cells modified`),
   confirmDiscard: 'You have changes that have not been exported. Discard them and import another file?',
   errorUnsupported: 'Only CSV and Excel (.xlsx) files are supported.',
@@ -223,7 +241,24 @@ const es: Messages = {
   duplicatesSummary: (groups: number, rows: number) =>
     `${groups === 1 ? '1 grupo' : `${formatEs(groups)} grupos`} · se ${rows === 1 ? 'eliminará 1 fila' : `eliminarán ${formatEs(rows)} filas`}`,
   duplicatesRemove: (n: number) => (n === 1 ? 'Eliminar 1 fila' : `Eliminar ${formatEs(n)} filas`),
-  exportCsv: 'Exportar CSV limpio',
+  exportCsv: 'Exportar',
+  exportTitle: 'Exportar',
+  exportFormat: 'Formato del archivo',
+  exportDelimiter: 'Separador de columnas',
+  delimiterNames: { ';': 'Punto y coma ( ; ), Excel en español', ',': 'Coma ( , ), internacional', '\t': 'Tabulador' },
+  exportCsvHint: 'Se guarda en UTF-8 para que las tildes se vean bien en Excel y en bases de datos.',
+  exportTypesHint:
+    'Elige cómo se guarda cada columna. La sugerencia encaja con todos los valores de la columna; los que no se pueden convertir sin perder información (007, 1234,56, 13/07/2024...) se guardan como texto.',
+  exportColumn: 'Columna',
+  exportType: 'Guardar como',
+  exportExample: 'Ejemplo',
+  exportTypeOf: (column: string) => `Tipo de «${column}»`,
+  exportSuggested: 'sugerido',
+  columnTypeNames: { text: 'Texto', number: 'Número', date: 'Fecha', boolean: 'Verdadero/Falso' },
+  exportFallbacks: (n: number) => (n === 1 ? '1 valor se quedará como texto' : `${formatEs(n)} valores se quedarán como texto`),
+  exportError: 'No se ha podido crear el archivo. Inténtalo de nuevo.',
+  exporting: 'Creando archivo...',
+  download: 'Descargar',
   modifiedCells: (n: number) => (n === 1 ? '1 celda modificada' : `${formatEs(n)} celdas modificadas`),
   confirmDiscard: 'Tienes cambios sin exportar. ¿Descartarlos e importar otro archivo?',
   errorUnsupported: 'Solo se admiten archivos CSV y Excel (.xlsx).',

@@ -1,6 +1,6 @@
-/** Saves text as a file on the user's device. Generated in memory: nothing is uploaded. */
-export function downloadTextFile(content: string, fileName: string, mimeType: string) {
-  const url = URL.createObjectURL(new Blob([content], { type: mimeType }))
+/** Saves a file on the user's device. Generated in memory: nothing is uploaded. */
+export function downloadBlob(blob: Blob, fileName: string) {
+  const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url
   link.download = fileName

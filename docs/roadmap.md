@@ -16,7 +16,7 @@ Las funciones comunes a ambas versiones se especifican en `shared/test-cases/` (
 
 ## Más adelante
 - [x] Importar Excel (.xlsx), con selector de hoja
-- Exportar a Excel (.xlsx)
+- [x] Exportar a Excel (.xlsx) eligiendo el tipo de cada columna, y CSV eligiendo el separador
 - Importar JSON
 - [x] Unificar valores parecidos en una columna (fuzzy matching)
 - [x] Filas duplicadas exactas

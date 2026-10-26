@@ -1,0 +1,68 @@
+.export {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.export__csv {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.export__field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.export select {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--page-bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.8125rem;
+}
+
+.export__scroll {
+  max-height: 50vh;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.export__types {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.export__types th,
+.export__types td {
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.export__types th {
+  position: sticky;
+  top: 0;
+  background: var(--surface-raised);
+}
+
+.export__example {
+  max-width: 220px;
+  overflow: hidden;
+  color: var(--muted);
+  font-family: var(--mono);
+  white-space: pre;
+  text-overflow: ellipsis;
+}
+
+.export__warning {
+  color: var(--warning);
+}

@@ -1,0 +1,271 @@
+{
+  "conversions": [
+    {
+      "description": "text stays text",
+      "value": "  TRANSGRAU ",
+      "type": "text",
+      "expected": {
+        "type": "text",
+        "value": "  TRANSGRAU "
+      }
+    },
+    {
+      "description": "numbers can be forced to text",
+      "value": "1234.5",
+      "type": "text",
+      "expected": {
+        "type": "text",
+        "value": "1234.5"
+      }
+    },
+    {
+      "description": "empty cell is empty whatever the type",
+      "value": "",
+      "type": "number",
+      "expected": {
+        "type": "empty"
+      }
+    },
+    {
+      "description": "integer",
+      "value": "433",
+      "type": "number",
+      "expected": {
+        "type": "number",
+        "value": 433
+      }
+    },
+    {
+      "description": "negative decimal",
+      "value": "-1234.56",
+      "type": "number",
+      "expected": {
+        "type": "number",
+        "value": -1234.56
+      }
+    },
+    {
+      "description": "zero and zero point something",
+      "value": "0.5",
+      "type": "number",
+      "expected": {
+        "type": "number",
+        "value": 0.5
+      }
+    },
+    {
+      "description": "trailing decimal zeros are fine",
+      "value": "12.50",
+      "type": "number",
+      "expected": {
+        "type": "number",
+        "value": 12.5
+      }
+    },
+    {
+      "description": "leading zeros would be lost: kept as text",
+      "value": "007",
+      "type": "number",
+      "expected": {
+        "type": "text",
+        "value": "007"
+      }
+    },
+    {
+      "description": "comma decimal is not converted (normalize amounts first)",
+      "value": "1234,56",
+      "type": "number",
+      "expected": {
+        "type": "text",
+        "value": "1234,56"
+      }
+    },
+    {
+      "description": "thousands separators are not converted",
+      "value": "1.234.567",
+      "type": "number",
+      "expected": {
+        "type": "text",
+        "value": "1.234.567"
+      }
+    },
+    {
+      "description": "spaces are not converted (trim first)",
+      "value": " 433",
+      "type": "number",
+      "expected": {
+        "type": "text",
+        "value": " 433"
+      }
+    },
+    {
+      "description": "more than 15 significant digits would lose precision: kept as text",
+      "value": "1234567890123456789",
+      "type": "number",
+      "expected": {
+        "type": "text",
+        "value": "1234567890123456789"
+      }
+    },
+    {
+      "description": "15 significant digits are fine",
+      "value": "123456789012345",
+      "type": "number",
+      "expected": {
+        "type": "number",
+        "value": 123456789012345
+      }
+    },
+    {
+      "description": "plus sign or currency is not converted",
+      "value": "+34600123456",
+      "type": "number",
+      "expected": {
+        "type": "text",
+        "value": "+34600123456"
+      }
+    },
+    {
+      "description": "ISO date",
+      "value": "2024-07-13",
+      "type": "date",
+      "expected": {
+        "type": "date",
+        "value": "2024-07-13"
+      }
+    },
+    {
+      "description": "ISO date and time",
+      "value": "2024-01-12 10:30:00",
+      "type": "date",
+      "expected": {
+        "type": "date",
+        "value": "2024-01-12 10:30:00"
+      }
+    },
+    {
+      "description": "non-ISO dates are not converted (normalize dates first)",
+      "value": "13/07/2024",
+      "type": "date",
+      "expected": {
+        "type": "text",
+        "value": "13/07/2024"
+      }
+    },
+    {
+      "description": "impossible dates are not converted",
+      "value": "2023-02-29",
+      "type": "date",
+      "expected": {
+        "type": "text",
+        "value": "2023-02-29"
+      }
+    },
+    {
+      "description": "TRUE",
+      "value": "TRUE",
+      "type": "boolean",
+      "expected": {
+        "type": "boolean",
+        "value": true
+      }
+    },
+    {
+      "description": "false in lowercase",
+      "value": "false",
+      "type": "boolean",
+      "expected": {
+        "type": "boolean",
+        "value": false
+      }
+    },
+    {
+      "description": "other words are not booleans",
+      "value": "sí",
+      "type": "boolean",
+      "expected": {
+        "type": "text",
+        "value": "sí"
+      }
+    }
+  ],
+  "suggestions": [
+    {
+      "description": "all integers",
+      "values": [
+        "1001",
+        "1002",
+        "",
+        "1003"
+      ],
+      "expected": "number"
+    },
+    {
+      "description": "decimals",
+      "values": [
+        "5837.32",
+        "-12",
+        "0.1"
+      ],
+      "expected": "number"
+    },
+    {
+      "description": "a leading zero makes it text (IDs, postal codes)",
+      "values": [
+        "08001",
+        "46001"
+      ],
+      "expected": "text"
+    },
+    {
+      "description": "phone numbers with prefix are text",
+      "values": [
+        "+34600123456",
+        "+34944555666"
+      ],
+      "expected": "text"
+    },
+    {
+      "description": "ISO dates",
+      "values": [
+        "2024-07-13",
+        "2024-01-12 10:30:00"
+      ],
+      "expected": "date"
+    },
+    {
+      "description": "booleans",
+      "values": [
+        "TRUE",
+        "FALSE",
+        "true"
+      ],
+      "expected": "boolean"
+    },
+    {
+      "description": "one non-number makes the column text",
+      "values": [
+        "1",
+        "2",
+        "pendiente"
+      ],
+      "expected": "text"
+    },
+    {
+      "description": "an empty column is text",
+      "values": [
+        "",
+        ""
+      ],
+      "expected": "text"
+    },
+    {
+      "description": "names are text",
+      "values": [
+        "Juan Pérez",
+        "Ana Ruiz"
+      ],
+      "expected": "text"
+    }
+  ]
+}
