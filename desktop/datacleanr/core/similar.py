@@ -5,7 +5,8 @@ import unicodedata
 from collections import Counter
 from dataclasses import dataclass
 
-from rapidfuzz import fuzz
+import numpy as np
+from rapidfuzz import fuzz, process
 
 from .text import JS_WHITESPACE, js_trim
 
@@ -94,13 +95,19 @@ def group_similar_values(values: list[str], options: SimilarOptions) -> list[Sim
         return sum(variant.count for variant in variants)
 
     clusters: list[tuple[str, list[Variant]]] = []
+    leaders: list[str] = []
     for key, variants in sorted(buckets.items(), key=lambda item: (-total(item[1]), item[0])):
-        for leader, members in clusters:
-            if similarity(key, leader) >= options.threshold:
-                members.extend(variants)
-                break
-        else:
+        # Score against every leader at once in native code; the first one above the threshold wins
+        match = None
+        if leaders:
+            scores = process.cdist([key], leaders, scorer=fuzz.ratio, dtype=np.float64)[0]
+            above = np.flatnonzero(scores >= options.threshold)
+            match = int(above[0]) if above.size else None
+        if match is None:
             clusters.append((key, list(variants)))
+            leaders.append(key)
+        else:
+            clusters[match][1].extend(variants)
 
     groups = []
     for _leader, members in sorted(clusters, key=lambda cluster: (-total(cluster[1]), cluster[0])):
