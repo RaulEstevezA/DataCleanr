@@ -170,6 +170,13 @@
     }
   },
   {
+    "description": "invalid: NaN and Infinity are not JSON",
+    "input": "[{\"a\": NaN}]",
+    "expected": {
+      "error": "invalid"
+    }
+  },
+  {
     "description": "invalid: an object without a single array",
     "input": "{\"a\": [1], \"b\": [2]}",
     "expected": {
