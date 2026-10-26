@@ -1,0 +1,348 @@
+{
+  "comparisonKey": [
+    {
+      "description": "case, spaces and punctuation are ignored",
+      "input": "  Trans Grau ",
+      "ignoreLegalForms": false,
+      "expected": "transgrau"
+    },
+    {
+      "description": "accents are ignored",
+      "input": "Talleres Ruíz",
+      "ignoreLegalForms": false,
+      "expected": "talleresruiz"
+    },
+    {
+      "description": "ñ is kept as n",
+      "input": "Peña",
+      "ignoreLegalForms": false,
+      "expected": "pena"
+    },
+    {
+      "description": "dots are removed",
+      "input": "Transgrau S.L.",
+      "ignoreLegalForms": false,
+      "expected": "transgrausl"
+    },
+    {
+      "description": "legal form S.L. is ignored when enabled",
+      "input": "Transgrau S.L.",
+      "ignoreLegalForms": true,
+      "expected": "transgrau"
+    },
+    {
+      "description": "legal form written with spaces (S. L.)",
+      "input": "Transgrau S. L.",
+      "ignoreLegalForms": true,
+      "expected": "transgrau"
+    },
+    {
+      "description": "legal form SL without dots",
+      "input": "Trans Grau SL",
+      "ignoreLegalForms": true,
+      "expected": "transgrau"
+    },
+    {
+      "description": "legal form S.A.",
+      "input": "LOGISTICA NORTE S.A.",
+      "ignoreLegalForms": true,
+      "expected": "logisticanorte"
+    },
+    {
+      "description": "legal form S.L.U.",
+      "input": "Frutas Martínez S.L.U.",
+      "ignoreLegalForms": true,
+      "expected": "frutasmartinez"
+    },
+    {
+      "description": "legal form after a comma (Inc.)",
+      "input": "Acme, Inc.",
+      "ignoreLegalForms": true,
+      "expected": "acme"
+    },
+    {
+      "description": "only trailing legal forms are removed",
+      "input": "SA Distribuciones",
+      "ignoreLegalForms": true,
+      "expected": "sadistribuciones"
+    },
+    {
+      "description": "a value that is only a legal form keeps it",
+      "input": "S.L.",
+      "ignoreLegalForms": true,
+      "expected": "sl"
+    },
+    {
+      "description": "empty value",
+      "input": "",
+      "ignoreLegalForms": true,
+      "expected": ""
+    }
+  ],
+  "similarity": [
+    {
+      "a": "transgrau",
+      "b": "transgru",
+      "expected": 94.1176
+    },
+    {
+      "a": "transgrau",
+      "b": "transgrausl",
+      "expected": 90.0
+    },
+    {
+      "a": "ana",
+      "b": "ane",
+      "expected": 66.6667
+    },
+    {
+      "a": "talleresruiz",
+      "b": "tallerruiz",
+      "expected": 90.9091
+    },
+    {
+      "a": "logisticanorte",
+      "b": "logistcanorte",
+      "expected": 96.2963
+    },
+    {
+      "a": "frutasmartinez",
+      "b": "frutasmartines",
+      "expected": 92.8571
+    },
+    {
+      "a": "abc",
+      "b": "xyz",
+      "expected": 0.0
+    },
+    {
+      "a": "",
+      "b": "",
+      "expected": 100.0
+    },
+    {
+      "a": "abc",
+      "b": "",
+      "expected": 0.0
+    }
+  ],
+  "groups": [
+    {
+      "description": "variants of the same company are grouped (legal forms ignored)",
+      "options": {
+        "threshold": 85,
+        "ignoreLegalForms": true
+      },
+      "values": [
+        "  TRANSGRAU ",
+        "Trans Grau SL",
+        "Transgrau S.L.",
+        "TRANS GRAU",
+        "Trans Grau SL",
+        "Logística Norte",
+        "Logistica Norte SA",
+        "Talleres Ruiz"
+      ],
+      "expected": [
+        {
+          "variants": [
+            {
+              "value": "Trans Grau SL",
+              "count": 2
+            },
+            {
+              "value": "  TRANSGRAU ",
+              "count": 1
+            },
+            {
+              "value": "TRANS GRAU",
+              "count": 1
+            },
+            {
+              "value": "Transgrau S.L.",
+              "count": 1
+            }
+          ],
+          "suggested": "Trans Grau SL"
+        },
+        {
+          "variants": [
+            {
+              "value": "Logistica Norte SA",
+              "count": 1
+            },
+            {
+              "value": "Logística Norte",
+              "count": 1
+            }
+          ],
+          "suggested": "Logistica Norte SA"
+        }
+      ]
+    },
+    {
+      "description": "legal forms make a difference when not ignored, but fuzzy matching still groups them at 85",
+      "options": {
+        "threshold": 85,
+        "ignoreLegalForms": false
+      },
+      "values": [
+        "Transgrau",
+        "Transgrau SL"
+      ],
+      "expected": [
+        {
+          "variants": [
+            {
+              "value": "Transgrau",
+              "count": 1
+            },
+            {
+              "value": "Transgrau SL",
+              "count": 1
+            }
+          ],
+          "suggested": "Transgrau"
+        }
+      ]
+    },
+    {
+      "description": "a higher threshold keeps them apart",
+      "options": {
+        "threshold": 95,
+        "ignoreLegalForms": false
+      },
+      "values": [
+        "Transgrau",
+        "Transgrau SL"
+      ],
+      "expected": []
+    },
+    {
+      "description": "typos are grouped",
+      "options": {
+        "threshold": 85,
+        "ignoreLegalForms": true
+      },
+      "values": [
+        "Transgrau",
+        "Transgrau",
+        "Transgru"
+      ],
+      "expected": [
+        {
+          "variants": [
+            {
+              "value": "Transgrau",
+              "count": 2
+            },
+            {
+              "value": "Transgru",
+              "count": 1
+            }
+          ],
+          "suggested": "Transgrau"
+        }
+      ]
+    },
+    {
+      "description": "short different names are not grouped",
+      "options": {
+        "threshold": 85,
+        "ignoreLegalForms": true
+      },
+      "values": [
+        "Ana",
+        "Ane"
+      ],
+      "expected": []
+    },
+    {
+      "description": "identical values only are not a group to unify",
+      "options": {
+        "threshold": 85,
+        "ignoreLegalForms": true
+      },
+      "values": [
+        "Valencia",
+        "Valencia",
+        "Valencia"
+      ],
+      "expected": []
+    },
+    {
+      "description": "empty and whitespace-only values are ignored",
+      "options": {
+        "threshold": 85,
+        "ignoreLegalForms": true
+      },
+      "values": [
+        "",
+        "  ",
+        "Bilbao",
+        "bilbao"
+      ],
+      "expected": [
+        {
+          "variants": [
+            {
+              "value": "Bilbao",
+              "count": 1
+            },
+            {
+              "value": "bilbao",
+              "count": 1
+            }
+          ],
+          "suggested": "Bilbao"
+        }
+      ]
+    },
+    {
+      "description": "groups are ordered by total count, most frequent first",
+      "options": {
+        "threshold": 85,
+        "ignoreLegalForms": true
+      },
+      "values": [
+        "Madrid",
+        "madrid",
+        "Sevilla",
+        "SEVILLA",
+        "sevilla "
+      ],
+      "expected": [
+        {
+          "variants": [
+            {
+              "value": "SEVILLA",
+              "count": 1
+            },
+            {
+              "value": "Sevilla",
+              "count": 1
+            },
+            {
+              "value": "sevilla ",
+              "count": 1
+            }
+          ],
+          "suggested": "SEVILLA"
+        },
+        {
+          "variants": [
+            {
+              "value": "Madrid",
+              "count": 1
+            },
+            {
+              "value": "madrid",
+              "count": 1
+            }
+          ],
+          "suggested": "Madrid"
+        }
+      ]
+    }
+  ]
+}

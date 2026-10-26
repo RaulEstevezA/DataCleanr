@@ -5,19 +5,26 @@ import { columnLabel, type Dataset } from '../core/dataset.ts'
 import { DEFAULT_TWO_DIGIT_YEAR_LIMIT, normalizeDate, type DateOptions } from '../core/date.ts'
 import type { PhoneOptions } from '../core/phone.ts'
 import { createReplaceTransform, type ReplaceOptions } from '../core/replace.ts'
+import { groupSimilarValues, type SimilarOptions } from '../core/similar.ts'
 import { transformIds, transforms, type TransformId } from '../core/transforms.ts'
 import { useStoredState } from '../hooks/useStoredState.ts'
 import { useI18n } from '../i18n/useI18n.ts'
 import { AmountForm } from './AmountForm.tsx'
 import { DateForm } from './DateForm.tsx'
 import { PhoneForm } from './PhoneForm.tsx'
+import { SimilarValuesForm, type GroupChoice } from './SimilarValuesForm.tsx'
 import { VisibleText } from './VisibleText.tsx'
 import './TransformPanel.css'
 
 // Rendering thousands of rows at once would freeze the page
 const MAX_PREVIEW_ROWS = 200
 
-type Selection = TransformId | 'custom' | 'phone' | 'date' | 'amount'
+type Selection = TransformId | 'custom' | 'phone' | 'date' | 'amount' | 'similar'
+
+// Pairwise comparison grows with the square of distinct values: beyond this the page would freeze
+const MAX_DISTINCT_FOR_SIMILAR = 3000
+
+const defaultSimilarOptions = (): SimilarOptions => ({ threshold: 85, ignoreLegalForms: true })
 
 // Loaded on demand: phone metadata for every country is large and most sessions never need it
 type PhoneModule = typeof import('../core/phone.ts')
@@ -58,6 +65,9 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
   // Options saved by an older version may lack newer fields
   const dateOptions = useMemo(() => ({ ...defaultDateOptions(), ...storedDateOptions }), [storedDateOptions])
   const [amountOptions, setAmountOptions] = useStoredState('datacleanr.amountOptions', defaultAmountOptions)
+  const [similarOptions, setSimilarOptions] = useStoredState('datacleanr.similarOptions', defaultSimilarOptions)
+  // Choices are indexed like `similarGroups` and reset whenever the groups are recomputed
+  const [groupChoices, setGroupChoices] = useState<GroupChoice[] | null>(null)
   // Store rejections (not acceptances) so every change is accepted by default
   const [rejected, setRejected] = useState<Set<number>>(new Set())
 
@@ -68,12 +78,35 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
     if (transformId === 'amount') return (value: string) => normalizeAmount(value, amountOptions)
     return null
   }, [transformId, phoneModule, phoneOptions, dateOptions, amountOptions])
+  const distinctCount = useMemo(() => new Set(dataset.rows.map((row) => row[column])).size, [dataset, column])
+  const tooManyForSimilar = distinctCount > MAX_DISTINCT_FOR_SIMILAR
+  const similarGroups = useMemo(() => {
+    if (transformId !== 'similar' || tooManyForSimilar) return []
+    return groupSimilarValues(
+      dataset.rows.map((row) => row[column]),
+      similarOptions,
+    )
+  }, [dataset, column, transformId, tooManyForSimilar, similarOptions])
+  const choices = useMemo(
+    () => groupChoices ?? similarGroups.map((group) => ({ target: group.suggested, custom: false, included: true })),
+    [groupChoices, similarGroups],
+  )
+
   const transform = useMemo(() => {
     if (normalize) return (value: string) => normalize(value).value
+    if (transformId === 'similar') {
+      const mapping = new Map<string, string>()
+      similarGroups.forEach((group, g) => {
+        const { target, included } = choices[g]
+        if (!included || target === '') return
+        for (const { value } of group.variants) if (value !== target) mapping.set(value, target)
+      })
+      return (value: string) => mapping.get(value) ?? value
+    }
     if (transformId === 'custom') return createReplaceTransform(replace)
     if (transformId === 'phone' || transformId === 'date' || transformId === 'amount') return null
     return transformId ? transforms[transformId] : null
-  }, [normalize, transformId, replace])
+  }, [normalize, transformId, replace, similarGroups, choices])
   const changes = useMemo(
     () => (transform ? previewColumnChanges(dataset, column, transform) : []),
     [dataset, column, transform],
@@ -106,6 +139,7 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
   function selectTransform(id: Selection) {
     setTransformId(id)
     setRejected(new Set())
+    setGroupChoices(null)
     if (id === 'phone' && !phoneModule) {
       setPhoneLoadFailed(false)
       import('../core/phone.ts').then(setPhoneModule, () => setPhoneLoadFailed(true))
@@ -114,6 +148,17 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
 
   function updatePhoneOptions(options: PhoneOptions) {
     setPhoneOptions(options)
+    setRejected(new Set())
+  }
+
+  function updateSimilarOptions(options: SimilarOptions) {
+    setSimilarOptions(options)
+    setGroupChoices(null)
+    setRejected(new Set())
+  }
+
+  function updateGroupChoice(index: number, choice: GroupChoice) {
+    setGroupChoices(choices.map((current, i) => (i === index ? choice : current)))
     setRejected(new Set())
   }
 
@@ -147,6 +192,7 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
     onApply(applyColumnChanges(dataset, column, accepted), accepted.length)
     setTransformId(null)
     setReplace(initialReplace)
+    setGroupChoices(null)
     setRejected(new Set())
   }
 
@@ -198,7 +244,28 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
         >
           {t.normalizeAmount}
         </button>
+        <button
+          type="button"
+          className="button"
+          aria-pressed={transformId === 'similar'}
+          onClick={() => selectTransform('similar')}
+        >
+          {t.similarValues}
+        </button>
       </div>
+
+      {transformId === 'similar' && tooManyForSimilar && (
+        <p className="transform-panel__warning">{t.similarTooMany(distinctCount, MAX_DISTINCT_FOR_SIMILAR)}</p>
+      )}
+      {transformId === 'similar' && !tooManyForSimilar && (
+        <SimilarValuesForm
+          options={similarOptions}
+          onOptionsChange={updateSimilarOptions}
+          groups={similarGroups}
+          choices={choices}
+          onChoiceChange={updateGroupChoice}
+        />
+      )}
 
       {transformId === 'amount' && <AmountForm options={amountOptions} onChange={updateAmountOptions} />}
       {currencies.length > 1 && (
@@ -276,7 +343,10 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
         </div>
       )}
 
-      {transform && changes.length === 0 && (transformId !== 'custom' || replace.find.trim() !== '') && (
+      {transform &&
+        changes.length === 0 &&
+        transformId !== 'similar' &&
+        (transformId !== 'custom' || replace.find.trim() !== '') && (
         <p className="transform-panel__info">{transformId === 'custom' ? t.noMatches : t.noChanges}</p>
       )}
 

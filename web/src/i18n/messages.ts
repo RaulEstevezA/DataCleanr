@@ -62,6 +62,17 @@ const en = {
     n === 1
       ? '1 value could not be normalized and will be left unchanged. Review it by hand.'
       : `${formatEn(n)} values could not be normalized and will be left unchanged. Review them by hand.`,
+  similarValues: 'Unify similar values',
+  similarThreshold: (n: number) => `Similarity: ${n}%`,
+  similarThresholdHint: 'Lower groups more values (and more false matches); higher is stricter.',
+  similarIgnoreLegalForms: 'Ignore legal forms when comparing (S.L., S.A., Inc...)',
+  similarNone: 'No similar values found in this column with this similarity.',
+  similarGroupSummary: (variants: number, cells: number) =>
+    `${variants} variants · ${cells === 1 ? '1 cell' : `${formatEn(cells)} cells`}`,
+  similarChooseValue: 'Unify as:',
+  similarOther: 'Other:',
+  similarTooMany: (distinct: number, max: number) =>
+    `This column has ${formatEn(distinct)} different values. Similar-value grouping supports up to ${formatEn(max)} for now.`,
   normalizeAmount: 'Normalize amounts',
   amountAmbiguous: 'Decimal separator when in doubt (e.g. 1.234)',
   amountSeparatorNames: {
@@ -169,6 +180,17 @@ const es: Messages = {
     n === 1
       ? '1 valor no se puede normalizar y se dejará sin cambios. Revísalo a mano.'
       : `${formatEs(n)} valores no se pueden normalizar y se dejarán sin cambios. Revísalos a mano.`,
+  similarValues: 'Unificar valores parecidos',
+  similarThreshold: (n: number) => `Parecido: ${n}%`,
+  similarThresholdHint: 'Más bajo agrupa más valores (y más falsos parecidos); más alto es más estricto.',
+  similarIgnoreLegalForms: 'Ignorar formas jurídicas al comparar (S.L., S.A., Inc...)',
+  similarNone: 'No se han encontrado valores parecidos en esta columna con este parecido.',
+  similarGroupSummary: (variants: number, cells: number) =>
+    `${variants} variantes · ${cells === 1 ? '1 celda' : `${formatEs(cells)} celdas`}`,
+  similarChooseValue: 'Unificar como:',
+  similarOther: 'Otro:',
+  similarTooMany: (distinct: number, max: number) =>
+    `Esta columna tiene ${formatEs(distinct)} valores distintos. De momento, la agrupación de parecidos admite hasta ${formatEs(max)}.`,
   normalizeAmount: 'Normalizar importes',
   amountAmbiguous: 'Separador decimal en caso de duda (ej. 1.234)',
   amountSeparatorNames: {
