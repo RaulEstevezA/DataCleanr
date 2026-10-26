@@ -1,5 +1,10 @@
 """Entry script for PyInstaller: datacleanr/__main__.py uses relative imports, so it can't be the script itself."""
 
-from datacleanr.__main__ import main
+import sys
+
+if "--smoke-test" in sys.argv:
+    from smoke_test import main
+else:
+    from datacleanr.__main__ import main
 
 main()

@@ -6,10 +6,12 @@
 # and with the DataCleanr binary on Linux.
 
 import sys
+import tomllib
 from pathlib import Path
 
 HERE = Path(SPECPATH)
 ROOT = HERE.parent
+VERSION = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
 
 # Qt modules the app doesn't use. PyInstaller follows imports, but the PySide6 hooks pull in
 # some of these through plugins; leaving them out keeps the download much smaller.
@@ -70,7 +72,7 @@ if sys.platform == "darwin":
         icon=icon,
         bundle_identifier="io.github.raulesteveza.datacleanr",
         info_plist={
-            "CFBundleShortVersionString": "0.1.0",
+            "CFBundleShortVersionString": VERSION,
             "NSHighResolutionCapable": True,
             # Light and dark appearance follow the system
             "NSRequiresAquaSystemAppearance": False,
