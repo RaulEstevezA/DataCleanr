@@ -1,0 +1,354 @@
+[
+  {
+    "description": "ISO date stays ISO",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "2024-07-13",
+    "expected": "2024-07-13",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "day/month/year with slashes",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "13/07/2024",
+    "expected": "2024-07-13",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "day-month-year with hyphens and no leading zeros",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "13-7-2024",
+    "expected": "2024-07-13",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "day.month.year with dots",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "13.07.2024",
+    "expected": "2024-07-13",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "single-digit day and month",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "3/4/2024",
+    "expected": "2024-04-03",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "surrounding spaces are ignored",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "  13/07/2024 ",
+    "expected": "2024-07-13",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "two-digit year below 30 is 20xx (default limit 29, as in Excel)",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "13/7/24",
+    "expected": "2024-07-13",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "two-digit year 30 or above is 19xx (default limit 29, as in Excel)",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "13/7/85",
+    "expected": "1985-07-13",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "custom limit: year up to the limit is 20xx",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 10
+    },
+    "input": "15/03/10",
+    "expected": "2010-03-15",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "custom limit: year above the limit is 19xx (e.g. birth dates)",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 10
+    },
+    "input": "15/03/25",
+    "expected": "1925-03-15",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "limit 99: every two-digit year is 20xx",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 99
+    },
+    "input": "15/03/85",
+    "expected": "2085-03-15",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "limit 0: only 00 is 20xx",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 0
+    },
+    "input": "15/03/01",
+    "expected": "1901-03-15",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "limit 0: 00 is still 2000",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 0
+    },
+    "input": "15/03/00",
+    "expected": "2000-03-15",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "four-digit years ignore the limit",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 99
+    },
+    "input": "15/03/1925",
+    "expected": "1925-03-15",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "year-first with slashes is always year/month/day",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "2024/07/13",
+    "expected": "2024-07-13",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "month/day/year when the input order is MDY",
+    "options": {
+      "inputOrder": "MDY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "07/13/2024",
+    "expected": "2024-07-13",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "same ambiguous value read as MDY",
+    "options": {
+      "inputOrder": "MDY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "03/04/2024",
+    "expected": "2024-03-04",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "same ambiguous value read as DMY",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "03/04/2024",
+    "expected": "2024-04-03",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "year-first ignores the input order",
+    "options": {
+      "inputOrder": "MDY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "2024-07-13",
+    "expected": "2024-07-13",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "output DD/MM/YYYY",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "DMY",
+      "twoDigitYearLimit": 29
+    },
+    "input": "2024-07-13",
+    "expected": "13/07/2024",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "output MM/DD/YYYY",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "MDY",
+      "twoDigitYearLimit": 29
+    },
+    "input": "13/07/2024",
+    "expected": "07/13/2024",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "leap day in a leap year",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "29/02/2024",
+    "expected": "2024-02-29",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "invalid: leap day in a non-leap year",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "29/02/2023",
+    "expected": "29/02/2023",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "invalid: day 31 in a 30-day month",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "31/04/2024",
+    "expected": "31/04/2024",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "invalid: month 13 means the order is probably wrong",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "07/13/2024",
+    "expected": "07/13/2024",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "invalid: three-digit year",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "13/07/202",
+    "expected": "13/07/202",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "invalid: mixed separators",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "13/07-2024",
+    "expected": "13/07-2024",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "invalid: time is not dropped silently",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "13/07/2024 10:30",
+    "expected": "13/07/2024 10:30",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "invalid: month names are not supported yet",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "13 jul 2024",
+    "expected": "13 jul 2024",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "invalid: not a date",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "pendiente",
+    "expected": "pendiente",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "empty cell stays empty",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "",
+    "expected": "",
+    "expectedStatus": "empty"
+  },
+  {
+    "description": "whitespace-only cell is left untouched",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "  ",
+    "expected": "  ",
+    "expectedStatus": "empty"
+  }
+]

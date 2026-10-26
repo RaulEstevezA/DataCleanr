@@ -1,3 +1,4 @@
+import type { DateFormat, DateInputOrder } from '../core/date.ts'
 import type { PhoneFormat } from '../core/phone.ts'
 import type { TransformId } from '../core/transforms.ts'
 
@@ -53,7 +54,21 @@ const en = {
     'Numbers that already have a prefix (+33, +44...) keep their country. In national format, foreign numbers stay international so their country is not lost.',
   phoneLoading: 'Loading phone number rules...',
   phoneLoadError: 'Phone number rules could not be loaded. Check your connection and try again.',
-  phoneIssues: (n: string) => `${n} values could not be normalized and will be left unchanged. Review them by hand.`,
+  normalizeIssues: (n: string) => `${n} values could not be normalized and will be left unchanged. Review them by hand.`,
+  normalizeDate: 'Normalize dates',
+  dateInputOrder: 'How are dates written in this column?',
+  dateOrderNames: {
+    DMY: 'Day / month / year',
+    MDY: 'Month / day / year',
+  } satisfies Record<DateInputOrder, string>,
+  dateFormat: 'Output format',
+  dateFormatNames: {
+    ISO: 'ISO 8601 (databases)',
+    DMY: 'DD/MM/YYYY',
+    MDY: 'MM/DD/YYYY',
+  } satisfies Record<DateFormat, string>,
+  dateTwoDigitLimit: 'Two-digit years: up to which year are they 2000s? (Excel uses 29)',
+  dateHint: 'Dates starting with the year (2024-07-13) are always read as year-month-day.',
   noChanges: 'Nothing to change: this column is already clean for this transformation.',
   original: 'Original',
   proposed: 'Proposed',
@@ -123,7 +138,21 @@ const es: Messages = {
     'Los números que ya tienen prefijo (+33, +44...) mantienen su país. En formato nacional, los extranjeros se dejan en internacional para no perder su país.',
   phoneLoading: 'Cargando reglas de teléfonos...',
   phoneLoadError: 'No se han podido cargar las reglas de teléfonos. Revisa tu conexión e inténtalo de nuevo.',
-  phoneIssues: (n: string) => `${n} valores no se pueden normalizar y se dejarán sin cambios. Revísalos a mano.`,
+  normalizeIssues: (n: string) => `${n} valores no se pueden normalizar y se dejarán sin cambios. Revísalos a mano.`,
+  normalizeDate: 'Normalizar fechas',
+  dateInputOrder: '¿Cómo están escritas las fechas en esta columna?',
+  dateOrderNames: {
+    DMY: 'Día / mes / año',
+    MDY: 'Mes / día / año',
+  },
+  dateFormat: 'Formato de salida',
+  dateFormatNames: {
+    ISO: 'ISO 8601 (bases de datos)',
+    DMY: 'DD/MM/AAAA',
+    MDY: 'MM/DD/AAAA',
+  },
+  dateTwoDigitLimit: 'Años de dos cifras: ¿hasta qué año son del 2000? (Excel usa el 29)',
+  dateHint: 'Las fechas que empiezan por el año (2024-07-13) se leen siempre como año-mes-día.',
   noChanges: 'No hay nada que cambiar: esta columna ya está limpia para esta transformación.',
   original: 'Original',
   proposed: 'Propuesto',

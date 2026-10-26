@@ -1,11 +1,13 @@
 import { useId, useMemo, useState } from 'react'
 import { applyColumnChanges, previewColumnChanges } from '../core/changes.ts'
 import { columnLabel, type Dataset } from '../core/dataset.ts'
+import { DEFAULT_TWO_DIGIT_YEAR_LIMIT, normalizeDate, type DateOptions } from '../core/date.ts'
 import type { PhoneOptions } from '../core/phone.ts'
 import { createReplaceTransform, type ReplaceOptions } from '../core/replace.ts'
 import { transformIds, transforms, type TransformId } from '../core/transforms.ts'
 import { useStoredState } from '../hooks/useStoredState.ts'
 import { useI18n } from '../i18n/useI18n.ts'
+import { DateForm } from './DateForm.tsx'
 import { PhoneForm } from './PhoneForm.tsx'
 import { VisibleText } from './VisibleText.tsx'
 import './TransformPanel.css'
@@ -13,7 +15,7 @@ import './TransformPanel.css'
 // Rendering thousands of rows at once would freeze the page
 const MAX_PREVIEW_ROWS = 200
 
-type Selection = TransformId | 'custom' | 'phone'
+type Selection = TransformId | 'custom' | 'phone' | 'date'
 
 // Loaded on demand: phone metadata for every country is large and most sessions never need it
 type PhoneModule = typeof import('../core/phone.ts')
@@ -21,6 +23,14 @@ type PhoneModule = typeof import('../core/phone.ts')
 function defaultPhoneOptions(): PhoneOptions {
   const region = navigator.language.split('-')[1]?.toUpperCase()
   return { defaultCountry: (region || 'ES') as PhoneOptions['defaultCountry'], format: 'E164' }
+}
+
+function defaultDateOptions(): DateOptions {
+  return {
+    inputOrder: navigator.language === 'en-US' ? 'MDY' : 'DMY',
+    format: 'ISO',
+    twoDigitYearLimit: DEFAULT_TWO_DIGIT_YEAR_LIMIT,
+  }
 }
 
 const initialReplace: ReplaceOptions = { find: '', replacement: '', wholeCell: true, ignoreCase: true }
@@ -38,25 +48,35 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
   const [phoneOptions, setPhoneOptions] = useStoredState('datacleanr.phoneOptions', defaultPhoneOptions)
   const [phoneModule, setPhoneModule] = useState<PhoneModule | null>(null)
   const [phoneLoadFailed, setPhoneLoadFailed] = useState(false)
+  const [storedDateOptions, setDateOptions] = useStoredState('datacleanr.dateOptions', defaultDateOptions)
+  // Options saved by an older version may lack newer fields
+  const dateOptions = useMemo(() => ({ ...defaultDateOptions(), ...storedDateOptions }), [storedDateOptions])
   // Store rejections (not acceptances) so every change is accepted by default
   const [rejected, setRejected] = useState<Set<number>>(new Set())
 
+  // Normalizers (phone, date) report values they cannot handle, which are left unchanged
+  const normalize = useMemo(() => {
+    if (transformId === 'phone' && phoneModule) return (value: string) => phoneModule.normalizePhone(value, phoneOptions)
+    if (transformId === 'date') return (value: string) => normalizeDate(value, dateOptions)
+    return null
+  }, [transformId, phoneModule, phoneOptions, dateOptions])
   const transform = useMemo(() => {
+    if (normalize) return (value: string) => normalize(value).value
     if (transformId === 'custom') return createReplaceTransform(replace)
-    if (transformId === 'phone') return phoneModule?.createPhoneTransform(phoneOptions) ?? null
+    if (transformId === 'phone' || transformId === 'date') return null
     return transformId ? transforms[transformId] : null
-  }, [transformId, replace, phoneModule, phoneOptions])
+  }, [normalize, transformId, replace])
   const changes = useMemo(
     () => (transform ? previewColumnChanges(dataset, column, transform) : []),
     [dataset, column, transform],
   )
-  // Phone values that could not be normalized: listed so the user can fix them by hand
-  const phoneIssues = useMemo(() => {
-    if (transformId !== 'phone' || !phoneModule) return []
+  // Values that could not be normalized: listed so the user can fix them by hand
+  const issues = useMemo(() => {
+    if (!normalize) return []
     return dataset.rows
       .map((row, index) => ({ row: index, value: row[column] }))
-      .filter(({ value }) => phoneModule.normalizePhone(value, phoneOptions).status === 'invalid')
-  }, [dataset, column, transformId, phoneModule, phoneOptions])
+      .filter(({ value }) => normalize(value).status === 'invalid')
+  }, [dataset, column, normalize])
   // Distinct values of the column, offered as suggestions in the "find" field
   const columnValues = useMemo(
     () => [...new Set(dataset.rows.map((row) => row[column].trim()))].filter(Boolean).sort(),
@@ -77,6 +97,11 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
 
   function updatePhoneOptions(options: PhoneOptions) {
     setPhoneOptions(options)
+    setRejected(new Set())
+  }
+
+  function updateDateOptions(options: DateOptions) {
+    setDateOptions(options)
     setRejected(new Set())
   }
 
@@ -135,7 +160,17 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
         >
           {t.normalizePhone}
         </button>
+        <button
+          type="button"
+          className="button"
+          aria-pressed={transformId === 'date'}
+          onClick={() => selectTransform('date')}
+        >
+          {t.normalizeDate}
+        </button>
       </div>
+
+      {transformId === 'date' && <DateForm options={dateOptions} onChange={updateDateOptions} />}
 
       {transformId === 'phone' && phoneModule && (
         <PhoneForm options={phoneOptions} countries={phoneModule.phoneCountries} onChange={updatePhoneOptions} />
@@ -143,11 +178,11 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
       {transformId === 'phone' && !phoneModule && (
         <p className="transform-panel__info">{phoneLoadFailed ? t.phoneLoadError : t.phoneLoading}</p>
       )}
-      {phoneIssues.length > 0 && (
+      {issues.length > 0 && (
         <details className="transform-panel__issues">
-          <summary>{t.phoneIssues(format(phoneIssues.length))}</summary>
+          <summary>{t.normalizeIssues(format(issues.length))}</summary>
           <ul>
-            {phoneIssues.slice(0, MAX_PREVIEW_ROWS).map(({ row, value }) => (
+            {issues.slice(0, MAX_PREVIEW_ROWS).map(({ row, value }) => (
               <li key={row}>
                 <span className="transform-panel__index">{row + 1}</span>
                 <VisibleText value={value} />
