@@ -1,14 +1,14 @@
 # Roadmap
 
 ## v0.1 — Web básica
-- [ ] Proyecto React + TypeScript + Vite
+- [x] Proyecto React + TypeScript + Vite
 - [ ] Cargar CSV
 - [ ] Mostrar datos en tabla y columnas detectadas
 - [ ] Seleccionar columna
 - [ ] Transformaciones: trim, minúsculas, mayúsculas, Title Case, colapsar espacios
 - [ ] Vista previa `original → propuesto` antes de aplicar
 - [ ] Exportar CSV limpio
-- [ ] Despliegue en GitHub Pages
+- [ ] Despliegue en el portfolio (`raulesteveza.github.io/tools/DataCleanr/`)
 
 ## Más adelante
 - Importar Excel y JSON
@@ -17,3 +17,4 @@
 - Perfiles/reglas de limpieza
 - Historial de transformaciones, undo/redo
 - Versión desktop en Python
+- Instaladores desktop (Windows/macOS/Linux) publicados en GitHub Releases, con enlace de descarga desde la versión web
