@@ -2,11 +2,11 @@
 
 ## v0.1 — Web básica
 - [x] Proyecto React + TypeScript + Vite
-- [ ] Cargar CSV
-- [ ] Mostrar datos en tabla y columnas detectadas
-- [ ] Seleccionar columna
-- [ ] Transformaciones: trim, minúsculas, mayúsculas, Title Case, colapsar espacios
-- [ ] Vista previa `original → propuesto` antes de aplicar
+- [x] Cargar CSV
+- [x] Mostrar datos en tabla y columnas detectadas
+- [x] Seleccionar columna
+- [x] Transformaciones: trim, minúsculas, mayúsculas, Title Case, colapsar espacios
+- [x] Vista previa `original → propuesto` antes de aplicar
 - [ ] Exportar CSV limpio
 - [ ] Despliegue en el portfolio (`raulesteveza.github.io/tools/DataCleanr/`)
 

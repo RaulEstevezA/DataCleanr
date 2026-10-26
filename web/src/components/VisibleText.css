@@ -1,0 +1,14 @@
+.visible-text {
+  font-family: var(--mono);
+  white-space: pre;
+}
+
+.visible-text__space {
+  color: var(--muted);
+  opacity: 0.6;
+}
+
+.visible-text__empty {
+  color: var(--muted);
+  font-style: italic;
+}

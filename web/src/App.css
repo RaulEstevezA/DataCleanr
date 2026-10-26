@@ -18,6 +18,15 @@
   gap: 16px;
 }
 
+.app__notice {
+  padding: 10px 16px;
+  border: 1px solid var(--success);
+  border-radius: var(--radius);
+  background: var(--success-soft);
+  color: var(--success);
+  font-size: 0.875rem;
+}
+
 @media (max-width: 600px) {
   .app__main {
     padding: 16px;
