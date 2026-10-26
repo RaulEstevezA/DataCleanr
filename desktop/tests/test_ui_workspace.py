@@ -138,3 +138,29 @@ def test_spanish_country_names():
     assert country_name("PT", "es") == "Portugal (PT)"
     assert country_name("DE", "en") == "Germany (DE)"
     assert country_name("XK", "es") == "Kosovo (XK)"
+
+
+def test_unify_similar_values(window, tmp_path):
+    window._i18n.set_language("es")
+    load(window, tmp_path, "Nombre\nRaúl Estévez\nRaúl Estévez\nRAUL ESTEVEZ\nraul estévez\nAna Ruiz\n")
+    window.workspace.select_column(0)
+    panel = window.workspace.panel
+    panel.select_action("similar")
+    wait_for_background()
+
+    form = panel.forms["similar"]
+    assert len(form._card_widgets) == 1
+    assert sorted(c.proposed for c in panel.model.changes) == ["Raúl Estévez", "Raúl Estévez"]
+
+    card = form._card_widgets[0]
+    card.custom.setText("Raúl Estévez Á.")
+    card._custom_edited()
+    assert {c.proposed for c in panel.model.changes} == {"Raúl Estévez Á."}
+    assert panel.profile_step("similar")["mapping"] == [
+        {"from": "Raúl Estévez", "to": "Raúl Estévez Á."},
+        {"from": "RAUL ESTEVEZ", "to": "Raúl Estévez Á."},
+        {"from": "raul estévez", "to": "Raúl Estévez Á."},
+    ]
+
+    card.included.setChecked(False)
+    assert not panel.model.changes

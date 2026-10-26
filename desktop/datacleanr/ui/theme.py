@@ -43,6 +43,20 @@ QLabel[role="warning"] {{
     border-radius: 10px;
     padding: 10px 14px;
 }}
+QFrame#groupCard {{
+    background: {PAGE_BG};
+    border: 1px solid {BORDER};
+    border-radius: 10px;
+}}
+QSlider::groove:horizontal {{ height: 6px; background: {BORDER}; border-radius: 3px; }}
+QSlider::sub-page:horizontal {{ background: {ACCENT}; border-radius: 3px; }}
+QSlider::handle:horizontal {{
+    background: {ACCENT};
+    width: 16px;
+    height: 16px;
+    margin: -5px 0;
+    border-radius: 8px;
+}}
 QWidget[role="warningBox"] {{
     background: {WARNING_SOFT};
     border: 1px solid {WARNING};

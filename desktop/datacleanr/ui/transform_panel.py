@@ -28,6 +28,7 @@ from .i18n import I18n
 from .option_forms import AmountForm, DateForm, IssuesBox, PhoneForm, ReplaceForm
 from .preview_model import ACCEPT, ARROW, ORIGINAL, PROPOSED, ROW, PreviewModel
 from .session import CellAction
+from .similar_form import SimilarForm
 
 
 class TransformPanel(QFrame):
@@ -45,7 +46,7 @@ class TransformPanel(QFrame):
         self.title = QLabel()
         self.title.setProperty("role", "heading")
         # A dropdown instead of the web's buttons: it takes one line in the narrow side panel
-        self.action_ids: list[CellAction] = [*TRANSFORMS, "custom", "phone", "date", "amount"]
+        self.action_ids: list[CellAction] = [*TRANSFORMS, "custom", "phone", "date", "amount", "similar"]
         self.action_label = QLabel()
         self.action_label.setProperty("role", "muted")
         self.action_combo = QComboBox()
@@ -56,6 +57,7 @@ class TransformPanel(QFrame):
             "phone": PhoneForm(i18n),
             "date": DateForm(i18n),
             "amount": AmountForm(i18n),
+            "similar": SimilarForm(i18n),
         }
         # Only the current form is shown, so the panel takes the height of that form alone,
         # and forms never shrink below their natural height (the preview gives way instead)
@@ -179,10 +181,19 @@ class TransformPanel(QFrame):
         if action == "custom":
             form = self.forms["custom"]
             return create_replace_transform(form.options) if form.has_search else None
+        if action == "similar":
+            form = self.forms["similar"]
+            if not form.ready:
+                return None
+            mapping = form.mapping()
+            return lambda value: mapping.get(value, value)
         return TRANSFORMS.get(action)
 
     def profile_step(self, action: CellAction) -> dict:
         column = self.dataset.columns[self.column]
+        if action == "similar":
+            mapping = self.forms["similar"].mapping()
+            return {"type": "map", "column": column, "mapping": [{"from": k, "to": v} for k, v in mapping.items()]}
         if action == "custom":
             o = self.forms["custom"].options
             return {
@@ -239,6 +250,8 @@ class TransformPanel(QFrame):
         self.action_combo.setCurrentIndex(self.action_combo.findData(action))
         for key, form in self.forms.items():
             form.setVisible(key == action)
+        if action == "similar" and self.dataset is not None:
+            self.forms["similar"].set_values([row[self.column] for row in self.dataset.rows])
         self.refresh_preview()
 
     def refresh_preview(self) -> None:

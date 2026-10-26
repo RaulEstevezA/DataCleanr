@@ -88,6 +88,15 @@ class Messages:
     amount_two_decimals: str
     amount_hint: str
     amount_mixed_currencies: Callable[[str], str]
+    similar_threshold: Callable[[int], str]
+    similar_threshold_hint: str
+    similar_ignore_legal_forms: str
+    similar_searching: str
+    similar_none: str
+    similar_truncated: Callable[[int, int], str]
+    similar_group_summary: Callable[[int, int], str]
+    similar_choose_value: str
+    similar_other: str
 
 
 EN = Messages(
@@ -207,6 +216,19 @@ EN = Messages(
         f"This column mixes currencies ({currencies}). Removing the symbols loses that information: "
         "review before applying."
     ),
+    similar_threshold=lambda n: f"Similarity: {n}%",
+    similar_threshold_hint="Lower groups more values (and more false matches); higher is stricter.",
+    similar_ignore_legal_forms="Ignore legal forms when comparing (S.L., S.A., Inc...)",
+    similar_searching="Looking for similar values...",
+    similar_none="No similar values found in this column with this similarity.",
+    similar_truncated=lambda shown, total: (
+        f"Showing the first {_en(shown)} of {_en(total)} groups. Hidden groups use the suggested value."
+    ),
+    similar_group_summary=lambda variants, cells: (
+        f"{variants} variants · {'1 cell' if cells == 1 else f'{_en(cells)} cells'}"
+    ),
+    similar_choose_value="Unify as:",
+    similar_other="Other:",
 )
 
 ES = Messages(
@@ -328,6 +350,19 @@ ES = Messages(
         f"Esta columna mezcla monedas ({currencies}). Al quitar los símbolos se pierde esa información: "
         "revísala antes de aplicar."
     ),
+    similar_threshold=lambda n: f"Parecido: {n}%",
+    similar_threshold_hint="Más bajo agrupa más valores (y más falsos parecidos); más alto es más estricto.",
+    similar_ignore_legal_forms="Ignorar formas jurídicas al comparar (S.L., S.A., Inc...)",
+    similar_searching="Buscando valores parecidos...",
+    similar_none="No se han encontrado valores parecidos en esta columna con este parecido.",
+    similar_truncated=lambda shown, total: (
+        f"Se muestran los primeros {_es(shown)} de {_es(total)} grupos. Los no mostrados usan el valor sugerido."
+    ),
+    similar_group_summary=lambda variants, cells: (
+        f"{variants} variantes · {'1 celda' if cells == 1 else f'{_es(cells)} celdas'}"
+    ),
+    similar_choose_value="Unificar como:",
+    similar_other="Otro:",
 )
 
 MESSAGES = {"en": EN, "es": ES}
