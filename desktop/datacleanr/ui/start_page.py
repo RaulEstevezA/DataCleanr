@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QFileDialog, QFrame, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QFileDialog, QFrame, QHBoxLayout, QLabel, QPushButton, QScrollArea, QVBoxLayout, QWidget
 
 from .i18n import I18n
 
@@ -33,7 +33,6 @@ class DropZone(QFrame):
         self.description = _label("muted")
         self.button = QPushButton()
         self.button.setProperty("primary", True)
-        self.button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.button.clicked.connect(self._choose_file)
         self.hint = _label("muted")
         self.error = _label("error")
@@ -135,10 +134,21 @@ class StartPage(QWidget):
         row.addStretch()
         row.addWidget(card, stretch=100)
         row.addStretch()
+        content = QWidget()
+        content.setProperty("transparent", True)
+        content_layout = QVBoxLayout(content)
+        content_layout.setContentsMargins(24, 8, 24, 24)
+        content_layout.addLayout(row)
+        content_layout.addStretch()
+        # Scrolls on short windows instead of forcing a minimum window height
+        scroll = QScrollArea()
+        scroll.setWidget(content)
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.Shape.NoFrame)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(24, 8, 24, 24)
-        layout.addLayout(row)
-        layout.addStretch()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(scroll)
 
         i18n.changed.connect(self.retranslate)
         self.retranslate()

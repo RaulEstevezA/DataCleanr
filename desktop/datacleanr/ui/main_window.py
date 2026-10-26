@@ -65,6 +65,7 @@ class MainWindow(QMainWindow):
         self._i18n = i18n
         self.setWindowTitle("DataCleanr")
         self.resize(1200, 820)
+        self.setAcceptDrops(True)
 
         header = QHBoxLayout()
         header.setContentsMargins(24, 16, 24, 8)
@@ -109,6 +110,27 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.pages)
         self.setCentralWidget(central)
 
+    # The whole window accepts dropped files, on any screen and also while it is in the background
+
+    def dragEnterEvent(self, event) -> None:  # noqa: N802 (Qt API names)
+        if event.mimeData().hasUrls():
+            event.acceptProposedAction()
+
+    def dragMoveEvent(self, event) -> None:  # noqa: N802
+        if event.mimeData().hasUrls():
+            event.acceptProposedAction()
+
+    def dropEvent(self, event) -> None:  # noqa: N802
+        urls = event.mimeData().urls()
+        if not urls or not urls[0].isLocalFile():
+            return
+        event.acceptProposedAction()
+        self.raise_()
+        self.activateWindow()
+        if self.pages.currentWidget() is self.workspace and not self.confirm_discard():
+            return
+        self.open_file(Path(urls[0].toLocalFile()))
+
     def open_file(self, path: Path) -> None:
         drop_zone = self.start_page.drop_zone
         drop_zone.show_error(None)
@@ -122,7 +144,12 @@ class MainWindow(QMainWindow):
 
     def _file_failed(self, error: Exception) -> None:
         self.start_page.drop_zone.set_loading(False)
-        self.start_page.drop_zone.show_error(self._error_message(error))
+        message = self._error_message(error)
+        # A file dropped onto the workspace fails there, where the user is looking
+        if self.pages.currentWidget() is self.workspace:
+            self.workspace.show_notice(message, warning=True)
+        else:
+            self.start_page.drop_zone.show_error(message)
 
     def _error_message(self, error: Exception) -> str:
         t = self._i18n.t

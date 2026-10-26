@@ -28,6 +28,9 @@ datacleanr = "datacleanr.__main__:main"
 [tool.setuptools.packages.find]
 include = ["datacleanr*"]
 
+[tool.setuptools.package-data]
+datacleanr = ["assets/*"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 

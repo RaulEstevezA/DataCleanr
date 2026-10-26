@@ -124,7 +124,6 @@ class DatasetSummary(QFrame):
             button = QPushButton(column_label(dataset, index), self)
             button.setProperty("tag", True)
             button.setCheckable(True)
-            button.setCursor(Qt.CursorShape.PointingHandCursor)
             button.clicked.connect(lambda _=False, index=index: self.column_selected.emit(index))
             self.columns.addWidget(button)
             self._buttons.append(button)
