@@ -4,6 +4,8 @@ Tool for cleaning, normalizing and deduplicating CSV, Excel, JSON and XML data *
 
 **Try it online:** [raulesteveza.github.io/tools/DataCleanr](https://raulesteveza.github.io/tools/DataCleanr/)
 
+**Download for desktop:** [macOS](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-macOS.dmg) · [Windows](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Windows.zip) · [Linux](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Linux.tar.gz) ([how to open it](./desktop/README_en.md#opening-it-the-first-time))
+
 <p align="center">
   <a href="https://raulesteveza.github.io/tools/DataCleanr/">
     <img src="docs/images/web_app.png" alt="DataCleanr web version unifying different spellings of the same name" width="720">
