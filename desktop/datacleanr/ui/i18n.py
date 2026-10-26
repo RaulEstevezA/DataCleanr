@@ -46,6 +46,19 @@ class Messages:
     error_parse_xml: dict[str, str]
     error_read: str
     empty_sheet: Callable[[str], str]
+    clean_column: Callable[[str], str]
+    transform_names: dict[str, str]
+    no_changes: str
+    original: str
+    proposed: str
+    accept_all: str
+    changes_selected: Callable[[int, int], str]
+    cancel: str
+    apply_changes: Callable[[int], str]
+    changes_applied: Callable[[int, str], str]
+    modified_cells: Callable[[int], str]
+    undo: str
+    redo: str
 
 
 EN = Messages(
@@ -90,6 +103,34 @@ EN = Messages(
     },
     error_read="The file could not be opened.",
     empty_sheet=lambda sheet: f"The sheet “{sheet}” is empty.",
+    clean_column=lambda column: f"Clean column “{column}”",
+    transform_names={
+        "trim": "Trim spaces",
+        "collapseSpaces": "Collapse repeated spaces",
+        "lowercase": "lowercase",
+        "uppercase": "UPPERCASE",
+        "titleCase": "Title Case",
+        "custom": "Custom replace",
+        "phone": "Normalize phone numbers",
+        "date": "Normalize dates",
+        "amount": "Normalize amounts",
+        "similar": "Unify similar values",
+    },
+    no_changes="Nothing to change: this column is already clean for this transformation.",
+    original="Original",
+    proposed="Proposed",
+    accept_all="Accept all",
+    changes_selected=lambda accepted, total: (
+        f"{_en(accepted)} of {_en(total)} {'change' if total == 1 else 'changes'} selected"
+    ),
+    cancel="Cancel",
+    apply_changes=lambda n: "Apply 1 change" if n == 1 else f"Apply {_en(n)} changes",
+    changes_applied=lambda n, column: (
+        f"1 change applied to “{column}”." if n == 1 else f"{_en(n)} changes applied to “{column}”."
+    ),
+    modified_cells=lambda n: "1 cell modified" if n == 1 else f"{_en(n)} cells modified",
+    undo="Undo",
+    redo="Redo",
 )
 
 ES = Messages(
@@ -136,6 +177,34 @@ ES = Messages(
     },
     error_read="No se ha podido abrir el archivo.",
     empty_sheet=lambda sheet: f"La hoja «{sheet}» está vacía.",
+    clean_column=lambda column: f"Limpiar columna «{column}»",
+    transform_names={
+        "trim": "Quitar espacios de los extremos",
+        "collapseSpaces": "Quitar espacios repetidos",
+        "lowercase": "minúsculas",
+        "uppercase": "MAYÚSCULAS",
+        "titleCase": "Primera En Mayúscula",
+        "custom": "Reemplazo personalizado",
+        "phone": "Normalizar teléfonos",
+        "date": "Normalizar fechas",
+        "amount": "Normalizar importes",
+        "similar": "Unificar valores parecidos",
+    },
+    no_changes="No hay nada que cambiar: esta columna ya está limpia para esta transformación.",
+    original="Original",
+    proposed="Propuesto",
+    accept_all="Aceptar todos",
+    changes_selected=lambda accepted, total: (
+        f"{_es(accepted)} de {_es(total)} {'cambio seleccionado' if total == 1 else 'cambios seleccionados'}"
+    ),
+    cancel="Cancelar",
+    apply_changes=lambda n: "Aplicar 1 cambio" if n == 1 else f"Aplicar {_es(n)} cambios",
+    changes_applied=lambda n, column: (
+        f"1 cambio aplicado en «{column}»." if n == 1 else f"{_es(n)} cambios aplicados en «{column}»."
+    ),
+    modified_cells=lambda n: "1 celda modificada" if n == 1 else f"{_es(n)} celdas modificadas",
+    undo="Deshacer",
+    redo="Rehacer",
 )
 
 MESSAGES = {"en": EN, "es": ES}

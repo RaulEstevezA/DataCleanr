@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from PySide6.QtGui import QAction, QKeySequence
 from PySide6.QtWidgets import (
     QButtonGroup,
     QHBoxLayout,
@@ -13,7 +14,8 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from ..core.dataset import Dataset
+from ..core.dataset import Dataset, column_label, count_modified_cells
+from ..core.history import History, create_history, push_entry, redo, undo
 from ..io.csv_file import CsvParseError
 from ..io.json_file import JsonImportError
 from ..io.loader import ExcelReadError, LoadedFile, UnsupportedFileError, load_file
@@ -21,6 +23,7 @@ from ..io.xlsx_file import EmptySheetError, XlsxSheet, sheet_to_dataset
 from ..io.xml_file import XmlImportError
 from .background import run_in_background
 from .i18n import MESSAGES, I18n
+from .session import CellsOperation, HistoryStep, ImportOperation
 from .start_page import StartPage
 from .workspace import WorkspacePage
 
@@ -69,13 +72,24 @@ class MainWindow(QMainWindow):
         self.workspace = WorkspacePage(i18n)
         self.workspace.import_another.connect(self.show_start)
         self.workspace.sheet_selected.connect(self.select_sheet)
+        self.workspace.applied.connect(self.apply_cells)
+        self.workspace.undo.connect(lambda: self.move_in_history(undo))
+        self.workspace.redo.connect(lambda: self.move_in_history(redo))
         self.pages = QStackedWidget()
         self.pages.addWidget(self.start_page)
         self.pages.addWidget(self.workspace)
 
-        self.dataset: Dataset | None = None
+        # Every applied operation adds a new dataset version; the first entry is the untouched original
+        self.history: History[HistoryStep] | None = None
         # Every sheet of the imported Excel file, to switch between them; None for other formats
         self.sheets: list[XlsxSheet] | None = None
+
+        # Text fields keep their own undo: Qt gives them the shortcut first when they have focus
+        for sequences, move in ((QKeySequence.StandardKey.Undo, undo), (QKeySequence.StandardKey.Redo, redo)):
+            action = QAction(self)
+            action.setShortcuts(QKeySequence.keyBindings(sequences))
+            action.triggered.connect(lambda _=False, move=move: self.move_in_history(move))
+            self.addAction(action)
 
         central = QWidget()
         layout = QVBoxLayout(central)
@@ -113,10 +127,36 @@ class MainWindow(QMainWindow):
             return t.error_parse_xml[error.reason]
         return t.error_read
 
+    @property
+    def dataset(self) -> Dataset | None:
+        return self.history.current.dataset if self.history else None
+
     def _show_dataset(self, dataset: Dataset) -> None:
-        self.dataset = dataset
-        self.workspace.set_dataset(dataset, [sheet.sheet for sheet in self.sheets] if self.sheets else None)
+        self.history = create_history(HistoryStep(dataset, ImportOperation()))
+        self._refresh()
         self.pages.setCurrentWidget(self.workspace)
+
+    def _refresh(self, keep_column: bool = False) -> None:
+        original = self.history.entries[0].dataset
+        current = self.dataset
+        sheets = [sheet.sheet for sheet in self.sheets] if self.sheets else None
+        self.workspace.set_dataset(current, sheets, count_modified_cells(original, current), keep_column)
+        self.workspace.set_history_state(self.history.can_undo, self.history.can_redo)
+
+    def apply_cells(self, updated: Dataset, count: int, action: str, profile_step: dict) -> None:
+        column = self.workspace.selected_column
+        self.history = push_entry(
+            self.history, HistoryStep(updated, CellsOperation(column, action, count), profile_step)
+        )
+        self._refresh(keep_column=True)
+        self.workspace.show_notice(self._i18n.t.changes_applied(count, column_label(updated, column)))
+
+    def move_in_history(self, move) -> None:
+        if not self.history or self.pages.currentWidget() is not self.workspace:
+            return
+        self.history = move(self.history)
+        self._refresh(keep_column=True)
+        self.workspace.show_notice(None)
 
     def select_sheet(self, name: str) -> None:
         sheet = next((sheet for sheet in self.sheets or [] if sheet.sheet == name), None)
@@ -129,6 +169,6 @@ class MainWindow(QMainWindow):
             self.statusBar().showMessage(self._i18n.t.empty_sheet(name), 5000)
 
     def show_start(self) -> None:
-        self.dataset = None
+        self.history = None
         self.sheets = None
         self.pages.setCurrentWidget(self.start_page)

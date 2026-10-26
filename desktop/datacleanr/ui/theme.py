@@ -29,6 +29,13 @@ QLabel[role="title"] {{ font-size: 32px; font-weight: 700; }}
 QLabel[role="subtitle"] {{ color: {MUTED}; font-size: 17px; }}
 QLabel[role="heading"] {{ font-size: 17px; font-weight: 600; }}
 QLabel[role="error"] {{ color: {DANGER}; }}
+QLabel[role="notice"] {{
+    color: {SUCCESS};
+    background: {SUCCESS_SOFT};
+    border: 1px solid {SUCCESS};
+    border-radius: 10px;
+    padding: 10px 16px;
+}}
 QLabel[role="label"] {{ color: {MUTED}; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; }}
 QLabel[role="privacyTag"] {{
     color: {SUCCESS};
@@ -79,6 +86,16 @@ QPushButton[primary="true"] {{
     border-color: {ACCENT};
 }}
 QPushButton[primary="true"]:hover {{ background: {ACCENT_TEXT}; border-color: {ACCENT_TEXT}; }}
+
+QPushButton[option="true"]:checked {{
+    background: {ACCENT_SOFT};
+    border-color: {ACCENT};
+    color: {ACCENT_TEXT};
+}}
+
+QCheckBox {{ background: transparent; spacing: 8px; }}
+
+QSplitter::handle {{ background: transparent; height: 12px; }}
 
 QPushButton[lang="true"] {{
     background: transparent;

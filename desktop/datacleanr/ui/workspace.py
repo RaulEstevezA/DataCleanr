@@ -8,6 +8,7 @@ from PySide6.QtWidgets import (
     QHeaderView,
     QLabel,
     QPushButton,
+    QSplitter,
     QTableView,
     QVBoxLayout,
     QWidget,
@@ -17,12 +18,15 @@ from ..core.dataset import Dataset, column_label
 from .flow_layout import FlowLayout
 from .i18n import I18n
 from .table_model import DatasetTableModel
+from .transform_panel import TransformPanel
 
 FORMAT_NAMES = {"xlsx": "Excel", "json": "JSON", "xml": "XML"}
 
 
 class DatasetSummary(QFrame):
     import_another = Signal()
+    undo = Signal()
+    redo = Signal()
     column_selected = Signal(int)
     sheet_selected = Signal(str)
 
@@ -41,6 +45,11 @@ class DatasetSummary(QFrame):
         self.stats.setProperty("role", "muted")
         self.import_button = QPushButton()
         self.import_button.clicked.connect(self.import_another)
+        self.undo_button = QPushButton()
+        self.undo_button.clicked.connect(self.undo)
+        self.redo_button = QPushButton()
+        self.redo_button.clicked.connect(self.redo)
+        self.modified = 0
 
         self.sheet_label = QLabel()
         self.sheet_label.setProperty("role", "label")
@@ -55,6 +64,8 @@ class DatasetSummary(QFrame):
         title.addWidget(self.file_name)
         title.addWidget(self.privacy)
         title.addStretch()
+        title.addWidget(self.undo_button)
+        title.addWidget(self.redo_button)
         title.addWidget(self.import_button)
         sheet_row = QHBoxLayout()
         sheet_row.addWidget(self.sheet_label)
@@ -102,18 +113,29 @@ class DatasetSummary(QFrame):
         t = self._i18n.t
         self.privacy.setText(t.privacy_short)
         self.import_button.setText(t.import_another)
+        self.undo_button.setText(t.undo)
+        self.undo_button.setToolTip(f"{t.undo} (Ctrl/Cmd+Z)")
+        self.redo_button.setText(t.redo)
+        self.redo_button.setToolTip(f"{t.redo} (Ctrl/Cmd+Shift+Z)")
         self.sheet_label.setText(t.sheet.upper())
         self.columns_label.setText(t.detected_columns.upper())
         if self._dataset:
             dataset = self._dataset
             self.file_name.setText(dataset.file_name)
             source = dataset.encoding.upper() if dataset.format == "csv" else FORMAT_NAMES[dataset.format]
-            self.stats.setText(f"{t.row_count(len(dataset.rows))} · {t.column_count(len(dataset.columns))} · {source}")
+            stats = f"{t.row_count(len(dataset.rows))} · {t.column_count(len(dataset.columns))} · {source}"
+            if self.modified:
+                stats += f" · <span style='color:#3fb950'>{t.modified_cells(self.modified)}</span>"
+            self.stats.setText(stats)
 
 
 class WorkspacePage(QWidget):
     import_another = Signal()
     sheet_selected = Signal(str)
+    undo = Signal()
+    redo = Signal()
+    # Updated dataset, applied count, action id, profile step
+    applied = Signal(object, int, str, object)
 
     def __init__(self, i18n: I18n):
         super().__init__()
@@ -122,6 +144,17 @@ class WorkspacePage(QWidget):
         self.summary.import_another.connect(self.import_another)
         self.summary.sheet_selected.connect(self.sheet_selected)
         self.summary.column_selected.connect(self.select_column)
+        self.summary.undo.connect(self.undo)
+        self.summary.redo.connect(self.redo)
+
+        self.panel = TransformPanel(i18n)
+        self.panel.applied.connect(self.applied)
+        self.panel.preview_shown.connect(self._resize_panel)
+        self.panel.hide()
+        self.notice = QLabel()
+        self.notice.setProperty("role", "notice")
+        self.notice.setWordWrap(True)
+        self.notice.hide()
 
         self.model = DatasetTableModel()
         self.table = QTableView()
@@ -139,22 +172,54 @@ class WorkspacePage(QWidget):
         layout.setContentsMargins(24, 8, 24, 24)
         layout.setSpacing(16)
         layout.addWidget(self.summary)
-        layout.addWidget(self.table, stretch=1)
+        layout.addWidget(self.notice)
+        # The panel and the table share the space; the user can drag the divider
+        self.splitter = QSplitter(Qt.Orientation.Vertical)
+        self.splitter.addWidget(self.panel)
+        self.splitter.addWidget(self.table)
+        self.splitter.setChildrenCollapsible(False)
+        layout.addWidget(self.splitter, stretch=1)
         i18n.changed.connect(self.retranslate)
 
     @property
     def selected_column(self) -> int | None:
         return self.model.selected_column
 
-    def set_dataset(self, dataset: Dataset, sheets: list[str] | None = None) -> None:
+    def set_dataset(
+        self, dataset: Dataset, sheets: list[str] | None = None, modified: int = 0, keep_column: bool = False
+    ) -> None:
+        column = self.selected_column if keep_column else None
+        self.summary.modified = modified
         self.summary.set_dataset(dataset, sheets)
         self.model.empty_text = self._i18n.t.empty_cell
         self.model.set_dataset(dataset)
-        self.select_column(None)
+        self.select_column(column)
+
+    def set_history_state(self, can_undo: bool, can_redo: bool) -> None:
+        self.summary.undo_button.setEnabled(can_undo)
+        self.summary.redo_button.setEnabled(can_redo)
+
+    def show_notice(self, text: str | None) -> None:
+        self.notice.setText(text or "")
+        self.notice.setVisible(bool(text))
 
     def select_column(self, column: int | None) -> None:
         self.model.set_selected_column(column)
         self.summary.set_selected_column(column)
+        if column is not None and self.model.dataset is not None:
+            self.panel.set_target(self.model.dataset, column)
+            self.panel.show()
+            self._resize_panel(False)
+            self.show_notice(None)
+        else:
+            self.panel.hide()
+
+    def _resize_panel(self, preview: bool) -> None:
+        total = max(self.splitter.height(), 600)
+        # With a preview the panel gets most of the height; otherwise just what it needs.
+        # Either way the divider can be dragged.
+        panel = int(total * 0.62) if preview else self.panel.minimumSizeHint().height()
+        self.splitter.setSizes([panel, total - panel])
 
     def retranslate(self) -> None:
         self.summary.retranslate()
