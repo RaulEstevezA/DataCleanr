@@ -6,71 +6,99 @@
     "Dates: YYYY-MM-DD when there is no time, YYYY-MM-DD HH:MM:SS otherwise.",
     "Booleans: TRUE / FALSE.",
     "Empty cells: empty text. Rows with every cell empty are skipped.",
-    "The first row is the header. Sheets without any row cannot be imported."
+    "The first row is the header. Sheets without any row cannot be imported.",
+    "Cells with formatting but no value do not create rows or columns (Excel files often have them)."
   ],
-  "file": "files/sample.xlsx",
-  "sheets": [
+  "files": [
     {
-      "sheet": "Clientes",
-      "columns": [
-        "ID",
-        "Empresa",
-        "Fecha alta",
-        "Importe",
-        "Activo",
-        "Notas"
-      ],
-      "rows": [
-        [
-          "1001",
-          "  TRANSGRAU ",
-          "2024-07-13",
-          "5837.32",
-          "TRUE",
-          ""
-        ],
-        [
-          "1002",
-          "Logística Norte",
-          "2024-01-12 10:30:00",
-          "433",
-          "FALSE",
-          "Peña € ü"
-        ],
-        [
-          "1003",
-          "",
-          "",
-          "0.1",
-          "",
-          ""
-        ],
-        [
-          "007",
-          "Frutas Martínez",
-          "13/07/2024",
-          "-1234.5",
-          "",
-          "línea 1\nlínea 2"
-        ]
+      "file": "files/sample.xlsx",
+      "sheets": [
+        {
+          "sheet": "Clientes",
+          "columns": [
+            "ID",
+            "Empresa",
+            "Fecha alta",
+            "Importe",
+            "Activo",
+            "Notas"
+          ],
+          "rows": [
+            [
+              "1001",
+              "  TRANSGRAU ",
+              "2024-07-13",
+              "5837.32",
+              "TRUE",
+              ""
+            ],
+            [
+              "1002",
+              "Logística Norte",
+              "2024-01-12 10:30:00",
+              "433",
+              "FALSE",
+              "Peña € ü"
+            ],
+            [
+              "1003",
+              "",
+              "",
+              "0.1",
+              "",
+              ""
+            ],
+            [
+              "007",
+              "Frutas Martínez",
+              "13/07/2024",
+              "-1234.5",
+              "",
+              "línea 1\nlínea 2"
+            ]
+          ]
+        },
+        {
+          "sheet": "Proveedores",
+          "columns": [
+            "Nombre",
+            "Teléfono"
+          ],
+          "rows": [
+            [
+              "Talleres Ruiz",
+              "600123456"
+            ]
+          ]
+        },
+        {
+          "sheet": "Vacía",
+          "empty": true
+        }
       ]
     },
     {
-      "sheet": "Proveedores",
-      "columns": [
-        "Nombre",
-        "Teléfono"
-      ],
-      "rows": [
-        [
-          "Talleres Ruiz",
-          "600123456"
-        ]
+      "file": "files/formatted-empty-cells.xlsx",
+      "description": "background color on empty columns D-F and bold font on an empty cell in row 10",
+      "sheets": [
+        {
+          "sheet": "Datos",
+          "columns": [
+            "Nombre",
+            "Ciudad"
+          ],
+          "rows": [
+            [
+              "Ana",
+              "Bilbao"
+            ],
+            [
+              "Juan",
+              "Valencia"
+            ]
+          ]
+        }
       ]
-    },
-    {
-      "sheet": "Vacía",
-      "empty": true
     }
   ]
 }
