@@ -40,7 +40,7 @@ export function serializeCsv(dataset: Dataset): string {
   )
 }
 
-/** "clientes.csv", "clientes.xlsx" or "clientes.json" -> "clientes_clean.csv" (or .xlsx) */
+/** "clientes.csv" (or .xlsx, .json, .xml) -> "clientes_clean.csv" (or .xlsx) */
 export function cleanFileName(fileName: string, extension: 'csv' | 'xlsx' = 'csv'): string {
-  return fileName.replace(/(\.(csv|xlsx|json))?$/i, `_clean.${extension}`)
+  return fileName.replace(/(\.(csv|xlsx|json|xml))?$/i, `_clean.${extension}`)
 }

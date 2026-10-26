@@ -18,3 +18,8 @@ Shared logic lives in a `core/` folder in each version, with no UI dependencies:
 - Desktop: `desktop/datacleanr/core/` (Python, planned)
 
 A file in one `core/` has its counterpart in the other (e.g. `transforms.ts` / `transforms.py`), and both must pass the cases in `test-cases/`.
+
+## Notes for the desktop version
+
+- XML: parse with `defusedxml`, not the standard `xml.etree`, which is vulnerable to malicious files (entity expansion). Use the local name of tags and attributes (no namespace), as the web version does.
+- JSON: parse numbers as text (`parse_int=str, parse_float=str`) so they are kept exactly as written.

@@ -13,6 +13,7 @@ import type { Messages } from './i18n/messages.ts'
 import { useI18n } from './i18n/useI18n.ts'
 import { parseCsvFile } from './core/csv.ts'
 import { JsonImportError, parseJsonFile } from './core/json.ts'
+import { parseXmlFile, XmlImportError } from './core/xml.ts'
 import { columnLabel, countModifiedCells, type Dataset } from './core/dataset.ts'
 import { canRedo, canUndo, createHistory, currentEntry, goTo, pushEntry, redo, undo, type History } from './core/history.ts'
 import type { CellAction } from './core/operation.ts'
@@ -49,7 +50,7 @@ function App() {
       setError(t.errorOldExcel)
       return
     }
-    if (!name.endsWith('.csv') && !name.endsWith('.xlsx') && !name.endsWith('.json')) {
+    if (!['.csv', '.xlsx', '.json', '.xml'].some((extension) => name.endsWith(extension))) {
       setError(t.errorUnsupported)
       return
     }
@@ -62,6 +63,9 @@ function App() {
       } else if (name.endsWith('.json')) {
         setSheets(null)
         startWith(await parseJsonFile(file))
+      } else if (name.endsWith('.xml')) {
+        setSheets(null)
+        startWith(await parseXmlFile(file))
       } else {
         const workbook = await readWorkbook(file)
         // Open the first sheet that has data
@@ -72,6 +76,7 @@ function App() {
       }
     } catch (error) {
       if (error instanceof JsonImportError) setError(t.errorParseJson[error.reason])
+      else if (error instanceof XmlImportError) setError(t.errorParseXml[error.reason])
       else setError(name.endsWith('.csv') ? t.errorParse : t.errorParseExcel)
     } finally {
       setLoading(false)

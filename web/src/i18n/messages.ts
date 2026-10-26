@@ -12,7 +12,7 @@ const en = {
   privacyNotice: 'Processed locally. Your files are never sent to a server.',
   languageLabel: 'Language',
   emptyTitle: 'Import a file to get started',
-  emptyDescription: 'Load a CSV, Excel (.xlsx) or JSON file to preview its data, pick a column and clean it.',
+  emptyDescription: 'Load a CSV, Excel (.xlsx), JSON or XML file to preview its data, pick a column and clean it.',
   importButton: 'Select file',
   importLoading: 'Reading file...',
   importHint: 'or drag and drop it here',
@@ -88,7 +88,11 @@ const en = {
   download: 'Download',
   modifiedCells: (n: number) => (n === 1 ? '1 cell modified' : `${formatEn(n)} cells modified`),
   confirmDiscard: 'You have changes that have not been exported. Discard them and import another file?',
-  errorUnsupported: 'Only CSV, Excel (.xlsx) and JSON files are supported.',
+  errorUnsupported: 'Only CSV, Excel (.xlsx), JSON and XML files are supported.',
+  errorParseXml: {
+    invalid: 'The file is not well-formed XML.',
+    unsupported: 'No repeated elements were found to use as rows in this XML.',
+  },
   errorParseJson: {
     invalid: 'The file is not valid JSON.',
     unsupported:
@@ -209,7 +213,7 @@ const es: Messages = {
   privacyNotice: 'Procesado en local. Tus archivos nunca se envían a ningún servidor.',
   languageLabel: 'Idioma',
   emptyTitle: 'Importa un archivo para empezar',
-  emptyDescription: 'Carga un archivo CSV, Excel (.xlsx) o JSON para ver sus datos, elegir una columna y limpiarla.',
+  emptyDescription: 'Carga un archivo CSV, Excel (.xlsx), JSON o XML para ver sus datos, elegir una columna y limpiarla.',
   importButton: 'Seleccionar archivo',
   importLoading: 'Leyendo archivo...',
   importHint: 'o arrástralo aquí',
@@ -285,7 +289,11 @@ const es: Messages = {
   download: 'Descargar',
   modifiedCells: (n: number) => (n === 1 ? '1 celda modificada' : `${formatEs(n)} celdas modificadas`),
   confirmDiscard: 'Tienes cambios sin exportar. ¿Descartarlos e importar otro archivo?',
-  errorUnsupported: 'Solo se admiten archivos CSV, Excel (.xlsx) y JSON.',
+  errorUnsupported: 'Solo se admiten archivos CSV, Excel (.xlsx), JSON y XML.',
+  errorParseXml: {
+    invalid: 'El archivo no es un XML bien formado.',
+    unsupported: 'No se han encontrado elementos repetidos que usar como filas en este XML.',
+  },
   errorParseJson: {
     invalid: 'El archivo no es un JSON válido.',
     unsupported:

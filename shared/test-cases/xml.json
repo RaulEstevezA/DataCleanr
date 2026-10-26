@@ -1,0 +1,232 @@
+[
+  {
+    "description": "repeated child elements are the rows",
+    "input": "<clientes><cliente><nombre>Ana</nombre><ciudad>Bilbao</ciudad></cliente><cliente><nombre>Juan</nombre><email>juan@x.com</email></cliente></clientes>",
+    "expected": {
+      "columns": [
+        "nombre",
+        "ciudad",
+        "email"
+      ],
+      "rows": [
+        [
+          "Ana",
+          "Bilbao",
+          ""
+        ],
+        [
+          "Juan",
+          "",
+          "juan@x.com"
+        ]
+      ]
+    }
+  },
+  {
+    "description": "attributes become columns prefixed with @",
+    "input": "<clientes><cliente id=\"7\" activo=\"true\"><nombre>Ana</nombre></cliente></clientes>",
+    "expected": {
+      "columns": [
+        "@id",
+        "@activo",
+        "nombre"
+      ],
+      "rows": [
+        [
+          "7",
+          "true",
+          "Ana"
+        ]
+      ]
+    }
+  },
+  {
+    "description": "rows made only of attributes",
+    "input": "<datos><fila nombre=\"Ana\" ciudad=\"Bilbao\"/><fila nombre=\"Juan\" ciudad=\"Valencia\"/></datos>",
+    "expected": {
+      "columns": [
+        "@nombre",
+        "@ciudad"
+      ],
+      "rows": [
+        [
+          "Ana",
+          "Bilbao"
+        ],
+        [
+          "Juan",
+          "Valencia"
+        ]
+      ]
+    }
+  },
+  {
+    "description": "nested elements are flattened with dots",
+    "input": "<clientes><cliente><nombre>Ana</nombre><direccion tipo=\"fiscal\"><ciudad>Bilbao</ciudad><cp>48001</cp></direccion></cliente></clientes>",
+    "expected": {
+      "columns": [
+        "nombre",
+        "direccion.@tipo",
+        "direccion.ciudad",
+        "direccion.cp"
+      ],
+      "rows": [
+        [
+          "Ana",
+          "fiscal",
+          "Bilbao",
+          "48001"
+        ]
+      ]
+    }
+  },
+  {
+    "description": "repeated children inside a row are numbered",
+    "input": "<clientes><cliente><nombre>Ana</nombre><telefono>600111111</telefono><telefono>944555666</telefono></cliente></clientes>",
+    "expected": {
+      "columns": [
+        "nombre",
+        "telefono",
+        "telefono[2]"
+      ],
+      "rows": [
+        [
+          "Ana",
+          "600111111",
+          "944555666"
+        ]
+      ]
+    }
+  },
+  {
+    "description": "the most repeated element wins, wherever it is",
+    "input": "<export><cabecera><fecha>2024-07-13</fecha></cabecera><datos><fila><a>1</a></fila><fila><a>2</a></fila></datos></export>",
+    "expected": {
+      "columns": [
+        "a"
+      ],
+      "rows": [
+        [
+          "1"
+        ],
+        [
+          "2"
+        ]
+      ]
+    }
+  },
+  {
+    "description": "a single record is still a table",
+    "input": "<clientes><cliente><nombre>Ana</nombre></cliente></clientes>",
+    "expected": {
+      "columns": [
+        "nombre"
+      ],
+      "rows": [
+        [
+          "Ana"
+        ]
+      ]
+    }
+  },
+  {
+    "description": "text is kept exactly, empty elements are empty cells, entities and CDATA are decoded",
+    "input": "<l><r><a>  TRANSGRAU </a><b/><c>Pe&#241;a &amp; Cía</c><d><![CDATA[1 < 2]]></d></r></l>",
+    "expected": {
+      "columns": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "rows": [
+        [
+          "  TRANSGRAU ",
+          "",
+          "Peña & Cía",
+          "1 < 2"
+        ]
+      ]
+    }
+  },
+  {
+    "description": "pretty-printed XML: indentation is not data",
+    "input": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<clientes>\n  <cliente>\n    <nombre>Ana</nombre>\n  </cliente>\n  <cliente>\n    <nombre>Juan</nombre>\n  </cliente>\n</clientes>\n",
+    "expected": {
+      "columns": [
+        "nombre"
+      ],
+      "rows": [
+        [
+          "Ana"
+        ],
+        [
+          "Juan"
+        ]
+      ]
+    }
+  },
+  {
+    "description": "namespace prefixes are dropped",
+    "input": "<fe:facturas xmlns:fe=\"urn:ejemplo\"><fe:factura fe:numero=\"1\"><fe:total>100</fe:total></fe:factura></fe:facturas>",
+    "expected": {
+      "columns": [
+        "@numero",
+        "total"
+      ],
+      "rows": [
+        [
+          "1",
+          "100"
+        ]
+      ]
+    }
+  },
+  {
+    "description": "an element with attributes and text gives both",
+    "input": "<pedidos><pedido><precio moneda=\"EUR\">12.50</precio></pedido></pedidos>",
+    "expected": {
+      "columns": [
+        "precio",
+        "precio.@moneda"
+      ],
+      "rows": [
+        [
+          "12.50",
+          "EUR"
+        ]
+      ]
+    }
+  },
+  {
+    "description": "a list of simple values becomes one column",
+    "input": "<lista><item>a</item><item>b</item></lista>",
+    "expected": {
+      "columns": [
+        "item"
+      ],
+      "rows": [
+        [
+          "a"
+        ],
+        [
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "description": "invalid: not well-formed",
+    "input": "<clientes><cliente></clientes>",
+    "expected": {
+      "error": "invalid"
+    }
+  },
+  {
+    "description": "invalid: no elements inside the root",
+    "input": "<clientes>texto</clientes>",
+    "expected": {
+      "error": "unsupported"
+    }
+  }
+]
