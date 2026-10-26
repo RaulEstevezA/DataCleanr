@@ -4,6 +4,7 @@ import { AppFooter } from './components/AppFooter.tsx'
 import { AppHeader } from './components/AppHeader.tsx'
 import { DataTable } from './components/DataTable.tsx'
 import { DatasetSummary } from './components/DatasetSummary.tsx'
+import { DuplicatesPanel } from './components/DuplicatesPanel.tsx'
 import { FileImport } from './components/FileImport.tsx'
 import { TransformPanel } from './components/TransformPanel.tsx'
 import { useI18n } from './i18n/useI18n.ts'
@@ -20,6 +21,7 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
+  const [showDuplicates, setShowDuplicates] = useState(false)
 
   async function handleFile(file: File) {
     if (!file.name.toLowerCase().endsWith('.csv')) {
@@ -45,10 +47,25 @@ function App() {
     () => (original && dataset ? countModifiedCells(original, dataset) : 0),
     [original, dataset],
   )
+  const removedRows = original && dataset ? original.rows.length - dataset.rows.length : 0
+  const hasChanges = modifiedCells > 0 || removedRows > 0
 
   function selectColumn(index: number) {
     setSelectedColumn(index)
+    setShowDuplicates(false)
     setNotice(null)
+  }
+
+  function openDuplicates() {
+    setShowDuplicates(true)
+    setSelectedColumn(null)
+    setNotice(null)
+  }
+
+  function handleRemoveRows(updated: Dataset, removedCount: number) {
+    setDataset(updated)
+    setShowDuplicates(false)
+    setNotice(t.rowsRemoved(removedCount))
   }
 
   function handleApply(updated: Dataset, appliedCount: number) {
@@ -64,10 +81,11 @@ function App() {
   }
 
   function handleReset() {
-    if (modifiedCells > 0 && !window.confirm(t.confirmDiscard)) return
+    if (hasChanges && !window.confirm(t.confirmDiscard)) return
     setOriginal(null)
     setDataset(null)
     setSelectedColumn(null)
+    setShowDuplicates(false)
     setNotice(null)
   }
 
@@ -80,11 +98,20 @@ function App() {
             <DatasetSummary
               dataset={dataset}
               modifiedCells={modifiedCells}
+              removedRows={removedRows}
               selectedColumn={selectedColumn}
               onSelectColumn={selectColumn}
+              onFindDuplicates={openDuplicates}
               onExport={handleExport}
               onReset={handleReset}
             />
+            {showDuplicates && (
+              <DuplicatesPanel
+                dataset={dataset}
+                onRemove={handleRemoveRows}
+                onClose={() => setShowDuplicates(false)}
+              />
+            )}
             {selectedColumn !== null && (
               <TransformPanel
                 key={selectedColumn}

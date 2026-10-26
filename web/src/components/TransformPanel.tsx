@@ -1,7 +1,7 @@
 import { useId, useMemo, useState } from 'react'
 import { normalizeAmount, type AmountOptions } from '../core/amount.ts'
 import { applyColumnChanges, previewColumnChanges } from '../core/changes.ts'
-import { columnLabel, type Dataset } from '../core/dataset.ts'
+import { columnLabel, rowNumber, type Dataset } from '../core/dataset.ts'
 import { DEFAULT_TWO_DIGIT_YEAR_LIMIT, normalizeDate, type DateOptions } from '../core/date.ts'
 import type { PhoneOptions } from '../core/phone.ts'
 import { createReplaceTransform, type ReplaceOptions } from '../core/replace.ts'
@@ -288,7 +288,7 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
           <ul>
             {issues.slice(0, MAX_PREVIEW_ROWS).map(({ row, value }) => (
               <li key={row}>
-                <span className="transform-panel__index">{row + 1}</span>
+                <span className="transform-panel__index">{rowNumber(dataset, row)}</span>
                 <VisibleText value={value} />
               </li>
             ))}
@@ -381,12 +381,12 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
                       <td>
                         <input
                           type="checkbox"
-                          aria-label={t.acceptRow(change.row + 1)}
+                          aria-label={t.acceptRow(rowNumber(dataset, change.row))}
                           checked={isAccepted}
                           onChange={() => toggleRow(change.row)}
                         />
                       </td>
-                      <td className="transform-panel__index">{change.row + 1}</td>
+                      <td className="transform-panel__index">{rowNumber(dataset, change.row)}</td>
                       <td className="transform-panel__original">
                         <VisibleText value={change.original} />
                       </td>

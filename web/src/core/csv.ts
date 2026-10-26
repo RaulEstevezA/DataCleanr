@@ -14,7 +14,14 @@ export function parseCsvText(text: string, fileName: string, encoding: TextEncod
   if (!header) throw new CsvParseError('empty')
   // Pad or trim each row so every row has exactly one cell per column
   const normalizedRows = rows.map((row) => header.map((_, i) => row[i] ?? ''))
-  return { fileName, columns: header, rows: normalizedRows, delimiter: meta.delimiter, encoding }
+  return {
+    fileName,
+    columns: header,
+    rows: normalizedRows,
+    rowIds: normalizedRows.map((_, i) => i),
+    delimiter: meta.delimiter,
+    encoding,
+  }
 }
 
 /** Reads and parses a CSV file entirely in the browser, detecting its text encoding. */

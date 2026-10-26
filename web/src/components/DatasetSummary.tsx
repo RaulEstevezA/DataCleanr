@@ -5,8 +5,10 @@ import './DatasetSummary.css'
 interface DatasetSummaryProps {
   dataset: Dataset
   modifiedCells: number
+  removedRows: number
   selectedColumn: number | null
   onSelectColumn: (index: number) => void
+  onFindDuplicates: () => void
   onExport: () => void
   onReset: () => void
 }
@@ -14,8 +16,10 @@ interface DatasetSummaryProps {
 export function DatasetSummary({
   dataset,
   modifiedCells,
+  removedRows,
   selectedColumn,
   onSelectColumn,
+  onFindDuplicates,
   onExport,
   onReset,
 }: DatasetSummaryProps) {
@@ -32,9 +36,13 @@ export function DatasetSummary({
             {modifiedCells > 0 && (
               <span className="dataset-summary__modified"> · {t.modifiedCells(modifiedCells)}</span>
             )}
+            {removedRows > 0 && <span className="dataset-summary__modified"> · {t.removedRows(removedRows)}</span>}
           </p>
         </div>
         <div className="dataset-summary__actions">
+          <button type="button" className="button" onClick={onFindDuplicates}>
+            {t.findDuplicates}
+          </button>
           <button type="button" className="button" onClick={onReset}>
             {t.importAnother}
           </button>

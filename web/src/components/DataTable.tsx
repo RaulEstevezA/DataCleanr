@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { columnLabel, type Dataset } from '../core/dataset.ts'
+import { columnLabel, rowNumber, type Dataset } from '../core/dataset.ts'
 import { useI18n } from '../i18n/useI18n.ts'
 import './DataTable.css'
 
@@ -13,10 +13,12 @@ interface DataTableProps {
 
 export function DataTable({ dataset, selectedColumn, onSelectColumn }: DataTableProps) {
   const { t } = useI18n()
-  const [page, setPage] = useState(0)
+  const [requestedPage, setPage] = useState(0)
 
   const totalRows = dataset.rows.length
   const pageCount = Math.max(1, Math.ceil(totalRows / PAGE_SIZE))
+  // Removing rows can leave the current page past the end
+  const page = Math.min(requestedPage, pageCount - 1)
   const start = page * PAGE_SIZE
   const visibleRows = dataset.rows.slice(start, start + PAGE_SIZE)
 
@@ -39,7 +41,7 @@ export function DataTable({ dataset, selectedColumn, onSelectColumn }: DataTable
           <tbody>
             {visibleRows.map((row, r) => (
               <tr key={start + r}>
-                <td className="data-table__index">{start + r + 1}</td>
+                <td className="data-table__index">{rowNumber(dataset, start + r)}</td>
                 {row.map((cell, c) => (
                   <td key={c} aria-selected={c === selectedColumn}>
                     {cell === '' ? <span className="data-table__empty">{t.emptyCell}</span> : cell}

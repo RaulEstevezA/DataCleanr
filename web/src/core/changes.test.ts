@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { applyColumnChanges, previewColumnChanges } from './changes.ts'
-import type { Dataset } from './dataset.ts'
+import { countModifiedCells, removeRows, type Dataset } from './dataset.ts'
 import { transforms } from './transforms.ts'
 
 const dataset: Dataset = {
@@ -13,6 +13,7 @@ const dataset: Dataset = {
     ['Trans Grau SL', 'Bilbao'],
     ['', 'madrid '],
   ],
+  rowIds: [0, 1, 2],
 }
 
 describe('previewColumnChanges', () => {
@@ -50,5 +51,21 @@ describe('applyColumnChanges', () => {
   it('leaves other columns untouched', () => {
     const result = applyColumnChanges(dataset, 0, previewColumnChanges(dataset, 0, transforms.trim))
     expect(result.rows.map((row) => row[1])).toEqual([' Valencia', 'Bilbao', 'madrid '])
+  })
+})
+
+describe('countModifiedCells and removeRows', () => {
+  it('compare rows by their original position after rows are removed', () => {
+    const trimmed = applyColumnChanges(dataset, 1, previewColumnChanges(dataset, 1, transforms.trim))
+    const withoutFirst = removeRows(trimmed, new Set([0]))
+    expect(withoutFirst.rowIds).toEqual([1, 2])
+    // Row 0 (one modified cell) is gone; row 2 still has its modified cell
+    expect(countModifiedCells(dataset, withoutFirst)).toBe(1)
+  })
+
+  it('does not mutate the input dataset', () => {
+    const snapshot = structuredClone(dataset)
+    removeRows(dataset, new Set([1]))
+    expect(dataset).toEqual(snapshot)
   })
 })
