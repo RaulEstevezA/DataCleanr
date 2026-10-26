@@ -4,4 +4,17 @@
 
 Web version of DataCleanr: React + TypeScript + Vite. All processing happens in the browser.
 
-_Not initialized yet._
+## Requirements
+
+- Node.js 20.19+ or 22.12+
+
+## Development
+
+```bash
+cd web
+npm install
+npm run dev       # dev server at http://localhost:5173
+npm run build     # type-check and production build in dist/
+npm run preview   # serve the production build locally
+npm run lint      # lint with oxlint
+```
