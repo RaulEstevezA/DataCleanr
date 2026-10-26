@@ -1,0 +1,62 @@
+[
+  {
+    "description": "whole cell: replaces a matching cell ignoring case",
+    "options": { "find": "Transgrau s.l", "replacement": "TransGrau SL", "wholeCell": true, "ignoreCase": true },
+    "input": "TRANSGRAU S.L",
+    "expected": "TransGrau SL"
+  },
+  {
+    "description": "whole cell: ignores surrounding spaces in the cell",
+    "options": { "find": "Transgrau s.l", "replacement": "TransGrau SL", "wholeCell": true, "ignoreCase": true },
+    "input": "  Transgrau s.l ",
+    "expected": "TransGrau SL"
+  },
+  {
+    "description": "whole cell: does not touch cells that only contain the text",
+    "options": { "find": "Transgrau s.l", "replacement": "TransGrau SL", "wholeCell": true, "ignoreCase": true },
+    "input": "Transgrau s.l.",
+    "expected": "Transgrau s.l."
+  },
+  {
+    "description": "whole cell, case-sensitive: different case does not match",
+    "options": { "find": "Transgrau s.l", "replacement": "TransGrau SL", "wholeCell": true, "ignoreCase": false },
+    "input": "TRANSGRAU S.L",
+    "expected": "TRANSGRAU S.L"
+  },
+  {
+    "description": "whole cell, case-sensitive: same case matches",
+    "options": { "find": "Transgrau s.l", "replacement": "TransGrau SL", "wholeCell": true, "ignoreCase": false },
+    "input": "Transgrau s.l",
+    "expected": "TransGrau SL"
+  },
+  {
+    "description": "part of text: replaces every occurrence",
+    "options": { "find": "s.l.", "replacement": "S.L.", "wholeCell": false, "ignoreCase": true },
+    "input": "Transgrau s.l. y Frutas s.l.",
+    "expected": "Transgrau S.L. y Frutas S.L."
+  },
+  {
+    "description": "part of text: special characters are literal",
+    "options": { "find": "s.l.", "replacement": "S.L.", "wholeCell": false, "ignoreCase": true },
+    "input": "Transgrau sXlX",
+    "expected": "Transgrau sXlX"
+  },
+  {
+    "description": "part of text: '$' in the replacement is literal",
+    "options": { "find": "EUR", "replacement": "$&", "wholeCell": false, "ignoreCase": true },
+    "input": "100 EUR",
+    "expected": "100 $&"
+  },
+  {
+    "description": "empty search changes nothing",
+    "options": { "find": "  ", "replacement": "TransGrau SL", "wholeCell": true, "ignoreCase": true },
+    "input": "Transgrau",
+    "expected": "Transgrau"
+  },
+  {
+    "description": "empty search leaves empty cells empty",
+    "options": { "find": "  ", "replacement": "TransGrau SL", "wholeCell": true, "ignoreCase": true },
+    "input": "",
+    "expected": ""
+  }
+]

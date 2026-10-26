@@ -23,6 +23,7 @@ DataCleanr ayuda a limpiar, normalizar y unificar datos sucios o inconsistentes 
 DataCleanr/
 ├── web/       # Versión web (React + TypeScript + Vite) — GitHub Pages
 ├── desktop/   # Versión escritorio (Python + PySide6 + Pandas)
+├── shared/    # Casos de prueba compartidos por ambas versiones (JSON)
 └── docs/      # Documentación y notas de diseño
 ```
 

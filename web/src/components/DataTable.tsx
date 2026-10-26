@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Dataset } from '../lib/dataset.ts'
+import type { Dataset } from '../core/dataset.ts'
 import { useI18n } from '../i18n/useI18n.ts'
 import './DataTable.css'
 

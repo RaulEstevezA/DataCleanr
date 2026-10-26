@@ -1,4 +1,4 @@
-import type { TransformId } from '../lib/transforms.ts'
+import type { TransformId } from '../core/transforms.ts'
 
 const en = {
   tagline: 'Clean, normalize and unify tabular data',

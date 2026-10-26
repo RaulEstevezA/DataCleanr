@@ -1,0 +1,30 @@
+{
+  "trim": [
+    { "description": "removes leading and trailing whitespace", "input": "  TRANSGRAU ", "expected": "TRANSGRAU" },
+    { "description": "removes tabs and non-breaking spaces at the edges", "input": "\t Valencia ", "expected": "Valencia" },
+    { "description": "keeps inner spaces", "input": " laura   NAVARRO ", "expected": "laura   NAVARRO" },
+    { "description": "leaves empty strings empty", "input": "", "expected": "" }
+  ],
+  "collapseSpaces": [
+    { "description": "turns repeated spaces into one", "input": "laura   NAVARRO", "expected": "laura NAVARRO" },
+    { "description": "normalizes tabs and non-breaking spaces", "input": "Trans\t Grau", "expected": "Trans Grau" },
+    { "description": "does not trim the edges", "input": "  ana   ruiz ", "expected": " ana ruiz " },
+    { "description": "leaves empty strings empty", "input": "", "expected": "" }
+  ],
+  "lowercase": [
+    { "description": "lowercases accented letters", "input": "MARÍA LÓPEZ", "expected": "maría lópez" },
+    { "description": "leaves empty strings empty", "input": "", "expected": "" }
+  ],
+  "uppercase": [
+    { "description": "uppercases accented letters and ñ", "input": "logística españa", "expected": "LOGÍSTICA ESPAÑA" },
+    { "description": "leaves empty strings empty", "input": "", "expected": "" }
+  ],
+  "titleCase": [
+    { "description": "capitalizes each word", "input": "laura NAVARRO", "expected": "Laura Navarro" },
+    { "description": "handles accented first letters", "input": "ángel ÚBEDA", "expected": "Ángel Úbeda" },
+    { "description": "capitalizes after hyphens", "input": "jean-luc PÉREZ", "expected": "Jean-Luc Pérez" },
+    { "description": "preserves surrounding whitespace", "input": "  ana   ruiz ", "expected": "  Ana   Ruiz " },
+    { "description": "does not capitalize after digits or dots", "input": "calle 3b s.l.", "expected": "Calle 3b S.l." },
+    { "description": "leaves empty strings empty", "input": "", "expected": "" }
+  ]
+}

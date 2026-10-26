@@ -1,5 +1,9 @@
 # Roadmap
 
+No se publicará nada hasta que estén terminadas tanto la versión web como la de escritorio.
+
+Las funciones comunes a ambas versiones se especifican en `shared/test-cases/` (ver [shared/README.md](../shared/README.md)).
+
 ## v0.1 — Web básica
 - [x] Proyecto React + TypeScript + Vite
 - [x] Cargar CSV

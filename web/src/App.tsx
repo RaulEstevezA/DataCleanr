@@ -7,8 +7,8 @@ import { DatasetSummary } from './components/DatasetSummary.tsx'
 import { FileImport } from './components/FileImport.tsx'
 import { TransformPanel } from './components/TransformPanel.tsx'
 import { useI18n } from './i18n/useI18n.ts'
-import { parseCsvFile } from './lib/csv.ts'
-import type { Dataset } from './lib/dataset.ts'
+import { parseCsvFile } from './core/csv.ts'
+import type { Dataset } from './core/dataset.ts'
 
 function App() {
   const { t, language } = useI18n()
