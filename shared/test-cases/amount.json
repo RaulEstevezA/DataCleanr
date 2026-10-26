@@ -519,6 +519,17 @@
     "expectedStatus": "invalid"
   },
   {
+    "description": "invalid: only ASCII digits are numbers (not Arabic-Indic or other scripts)",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "١٢٣",
+    "expected": "١٢٣",
+    "expectedStatus": "invalid"
+  },
+  {
     "description": "invalid: two signs",
     "options": {
       "ambiguousDecimal": ",",
