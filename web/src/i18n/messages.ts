@@ -21,6 +21,19 @@ const en = {
   rowsRemoved: (n: number) => (n === 1 ? '1 duplicate row removed.' : `${formatEn(n)} duplicate rows removed.`),
   close: 'Close',
   duplicatesTitle: 'Duplicate rows',
+  duplicatesMode: 'Kind of duplicates',
+  duplicatesExact: 'Exact',
+  duplicatesSimilar: 'Possible (similar)',
+  duplicatesCompareSimilar:
+    'Columns to compare (rows are scored by their average similarity; leave out columns that are always different, like IDs):',
+  duplicatesSimilarHint:
+    'Columns where one of the two rows is empty are skipped, and at least half of the compared columns must have data. Groups are not selected by default: confirm the ones that are real duplicates.',
+  duplicatesSimilarGroup: (n: number) => `${formatEn(n)} similar rows`,
+  duplicatesScore: 'Similarity',
+  duplicatesSimilarTruncated: (shown: number, total: number) =>
+    `Showing the first ${formatEn(shown)} of ${formatEn(total)} groups. Hidden groups are not modified.`,
+  duplicatesTooManyRows: (rows: number, max: number) =>
+    `The file has ${formatEn(rows)} rows. Possible-duplicate detection supports up to ${formatEn(max)} for now.`,
   duplicatesCompare: 'Columns to compare (two rows are duplicates if they match in all of them):',
   duplicatesIgnoreCase: 'Ignore upper/lower case and extra spaces',
   duplicatesHint: 'Rows with all compared columns empty are never treated as duplicates.',
@@ -157,6 +170,19 @@ const es: Messages = {
   rowsRemoved: (n: number) => (n === 1 ? '1 fila duplicada eliminada.' : `${formatEs(n)} filas duplicadas eliminadas.`),
   close: 'Cerrar',
   duplicatesTitle: 'Filas duplicadas',
+  duplicatesMode: 'Tipo de duplicados',
+  duplicatesExact: 'Exactas',
+  duplicatesSimilar: 'Posibles (parecidas)',
+  duplicatesCompareSimilar:
+    'Columnas a comparar (se puntúa el parecido medio; quita las columnas que siempre son distintas, como los ID):',
+  duplicatesSimilarHint:
+    'Las columnas en las que una de las dos filas está vacía no cuentan, y al menos la mitad de las columnas comparadas deben tener datos. Los grupos no vienen seleccionados: confirma los que sean duplicados de verdad.',
+  duplicatesSimilarGroup: (n: number) => `${formatEs(n)} filas parecidas`,
+  duplicatesScore: 'Parecido',
+  duplicatesSimilarTruncated: (shown: number, total: number) =>
+    `Se muestran los primeros ${formatEs(shown)} de ${formatEs(total)} grupos. Los no mostrados no se modifican.`,
+  duplicatesTooManyRows: (rows: number, max: number) =>
+    `El archivo tiene ${formatEs(rows)} filas. De momento, la detección de posibles duplicados admite hasta ${formatEs(max)}.`,
   duplicatesCompare: 'Columnas a comparar (dos filas son duplicadas si coinciden en todas ellas):',
   duplicatesIgnoreCase: 'Ignorar mayúsculas/minúsculas y espacios sobrantes',
   duplicatesHint: 'Las filas con todas las columnas comparadas vacías nunca se consideran duplicadas.',

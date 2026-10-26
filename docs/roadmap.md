@@ -18,7 +18,9 @@ Las funciones comunes a ambas versiones se especifican en `shared/test-cases/` (
 - Importar Excel y JSON
 - [x] Unificar valores parecidos en una columna (fuzzy matching)
 - [x] Filas duplicadas exactas
-- Posibles filas duplicadas (fuzzy entre varias columnas)
+- [x] Posibles filas duplicadas (fuzzy entre varias columnas)
+- Combinar filas duplicadas (rellenar las celdas vacías de la fila conservada con las de las eliminadas)
+- Procesar en segundo plano (Web Worker) para archivos grandes
 - [x] Normalización de teléfonos
 - [x] Normalización de fechas
 - [x] Normalización de importes

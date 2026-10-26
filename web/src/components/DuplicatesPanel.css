@@ -11,6 +11,22 @@
   gap: 12px;
 }
 
+.duplicates__modes {
+  display: flex;
+  gap: 8px;
+}
+
+.duplicates__modes .button[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+
+.duplicates__score {
+  color: var(--accent-text);
+  text-decoration: none !important;
+}
+
 .duplicates__options {
   display: flex;
   flex-direction: column;

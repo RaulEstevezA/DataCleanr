@@ -1,0 +1,337 @@
+[
+  {
+    "description": "near-identical rows are grouped, scored against the first row of the group",
+    "rows": [
+      [
+        "Juan Pérez",
+        "juan@transgrau.com",
+        "Valencia"
+      ],
+      [
+        "juan perez",
+        "JUAN@transgrau.com",
+        "valencia "
+      ],
+      [
+        "Juan Peres",
+        "juan@transgrau.com",
+        "Valencia"
+      ],
+      [
+        "Ana Ruiz",
+        "ana@lnorte.es",
+        "Bilbao"
+      ],
+      [
+        "Ana Ruíz",
+        "",
+        "Bilbao"
+      ],
+      [
+        "Ana Gómez",
+        "",
+        ""
+      ],
+      [
+        "Pedro Sánchez",
+        "pedro@x.com",
+        "Madrid"
+      ]
+    ],
+    "options": {
+      "columns": [
+        0,
+        1,
+        2
+      ],
+      "threshold": 85,
+      "ignoreLegalForms": false
+    },
+    "expected": [
+      {
+        "rows": [
+          0,
+          1,
+          2
+        ],
+        "scores": [
+          100,
+          100.0,
+          96.2963
+        ]
+      },
+      {
+        "rows": [
+          3,
+          4
+        ],
+        "scores": [
+          100,
+          100.0
+        ]
+      }
+    ]
+  },
+  {
+    "description": "a stricter threshold leaves out the row with a typo",
+    "rows": [
+      [
+        "Juan Pérez",
+        "juan@transgrau.com",
+        "Valencia"
+      ],
+      [
+        "juan perez",
+        "JUAN@transgrau.com",
+        "valencia "
+      ],
+      [
+        "Juan Peres",
+        "juan@transgrau.com",
+        "Valencia"
+      ],
+      [
+        "Ana Ruiz",
+        "ana@lnorte.es",
+        "Bilbao"
+      ],
+      [
+        "Ana Ruíz",
+        "",
+        "Bilbao"
+      ],
+      [
+        "Ana Gómez",
+        "",
+        ""
+      ],
+      [
+        "Pedro Sánchez",
+        "pedro@x.com",
+        "Madrid"
+      ]
+    ],
+    "options": {
+      "columns": [
+        0,
+        1,
+        2
+      ],
+      "threshold": 99,
+      "ignoreLegalForms": false
+    },
+    "expected": [
+      {
+        "rows": [
+          0,
+          1
+        ],
+        "scores": [
+          100,
+          100.0
+        ]
+      },
+      {
+        "rows": [
+          3,
+          4
+        ],
+        "scores": [
+          100,
+          100.0
+        ]
+      }
+    ]
+  },
+  {
+    "description": "a single compared column",
+    "rows": [
+      [
+        "Juan Pérez",
+        "juan@transgrau.com",
+        "Valencia"
+      ],
+      [
+        "juan perez",
+        "JUAN@transgrau.com",
+        "valencia "
+      ],
+      [
+        "Juan Peres",
+        "juan@transgrau.com",
+        "Valencia"
+      ],
+      [
+        "Ana Ruiz",
+        "ana@lnorte.es",
+        "Bilbao"
+      ],
+      [
+        "Ana Ruíz",
+        "",
+        "Bilbao"
+      ],
+      [
+        "Ana Gómez",
+        "",
+        ""
+      ],
+      [
+        "Pedro Sánchez",
+        "pedro@x.com",
+        "Madrid"
+      ]
+    ],
+    "options": {
+      "columns": [
+        2
+      ],
+      "threshold": 85,
+      "ignoreLegalForms": false
+    },
+    "expected": [
+      {
+        "rows": [
+          0,
+          1,
+          2
+        ],
+        "scores": [
+          100,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "rows": [
+          3,
+          4
+        ],
+        "scores": [
+          100,
+          100.0
+        ]
+      }
+    ]
+  },
+  {
+    "description": "legal forms ignored when enabled",
+    "rows": [
+      [
+        "Transgrau S.L.",
+        "Valencia"
+      ],
+      [
+        "Trans Grau",
+        "Valencia"
+      ],
+      [
+        "Transgrau SA",
+        "Madrid"
+      ]
+    ],
+    "options": {
+      "columns": [
+        0,
+        1
+      ],
+      "threshold": 85,
+      "ignoreLegalForms": true
+    },
+    "expected": [
+      {
+        "rows": [
+          0,
+          1
+        ],
+        "scores": [
+          100,
+          100.0
+        ]
+      }
+    ]
+  },
+  {
+    "description": "legal forms count when disabled",
+    "rows": [
+      [
+        "Transgrau S.L.",
+        "Valencia"
+      ],
+      [
+        "Trans Grau",
+        "Valencia"
+      ],
+      [
+        "Transgrau SA",
+        "Madrid"
+      ]
+    ],
+    "options": {
+      "columns": [
+        0,
+        1
+      ],
+      "threshold": 95,
+      "ignoreLegalForms": false
+    },
+    "expected": [
+      {
+        "rows": [
+          0,
+          1
+        ],
+        "scores": [
+          100,
+          95.0
+        ]
+      }
+    ]
+  },
+  {
+    "description": "no columns selected finds nothing",
+    "rows": [
+      [
+        "Juan Pérez",
+        "juan@transgrau.com",
+        "Valencia"
+      ],
+      [
+        "juan perez",
+        "JUAN@transgrau.com",
+        "valencia "
+      ],
+      [
+        "Juan Peres",
+        "juan@transgrau.com",
+        "Valencia"
+      ],
+      [
+        "Ana Ruiz",
+        "ana@lnorte.es",
+        "Bilbao"
+      ],
+      [
+        "Ana Ruíz",
+        "",
+        "Bilbao"
+      ],
+      [
+        "Ana Gómez",
+        "",
+        ""
+      ],
+      [
+        "Pedro Sánchez",
+        "pedro@x.com",
+        "Madrid"
+      ]
+    ],
+    "options": {
+      "columns": [],
+      "threshold": 85,
+      "ignoreLegalForms": false
+    },
+    "expected": []
+  }
+]
