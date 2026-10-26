@@ -91,3 +91,50 @@ def test_no_changes_message(window, tmp_path):
     window.workspace.select_column(0)
     window.workspace.panel.select_action("trim")
     assert "already clean" in window.workspace.panel.info.text()
+
+
+def test_normalizers_show_issues_and_preview(window, tmp_path):
+    from PySide6.QtCore import QSettings
+
+    QSettings().setValue("phoneOptions", '{"defaultCountry": "ES", "format": "E164"}')
+    window._i18n.set_language("es")
+    load(window, tmp_path, "Teléfono;Fecha;Importe\n600 123 456;13/07/2024;€12,50\nno tiene;31/04/2024;$3.99\n")
+    panel = window.workspace.panel
+
+    window.workspace.select_column(0)
+    panel.select_action("phone")
+    assert [c.proposed for c in panel.model.changes] == ["+34600123456"]
+    assert panel.issues.isVisible() and "1 valor no se puede normalizar" in panel.issues.message.text()
+
+    window.workspace.select_column(2)
+    panel.select_action("amount")
+    assert panel.currency_warning.isVisible() and "EUR, USD" in panel.currency_warning.text()
+
+
+def test_custom_replace_and_profile_step(window, tmp_path):
+    load(window, tmp_path, "Empresa\nTransgrau s.l\nOtra\n")
+    window.workspace.select_column(0)
+    panel = window.workspace.panel
+    panel.select_action("custom")
+    assert not panel.preview.isVisible()
+    form = panel.forms["custom"]
+    form.find.setText("TRANSGRAU S.L")
+    form.replacement.setText("TransGrau SL")
+    assert [c.proposed for c in panel.model.changes] == ["TransGrau SL"]
+    assert panel.profile_step("custom") == {
+        "type": "replace",
+        "column": "Empresa",
+        "find": "TRANSGRAU S.L",
+        "replacement": "TransGrau SL",
+        "wholeCell": True,
+        "ignoreCase": True,
+    }
+
+
+def test_spanish_country_names():
+    from datacleanr.ui.option_forms import country_name
+
+    assert country_name("ES", "es") == "España (ES)"
+    assert country_name("PT", "es") == "Portugal (PT)"
+    assert country_name("DE", "en") == "Germany (DE)"
+    assert country_name("XK", "es") == "Kosovo (XK)"

@@ -149,7 +149,6 @@ class WorkspacePage(QWidget):
 
         self.panel = TransformPanel(i18n)
         self.panel.applied.connect(self.applied)
-        self.panel.preview_shown.connect(self._resize_panel)
         self.panel.hide()
         self.notice = QLabel()
         self.notice.setProperty("role", "notice")
@@ -173,11 +172,15 @@ class WorkspacePage(QWidget):
         layout.setSpacing(16)
         layout.addWidget(self.summary)
         layout.addWidget(self.notice)
-        # The panel and the table share the space; the user can drag the divider
-        self.splitter = QSplitter(Qt.Orientation.Vertical)
-        self.splitter.addWidget(self.panel)
+        # Desktop layout: table on the left, cleaning panel on the right with the full height
+        # (the web stacks them for phones). The divider can be dragged.
+        self.splitter = QSplitter(Qt.Orientation.Horizontal)
         self.splitter.addWidget(self.table)
+        self.splitter.addWidget(self.panel)
         self.splitter.setChildrenCollapsible(False)
+        self.splitter.setStretchFactor(0, 3)
+        self.splitter.setStretchFactor(1, 2)
+        self.panel.setMinimumWidth(440)
         layout.addWidget(self.splitter, stretch=1)
         i18n.changed.connect(self.retranslate)
 
@@ -208,18 +211,13 @@ class WorkspacePage(QWidget):
         self.summary.set_selected_column(column)
         if column is not None and self.model.dataset is not None:
             self.panel.set_target(self.model.dataset, column)
-            self.panel.show()
-            self._resize_panel(False)
+            if not self.panel.isVisible():
+                self.panel.show()
+                total = self.splitter.width()
+                self.splitter.setSizes([int(total * 0.58), total - int(total * 0.58)])
             self.show_notice(None)
         else:
             self.panel.hide()
-
-    def _resize_panel(self, preview: bool) -> None:
-        total = max(self.splitter.height(), 600)
-        # With a preview the panel gets most of the height; otherwise just what it needs.
-        # Either way the divider can be dragged.
-        panel = int(total * 0.62) if preview else self.panel.minimumSizeHint().height()
-        self.splitter.setSizes([panel, total - panel])
 
     def retranslate(self) -> None:
         self.summary.retranslate()

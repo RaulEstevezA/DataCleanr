@@ -36,6 +36,52 @@ QLabel[role="notice"] {{
     border-radius: 10px;
     padding: 10px 16px;
 }}
+QLabel[role="warning"] {{
+    color: {WARNING};
+    background: {WARNING_SOFT};
+    border: 1px solid {WARNING};
+    border-radius: 10px;
+    padding: 10px 14px;
+}}
+QWidget[role="warningBox"] {{
+    background: {WARNING_SOFT};
+    border: 1px solid {WARNING};
+    border-radius: 10px;
+}}
+QLabel[role="warningText"] {{ color: {WARNING}; }}
+QPushButton[warningToggle="true"] {{
+    background: transparent;
+    border: none;
+    color: {WARNING};
+    padding: 2px 0;
+    text-decoration: underline;
+}}
+QListWidget {{ background: {PAGE_BG}; border: 1px solid {BORDER}; border-radius: 6px; }}
+QLineEdit, QSpinBox {{
+    background: {PAGE_BG};
+    border: 1px solid {BORDER};
+    border-radius: 6px;
+    padding: 6px 10px;
+}}
+QLineEdit:focus, QSpinBox:focus {{ border-color: {ACCENT}; }}
+QRadioButton {{ background: transparent; spacing: 8px; }}
+QRadioButton::indicator {{
+    width: 14px;
+    height: 14px;
+    border-radius: 8px;
+    border: 1px solid {MUTED};
+    background: {PAGE_BG};
+}}
+QRadioButton::indicator:checked {{ border: 4px solid {ACCENT}; width: 8px; height: 8px; }}
+QCheckBox::indicator, QTableView::indicator {{
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    border: 1px solid {MUTED};
+    background: {PAGE_BG};
+}}
+QCheckBox::indicator:checked, QTableView::indicator:checked {{ background: {ACCENT}; border-color: {ACCENT}; }}
+QCheckBox::indicator:indeterminate {{ background: {ACCENT_SOFT}; border-color: {ACCENT}; }}
 QLabel[role="label"] {{ color: {MUTED}; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; }}
 QLabel[role="privacyTag"] {{
     color: {SUCCESS};

@@ -47,6 +47,8 @@ class Messages:
     error_read: str
     empty_sheet: Callable[[str], str]
     clean_column: Callable[[str], str]
+    transformation: str
+    choose_transformation: str
     transform_names: dict[str, str]
     no_changes: str
     original: str
@@ -59,6 +61,33 @@ class Messages:
     modified_cells: Callable[[int], str]
     undo: str
     redo: str
+    find_label: str
+    replace_label: str
+    find_placeholder: str
+    replace_placeholder: str
+    whole_cell: str
+    ignore_case: str
+    no_matches: str
+    normalize_issues: Callable[[int], str]
+    show_values: str
+    hide_values: str
+    phone_country: str
+    phone_format: str
+    phone_format_names: dict[str, str]
+    phone_hint: str
+    date_input_order: str
+    date_order_names: dict[str, str]
+    date_format: str
+    date_format_names: dict[str, str]
+    date_two_digit_limit: str
+    date_hint: str
+    amount_ambiguous: str
+    amount_separator_names: dict[str, str]
+    amount_format: str
+    amount_format_names: dict[str, str]
+    amount_two_decimals: str
+    amount_hint: str
+    amount_mixed_currencies: Callable[[str], str]
 
 
 EN = Messages(
@@ -104,6 +133,8 @@ EN = Messages(
     error_read="The file could not be opened.",
     empty_sheet=lambda sheet: f"The sheet “{sheet}” is empty.",
     clean_column=lambda column: f"Clean column “{column}”",
+    transformation="Transformation",
+    choose_transformation="Choose a transformation...",
     transform_names={
         "trim": "Trim spaces",
         "collapseSpaces": "Collapse repeated spaces",
@@ -131,6 +162,51 @@ EN = Messages(
     modified_cells=lambda n: "1 cell modified" if n == 1 else f"{_en(n)} cells modified",
     undo="Undo",
     redo="Redo",
+    find_label="Find",
+    replace_label="Replace with",
+    find_placeholder="Text to find",
+    replace_placeholder="New value",
+    whole_cell="Match whole cell",
+    ignore_case="Ignore upper/lower case",
+    no_matches="No cell matches the text you are looking for.",
+    normalize_issues=lambda n: (
+        "1 value could not be normalized and will be left unchanged. Review it by hand."
+        if n == 1
+        else f"{_en(n)} values could not be normalized and will be left unchanged. Review them by hand."
+    ),
+    show_values="Show values",
+    hide_values="Hide values",
+    phone_country="Default country (numbers without prefix)",
+    phone_format="Output format",
+    phone_format_names={"E164": "E.164 (databases)", "INTERNATIONAL": "International", "NATIONAL": "National"},
+    phone_hint=(
+        "Numbers that already have a prefix (+33, +44...) keep their country. In national format, "
+        "foreign numbers stay international so their country is not lost."
+    ),
+    date_input_order="How are dates written in this column?",
+    date_order_names={"DMY": "Day / month / year", "MDY": "Month / day / year"},
+    date_format="Output format",
+    date_format_names={"ISO": "ISO 8601 (databases)", "DMY": "DD/MM/YYYY", "MDY": "MM/DD/YYYY"},
+    date_two_digit_limit="Two-digit years: up to which year are they 2000s? (Excel uses 29)",
+    date_hint="Dates starting with the year (2024-07-13) are always read as year-month-day.",
+    amount_ambiguous="Decimal separator when in doubt (e.g. 1.234)",
+    amount_separator_names={",": "Comma", ".": "Dot"},
+    amount_format="Output format",
+    amount_format_names={
+        "DOT": "Dot decimal (databases)",
+        "COMMA": "Comma decimal",
+        "COMMA_GROUPED": "Spanish style",
+        "DOT_GROUPED": "English style",
+    },
+    amount_two_decimals="Always two decimals (never rounded: extra decimals go to review)",
+    amount_hint=(
+        "Unambiguous values are detected automatically: 12063.99 and 5837,32 are decimals, 1.234.567 is "
+        "thousands. Currency symbols (€, $, £, EUR...) are removed."
+    ),
+    amount_mixed_currencies=lambda currencies: (
+        f"This column mixes currencies ({currencies}). Removing the symbols loses that information: "
+        "review before applying."
+    ),
 )
 
 ES = Messages(
@@ -178,6 +254,8 @@ ES = Messages(
     error_read="No se ha podido abrir el archivo.",
     empty_sheet=lambda sheet: f"La hoja «{sheet}» está vacía.",
     clean_column=lambda column: f"Limpiar columna «{column}»",
+    transformation="Transformación",
+    choose_transformation="Elige una transformación...",
     transform_names={
         "trim": "Quitar espacios de los extremos",
         "collapseSpaces": "Quitar espacios repetidos",
@@ -205,6 +283,51 @@ ES = Messages(
     modified_cells=lambda n: "1 celda modificada" if n == 1 else f"{_es(n)} celdas modificadas",
     undo="Deshacer",
     redo="Rehacer",
+    find_label="Buscar",
+    replace_label="Reemplazar por",
+    find_placeholder="Texto a buscar",
+    replace_placeholder="Nuevo valor",
+    whole_cell="Coincidir con la celda completa",
+    ignore_case="Ignorar mayúsculas/minúsculas",
+    no_matches="Ninguna celda coincide con el texto buscado.",
+    normalize_issues=lambda n: (
+        "1 valor no se puede normalizar y se dejará sin cambios. Revísalo a mano."
+        if n == 1
+        else f"{_es(n)} valores no se pueden normalizar y se dejarán sin cambios. Revísalos a mano."
+    ),
+    show_values="Ver valores",
+    hide_values="Ocultar valores",
+    phone_country="País por defecto (números sin prefijo)",
+    phone_format="Formato de salida",
+    phone_format_names={"E164": "E.164 (bases de datos)", "INTERNATIONAL": "Internacional", "NATIONAL": "Nacional"},
+    phone_hint=(
+        "Los números que ya tienen prefijo (+33, +44...) mantienen su país. En formato nacional, los "
+        "extranjeros se dejan en internacional para no perder su país."
+    ),
+    date_input_order="¿Cómo están escritas las fechas en esta columna?",
+    date_order_names={"DMY": "Día / mes / año", "MDY": "Mes / día / año"},
+    date_format="Formato de salida",
+    date_format_names={"ISO": "ISO 8601 (bases de datos)", "DMY": "DD/MM/AAAA", "MDY": "MM/DD/AAAA"},
+    date_two_digit_limit="Años de dos cifras: ¿hasta qué año son del 2000? (Excel usa el 29)",
+    date_hint="Las fechas que empiezan por el año (2024-07-13) se leen siempre como año-mes-día.",
+    amount_ambiguous="Separador decimal en caso de duda (ej. 1.234)",
+    amount_separator_names={",": "Coma", ".": "Punto"},
+    amount_format="Formato de salida",
+    amount_format_names={
+        "DOT": "Punto decimal (bases de datos)",
+        "COMMA": "Coma decimal",
+        "COMMA_GROUPED": "Formato español",
+        "DOT_GROUPED": "Formato inglés",
+    },
+    amount_two_decimals="Siempre dos decimales (nunca redondea: si hay más, van a revisión)",
+    amount_hint=(
+        "Los valores sin ambigüedad se detectan solos: 12063.99 y 5837,32 son decimales, 1.234.567 son miles. "
+        "Se quitan los símbolos de moneda (€, $, £, EUR...)."
+    ),
+    amount_mixed_currencies=lambda currencies: (
+        f"Esta columna mezcla monedas ({currencies}). Al quitar los símbolos se pierde esa información: "
+        "revísala antes de aplicar."
+    ),
 )
 
 MESSAGES = {"en": EN, "es": ES}
