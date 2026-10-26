@@ -12,8 +12,13 @@ export class XmlImportError extends Error {
 
 const childElements = (element: Element) => [...element.children]
 
+const XMLNS = 'http://www.w3.org/2000/xmlns/'
+
+/** Real attributes only: namespace declarations (xmlns, xmlns:fe) are not data. */
+const dataAttributes = (element: Element) => [...element.attributes].filter((attribute) => attribute.namespaceURI !== XMLNS)
+
 /** Has structure (child elements or attributes), so it can be a row with several columns. */
-const isStructured = (element: Element) => element.children.length > 0 || element.attributes.length > 0
+const isStructured = (element: Element) => element.children.length > 0 || dataAttributes(element).length > 0
 
 /**
  * Finds the elements that represent the rows: the most repeated element name under
@@ -49,7 +54,7 @@ function findRecords(root: Element): Element[] {
  * "parent.child", and repeated children are numbered: "telefono", "telefono[2]".
  */
 function flatten(element: Element, prefix: string, into: Map<string, string>) {
-  for (const attribute of element.attributes) into.set(`${prefix}@${attribute.localName}`, attribute.value)
+  for (const attribute of dataAttributes(element)) into.set(`${prefix}@${attribute.localName}`, attribute.value)
   const seen = new Map<string, number>()
   for (const child of childElements(element)) {
     const count = (seen.get(child.localName) ?? 0) + 1
@@ -59,7 +64,7 @@ function flatten(element: Element, prefix: string, into: Map<string, string>) {
       flatten(child, `${path}.`, into)
     } else {
       into.set(path, child.textContent ?? '')
-      if (child.attributes.length > 0) flatten(child, `${path}.`, into)
+      if (dataAttributes(child).length > 0) flatten(child, `${path}.`, into)
     }
   }
 }
@@ -72,8 +77,12 @@ function recordToCells(record: Element): Map<string, string> {
   return cells
 }
 
-/** Parses XML that represents a table. Uses the browser's own parser: no external entities are loaded. */
+/**
+ * Parses XML that represents a table. Uses the browser's own parser (no external entities are
+ * loaded), and rejects entity declarations altogether, the basis of "XML bomb" attacks.
+ */
 export function parseXmlText(text: string, fileName: string, encoding: TextEncodingName = 'utf-8'): Dataset {
+  if (/<!ENTITY/i.test(text)) throw new XmlImportError('invalid')
   const document = new DOMParser().parseFromString(text.replace(/^﻿/, ''), 'application/xml')
   if (document.getElementsByTagName('parsererror').length > 0) throw new XmlImportError('invalid')
 

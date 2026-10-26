@@ -216,6 +216,36 @@
     }
   },
   {
+    "description": "namespace declarations (xmlns) are not data",
+    "input": "<facturas><factura xmlns:fe=\"urn:ejemplo\" numero=\"1\"><fe:total>100</fe:total></factura></facturas>",
+    "expected": {
+      "columns": [
+        "@numero",
+        "total"
+      ],
+      "rows": [
+        [
+          "1",
+          "100"
+        ]
+      ]
+    }
+  },
+  {
+    "description": "a DOCTYPE without entity declarations is fine",
+    "input": "<!DOCTYPE l><l><r><a>x</a></r></l>",
+    "expected": {
+      "columns": [
+        "a"
+      ],
+      "rows": [
+        [
+          "x"
+        ]
+      ]
+    }
+  },
+  {
     "description": "invalid: not well-formed",
     "input": "<clientes><cliente></clientes>",
     "expected": {
@@ -227,6 +257,13 @@
     "input": "<clientes>texto</clientes>",
     "expected": {
       "error": "unsupported"
+    }
+  },
+  {
+    "description": "invalid: entity declarations are rejected (XML bomb protection)",
+    "input": "<!DOCTYPE l [<!ENTITY e \"hola\">]><l><r><a>&e;</a></r></l>",
+    "expected": {
+      "error": "invalid"
     }
   }
 ]
