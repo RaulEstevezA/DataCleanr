@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "datacleanr"
+version = "0.1.0"
+description = "Desktop tool for cleaning, normalizing and deduplicating CSV, Excel, JSON and XML data locally."
+readme = "README_en.md"
+license = "MIT"
+authors = [{ name = "Raul Estevez" }]
+requires-python = ">=3.11"
+dependencies = [
+  "PySide6>=6.12",
+  "pandas>=3.1",
+  "openpyxl>=3.1.5",
+  "rapidfuzz>=3.14",
+  "phonenumbers>=9.0",
+  "defusedxml>=0.7.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=9.1", "ruff>=0.17"]
+
+[project.scripts]
+datacleanr = "datacleanr.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["datacleanr*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

@@ -7,4 +7,27 @@ Versión de escritorio de DataCleanr: Python + PySide6 + Pandas + OpenPyXL + Rap
 
 Qué hace la herramienta y su filosofía están en el [README principal](../README_es.md).
 
+## Ejecutar en local
+
+Requisitos: Python 3.11 o superior.
+
+```bash
+cd desktop
+python3 -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
+pip install -e ".[dev]"
+python -m pytest                   # tests (casos compartidos de shared/test-cases/)
+ruff check .                       # análisis estático
+python -m datacleanr               # ejecutar la aplicación
+```
+
+## Estructura
+
+```
+datacleanr/
+  core/          Lógica sin interfaz: cada módulo equivale a uno de web/src/core/
+tests/           Tests con pytest, leyendo los casos de shared/test-cases/
+pyproject.toml   Dependencias y configuración
+```
+
 [Volver al README principal](../README_es.md)
