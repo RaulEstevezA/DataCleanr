@@ -1,0 +1,332 @@
+{
+  "import": [
+    {
+      "description": "semicolon delimiter is detected (Excel in Spanish)",
+      "input": "Empresa;Ciudad\nTransgrau;Valencia",
+      "expected": {
+        "delimiter": ";",
+        "columns": [
+          "Empresa",
+          "Ciudad"
+        ],
+        "rows": [
+          [
+            "Transgrau",
+            "Valencia"
+          ]
+        ]
+      }
+    },
+    {
+      "description": "comma delimiter",
+      "input": "Empresa,Ciudad\nTransgrau,Valencia",
+      "expected": {
+        "delimiter": ",",
+        "columns": [
+          "Empresa",
+          "Ciudad"
+        ],
+        "rows": [
+          [
+            "Transgrau",
+            "Valencia"
+          ]
+        ]
+      }
+    },
+    {
+      "description": "tab delimiter",
+      "input": "Empresa\tCiudad\nTransgrau\tValencia",
+      "expected": {
+        "delimiter": "\t",
+        "columns": [
+          "Empresa",
+          "Ciudad"
+        ],
+        "rows": [
+          [
+            "Transgrau",
+            "Valencia"
+          ]
+        ]
+      }
+    },
+    {
+      "description": "values and headers are kept exactly as written",
+      "input": " Empresa ,\n  TRANSGRAU ,x",
+      "expected": {
+        "delimiter": ",",
+        "columns": [
+          " Empresa ",
+          ""
+        ],
+        "rows": [
+          [
+            "  TRANSGRAU ",
+            "x"
+          ]
+        ]
+      }
+    },
+    {
+      "description": "short rows are padded and long rows trimmed to the header",
+      "input": "a,b\n1\n1,2,3",
+      "expected": {
+        "delimiter": ",",
+        "columns": [
+          "a",
+          "b"
+        ],
+        "rows": [
+          [
+            "1",
+            ""
+          ],
+          [
+            "1",
+            "2"
+          ]
+        ]
+      }
+    },
+    {
+      "description": "a UTF-8 byte order mark is ignored; a single column defaults to comma",
+      "input": "﻿Empresa\nx",
+      "expected": {
+        "delimiter": ",",
+        "columns": [
+          "Empresa"
+        ],
+        "rows": [
+          [
+            "x"
+          ]
+        ]
+      }
+    },
+    {
+      "description": "quoted fields can contain the delimiter and line breaks",
+      "input": "Empresa;Nota\n\"A;B\";\"línea 1\nlínea 2\"",
+      "expected": {
+        "delimiter": ";",
+        "columns": [
+          "Empresa",
+          "Nota"
+        ],
+        "rows": [
+          [
+            "A;B",
+            "línea 1\nlínea 2"
+          ]
+        ]
+      }
+    },
+    {
+      "description": "doubled quotes inside quoted fields",
+      "input": "Nota\n\"dice \"\"hola\"\"\"",
+      "expected": {
+        "delimiter": ",",
+        "columns": [
+          "Nota"
+        ],
+        "rows": [
+          [
+            "dice \"hola\""
+          ]
+        ]
+      }
+    },
+    {
+      "description": "Windows line endings (CRLF)",
+      "input": "a;b\r\n1;2\r\n3;4\r\n",
+      "expected": {
+        "delimiter": ";",
+        "columns": [
+          "a",
+          "b"
+        ],
+        "rows": [
+          [
+            "1",
+            "2"
+          ],
+          [
+            "3",
+            "4"
+          ]
+        ]
+      }
+    },
+    {
+      "description": "lines with only spaces or empty fields are skipped",
+      "input": "a,b\n , \n\n1,2",
+      "expected": {
+        "delimiter": ",",
+        "columns": [
+          "a",
+          "b"
+        ],
+        "rows": [
+          [
+            "1",
+            "2"
+          ]
+        ]
+      }
+    },
+    {
+      "description": "the most consistent delimiter wins",
+      "input": "Nombre;Importe\nAna;1,5\nJuan;2,75\nLuis;3",
+      "expected": {
+        "delimiter": ";",
+        "columns": [
+          "Nombre",
+          "Importe"
+        ],
+        "rows": [
+          [
+            "Ana",
+            "1,5"
+          ],
+          [
+            "Juan",
+            "2,75"
+          ],
+          [
+            "Luis",
+            "3"
+          ]
+        ]
+      }
+    },
+    {
+      "description": "on a tie, comma wins (checked first)",
+      "input": "a;b,c\n1;2,3",
+      "expected": {
+        "delimiter": ",",
+        "columns": [
+          "a;b",
+          "c"
+        ],
+        "rows": [
+          [
+            "1;2",
+            "3"
+          ]
+        ]
+      }
+    },
+    {
+      "description": "an empty file cannot be imported",
+      "input": "",
+      "expected": {
+        "error": "empty"
+      }
+    }
+  ],
+  "export": [
+    {
+      "description": "starts with a UTF-8 byte order mark and uses CRLF",
+      "columns": [
+        "a",
+        "b"
+      ],
+      "rows": [
+        [
+          "1",
+          "2"
+        ],
+        [
+          "3",
+          "4"
+        ]
+      ],
+      "delimiter": ";",
+      "expected": "﻿a;b\r\n1;2\r\n3;4"
+    },
+    {
+      "description": "quotes values with the delimiter, quotes or line breaks",
+      "columns": [
+        "a"
+      ],
+      "rows": [
+        [
+          "x,y"
+        ],
+        [
+          "say \"hi\""
+        ],
+        [
+          "l1\nl2"
+        ],
+        [
+          "l1\r\nl2"
+        ]
+      ],
+      "delimiter": ",",
+      "expected": "﻿a\r\n\"x,y\"\r\n\"say \"\"hi\"\"\"\r\n\"l1\nl2\"\r\n\"l1\r\nl2\""
+    },
+    {
+      "description": "quotes values with leading or trailing spaces",
+      "columns": [
+        "a"
+      ],
+      "rows": [
+        [
+          "  TRANSGRAU "
+        ],
+        [
+          " x"
+        ],
+        [
+          "y "
+        ]
+      ],
+      "delimiter": ";",
+      "expected": "﻿a\r\n\"  TRANSGRAU \"\r\n\" x\"\r\n\"y \""
+    },
+    {
+      "description": "empty cells and headers stay empty",
+      "columns": [
+        "",
+        "b"
+      ],
+      "rows": [
+        [
+          "",
+          "x"
+        ]
+      ],
+      "delimiter": ";",
+      "expected": "﻿;b\r\n;x"
+    },
+    {
+      "description": "a semicolon is not special with comma delimiter",
+      "columns": [
+        "a"
+      ],
+      "rows": [
+        [
+          "x;y"
+        ]
+      ],
+      "delimiter": ",",
+      "expected": "﻿a\r\nx;y"
+    },
+    {
+      "description": "tab delimiter",
+      "columns": [
+        "a",
+        "b"
+      ],
+      "rows": [
+        [
+          "1",
+          "x y"
+        ]
+      ],
+      "delimiter": "\t",
+      "expected": "﻿a\tb\r\n1\tx y"
+    }
+  ]
+}

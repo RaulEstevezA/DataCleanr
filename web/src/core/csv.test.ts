@@ -1,54 +1,37 @@
 import { describe, expect, it } from 'vitest'
-import { cleanFileName, parseCsvText, serializeCsv } from './csv.ts'
+import cases from '../../../shared/test-cases/csv.json'
+import { cleanFileName, CsvParseError, parseCsvText, serializeCsv } from './csv.ts'
 
-describe('parseCsvText', () => {
-  it('detects semicolon delimiters', () => {
-    const dataset = parseCsvText('Empresa;Ciudad\nTransgrau;Valencia', 'a.csv')
-    expect(dataset.delimiter).toBe(';')
-    expect(dataset.rows).toEqual([['Transgrau', 'Valencia']])
-  })
-
-  it('keeps values and headers exactly as written', () => {
-    const dataset = parseCsvText(' Empresa ,\n  TRANSGRAU ,x', 'a.csv')
-    expect(dataset.columns).toEqual([' Empresa ', ''])
-    expect(dataset.rows).toEqual([['  TRANSGRAU ', 'x']])
-  })
-
-  it('pads short rows and trims long ones', () => {
-    const dataset = parseCsvText('a,b\n1\n1,2,3', 'a.csv')
-    expect(dataset.rows).toEqual([
-      ['1', ''],
-      ['1', '2'],
-    ])
-  })
-
-  it('ignores a UTF-8 byte order mark', () => {
-    expect(parseCsvText('﻿Empresa\nx', 'a.csv').columns).toEqual(['Empresa'])
-  })
-
-  it('rejects empty files', () => {
-    expect(() => parseCsvText('', 'a.csv')).toThrow()
+describe('parseCsvText (shared cases)', () => {
+  it.each(cases.import)('$description', ({ input, expected }) => {
+    if ('error' in expected) {
+      expect(() => parseCsvText(input, 'a.csv')).toThrow(CsvParseError)
+      return
+    }
+    const { delimiter, columns, rows } = parseCsvText(input, 'a.csv')
+    expect({ delimiter, columns, rows }).toEqual(expected)
   })
 })
 
-describe('serializeCsv', () => {
-  it('starts with a UTF-8 byte order mark for Excel', () => {
-    expect(serializeCsv(parseCsvText('a\n1', 'a.csv')).startsWith('﻿')).toBe(true)
+describe('serializeCsv (shared cases)', () => {
+  it.each(cases.export)('$description', ({ columns, rows, delimiter, expected }) => {
+    const dataset = {
+      fileName: 'a.csv',
+      format: 'csv' as const,
+      sheet: null,
+      columns,
+      rows,
+      rowIds: rows.map((_, i) => i),
+      delimiter,
+      encoding: 'utf-8' as const,
+    }
+    expect(serializeCsv(dataset)).toBe(expected)
   })
+})
 
-  it('reuses the original delimiter', () => {
-    expect(serializeCsv(parseCsvText('a;b\n1;2', 'a.csv'))).toBe('﻿a;b\r\n1;2')
-  })
-
-  it('quotes values containing the delimiter, quotes or line breaks', () => {
-    const csv = serializeCsv({ fileName: 'a.csv', format: 'csv', sheet: null, delimiter: ',', encoding: 'utf-8', columns: ['a'], rows: [['x,y'], ['say "hi"'], ['l1\nl2']], rowIds: [0, 1, 2] })
-    expect(csv).toBe('﻿a\r\n"x,y"\r\n"say ""hi"""\r\n"l1\nl2"')
-  })
-
-  it('round-trips through parseCsvText without changing any value', () => {
-    const original = parseCsvText('Empresa;Nota\n  TRANSGRAU ;"a;b"\n;"dice ""hola"""', 'a.csv')
-    expect(parseCsvText(serializeCsv(original), 'a.csv')).toEqual(original)
-  })
+it('round-trips through parseCsvText without changing any value', () => {
+  const original = parseCsvText('Empresa;Nota\n  TRANSGRAU ;"a;b"\n;"dice ""hola"""', 'a.csv')
+  expect(parseCsvText(serializeCsv(original), 'a.csv')).toEqual(original)
 })
 
 describe('cleanFileName', () => {
