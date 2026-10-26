@@ -96,7 +96,7 @@ web/                 Web version (React + TypeScript + Vite)
 desktop/             Desktop version (Python + PySide6)
 shared/              Behavior common to both versions
   test-cases/        JSON test cases and sample files
-docs/                Roadmap and images
+docs/                Images
 ```
 
 ## Suggestions

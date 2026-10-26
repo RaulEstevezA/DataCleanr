@@ -96,7 +96,7 @@ web/                 Versión web (React + TypeScript + Vite)
 desktop/             Versión de escritorio (Python + PySide6)
 shared/              Comportamiento común a ambas versiones
   test-cases/        Casos de prueba en JSON y archivos de ejemplo
-docs/                Roadmap e imágenes
+docs/                Imágenes
 ```
 
 ## Sugerencias
