@@ -123,6 +123,15 @@
   font-size: 0.875rem;
 }
 
+.transform-panel__warning {
+  padding: 10px 14px;
+  border: 1px solid var(--warning);
+  border-radius: var(--radius);
+  background: var(--warning-soft);
+  color: var(--warning);
+  font-size: 0.875rem;
+}
+
 .transform-panel__issues summary {
   color: var(--warning);
   cursor: pointer;

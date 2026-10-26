@@ -19,6 +19,7 @@ Las funciones comunes a ambas versiones se especifican en `shared/test-cases/` (
 - Detección de duplicados y fuzzy matching
 - [x] Normalización de teléfonos
 - [x] Normalización de fechas
+- [x] Normalización de importes
 - Perfiles/reglas de limpieza
 - Historial de transformaciones, undo/redo
 - Versión desktop en Python

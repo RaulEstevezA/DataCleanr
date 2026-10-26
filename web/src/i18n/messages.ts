@@ -1,3 +1,4 @@
+import type { AmountFormat, DecimalSeparator } from '../core/amount.ts'
 import type { DateFormat, DateInputOrder } from '../core/date.ts'
 import type { PhoneFormat } from '../core/phone.ts'
 import type { TransformId } from '../core/transforms.ts'
@@ -61,6 +62,24 @@ const en = {
     n === 1
       ? '1 value could not be normalized and will be left unchanged. Review it by hand.'
       : `${formatEn(n)} values could not be normalized and will be left unchanged. Review them by hand.`,
+  normalizeAmount: 'Normalize amounts',
+  amountAmbiguous: 'Decimal separator when in doubt (e.g. 1.234)',
+  amountSeparatorNames: {
+    ',': 'Comma',
+    '.': 'Dot',
+  } satisfies Record<DecimalSeparator, string>,
+  amountFormat: 'Output format',
+  amountFormatNames: {
+    DOT: 'Dot decimal (databases)',
+    COMMA: 'Comma decimal',
+    COMMA_GROUPED: 'Spanish style',
+    DOT_GROUPED: 'English style',
+  } satisfies Record<AmountFormat, string>,
+  amountTwoDecimals: 'Always two decimals (never rounded: extra decimals go to review)',
+  amountHint:
+    'Unambiguous values are detected automatically: 12063.99 and 5837,32 are decimals, 1.234.567 is thousands. Currency symbols (€, $, £, EUR...) are removed.',
+  amountMixedCurrencies: (list: string) =>
+    `This column mixes currencies (${list}). Removing the symbols loses that information: review before applying.`,
   normalizeDate: 'Normalize dates',
   dateInputOrder: 'How are dates written in this column?',
   dateOrderNames: {
@@ -150,6 +169,24 @@ const es: Messages = {
     n === 1
       ? '1 valor no se puede normalizar y se dejará sin cambios. Revísalo a mano.'
       : `${formatEs(n)} valores no se pueden normalizar y se dejarán sin cambios. Revísalos a mano.`,
+  normalizeAmount: 'Normalizar importes',
+  amountAmbiguous: 'Separador decimal en caso de duda (ej. 1.234)',
+  amountSeparatorNames: {
+    ',': 'Coma',
+    '.': 'Punto',
+  },
+  amountFormat: 'Formato de salida',
+  amountFormatNames: {
+    DOT: 'Punto decimal (bases de datos)',
+    COMMA: 'Coma decimal',
+    COMMA_GROUPED: 'Formato español',
+    DOT_GROUPED: 'Formato inglés',
+  },
+  amountTwoDecimals: 'Siempre dos decimales (nunca redondea: si hay más, van a revisión)',
+  amountHint:
+    'Los valores sin ambigüedad se detectan solos: 12063.99 y 5837,32 son decimales, 1.234.567 son miles. Se quitan los símbolos de moneda (€, $, £, EUR...).',
+  amountMixedCurrencies: (list: string) =>
+    `Esta columna mezcla monedas (${list}). Al quitar los símbolos se pierde esa información: revísala antes de aplicar.`,
   normalizeDate: 'Normalizar fechas',
   dateInputOrder: '¿Cómo están escritas las fechas en esta columna?',
   dateOrderNames: {

@@ -1,4 +1,5 @@
 import { useId, useMemo, useState } from 'react'
+import { normalizeAmount, type AmountOptions } from '../core/amount.ts'
 import { applyColumnChanges, previewColumnChanges } from '../core/changes.ts'
 import { columnLabel, type Dataset } from '../core/dataset.ts'
 import { DEFAULT_TWO_DIGIT_YEAR_LIMIT, normalizeDate, type DateOptions } from '../core/date.ts'
@@ -7,6 +8,7 @@ import { createReplaceTransform, type ReplaceOptions } from '../core/replace.ts'
 import { transformIds, transforms, type TransformId } from '../core/transforms.ts'
 import { useStoredState } from '../hooks/useStoredState.ts'
 import { useI18n } from '../i18n/useI18n.ts'
+import { AmountForm } from './AmountForm.tsx'
 import { DateForm } from './DateForm.tsx'
 import { PhoneForm } from './PhoneForm.tsx'
 import { VisibleText } from './VisibleText.tsx'
@@ -15,7 +17,7 @@ import './TransformPanel.css'
 // Rendering thousands of rows at once would freeze the page
 const MAX_PREVIEW_ROWS = 200
 
-type Selection = TransformId | 'custom' | 'phone' | 'date'
+type Selection = TransformId | 'custom' | 'phone' | 'date' | 'amount'
 
 // Loaded on demand: phone metadata for every country is large and most sessions never need it
 type PhoneModule = typeof import('../core/phone.ts')
@@ -23,6 +25,10 @@ type PhoneModule = typeof import('../core/phone.ts')
 function defaultPhoneOptions(): PhoneOptions {
   const region = navigator.language.split('-')[1]?.toUpperCase()
   return { defaultCountry: (region || 'ES') as PhoneOptions['defaultCountry'], format: 'E164' }
+}
+
+function defaultAmountOptions(): AmountOptions {
+  return { ambiguousDecimal: navigator.language.startsWith('en') ? '.' : ',', format: 'DOT', twoDecimals: false }
 }
 
 function defaultDateOptions(): DateOptions {
@@ -51,6 +57,7 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
   const [storedDateOptions, setDateOptions] = useStoredState('datacleanr.dateOptions', defaultDateOptions)
   // Options saved by an older version may lack newer fields
   const dateOptions = useMemo(() => ({ ...defaultDateOptions(), ...storedDateOptions }), [storedDateOptions])
+  const [amountOptions, setAmountOptions] = useStoredState('datacleanr.amountOptions', defaultAmountOptions)
   // Store rejections (not acceptances) so every change is accepted by default
   const [rejected, setRejected] = useState<Set<number>>(new Set())
 
@@ -58,12 +65,13 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
   const normalize = useMemo(() => {
     if (transformId === 'phone' && phoneModule) return (value: string) => phoneModule.normalizePhone(value, phoneOptions)
     if (transformId === 'date') return (value: string) => normalizeDate(value, dateOptions)
+    if (transformId === 'amount') return (value: string) => normalizeAmount(value, amountOptions)
     return null
-  }, [transformId, phoneModule, phoneOptions, dateOptions])
+  }, [transformId, phoneModule, phoneOptions, dateOptions, amountOptions])
   const transform = useMemo(() => {
     if (normalize) return (value: string) => normalize(value).value
     if (transformId === 'custom') return createReplaceTransform(replace)
-    if (transformId === 'phone' || transformId === 'date') return null
+    if (transformId === 'phone' || transformId === 'date' || transformId === 'amount') return null
     return transformId ? transforms[transformId] : null
   }, [normalize, transformId, replace])
   const changes = useMemo(
@@ -77,6 +85,16 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
       .map((row, index) => ({ row: index, value: row[column] }))
       .filter(({ value }) => normalize(value).status === 'invalid')
   }, [dataset, column, normalize])
+  // Removing currency symbols from a column that mixes currencies would lose information
+  const currencies = useMemo(() => {
+    if (transformId !== 'amount') return []
+    const found = new Set<string>()
+    for (const row of dataset.rows) {
+      const { currency } = normalizeAmount(row[column], amountOptions)
+      if (currency) found.add(currency)
+    }
+    return [...found].sort()
+  }, [dataset, column, transformId, amountOptions])
   // Distinct values of the column, offered as suggestions in the "find" field
   const columnValues = useMemo(
     () => [...new Set(dataset.rows.map((row) => row[column].trim()))].filter(Boolean).sort(),
@@ -96,6 +114,11 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
 
   function updatePhoneOptions(options: PhoneOptions) {
     setPhoneOptions(options)
+    setRejected(new Set())
+  }
+
+  function updateAmountOptions(options: AmountOptions) {
+    setAmountOptions(options)
     setRejected(new Set())
   }
 
@@ -167,7 +190,22 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
         >
           {t.normalizeDate}
         </button>
+        <button
+          type="button"
+          className="button"
+          aria-pressed={transformId === 'amount'}
+          onClick={() => selectTransform('amount')}
+        >
+          {t.normalizeAmount}
+        </button>
       </div>
+
+      {transformId === 'amount' && <AmountForm options={amountOptions} onChange={updateAmountOptions} />}
+      {currencies.length > 1 && (
+        <p className="transform-panel__warning" role="alert">
+          {t.amountMixedCurrencies(currencies.join(', '))}
+        </p>
+      )}
 
       {transformId === 'date' && <DateForm options={dateOptions} onChange={updateDateOptions} />}
 

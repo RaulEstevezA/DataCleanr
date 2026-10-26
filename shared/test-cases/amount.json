@@ -1,0 +1,554 @@
+[
+  {
+    "description": "comma decimal with dot thousands",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "4.072,67",
+    "expected": "4072.67",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "dot decimal: a separator followed by 2 digits is always decimal",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "12063.99 €",
+    "expected": "12063.99",
+    "expectedStatus": "valid",
+    "expectedCurrency": "EUR"
+  },
+  {
+    "description": "comma decimal without thousands",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "5837,32",
+    "expected": "5837.32",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "integer stays integer",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "433",
+    "expected": "433",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "currency symbol before the number",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "€8512",
+    "expected": "8512",
+    "expectedStatus": "valid",
+    "expectedCurrency": "EUR"
+  },
+  {
+    "description": "currency code after the number",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "12,50 EUR",
+    "expected": "12.50",
+    "expectedStatus": "valid",
+    "expectedCurrency": "EUR"
+  },
+  {
+    "description": "currency code before the number",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "USD 100",
+    "expected": "100",
+    "expectedStatus": "valid",
+    "expectedCurrency": "USD"
+  },
+  {
+    "description": "dollar sign",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "$1,234.56",
+    "expected": "1234.56",
+    "expectedStatus": "valid",
+    "expectedCurrency": "USD"
+  },
+  {
+    "description": "pound sign",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "£ 99.90",
+    "expected": "99.90",
+    "expectedStatus": "valid",
+    "expectedCurrency": "GBP"
+  },
+  {
+    "description": "both separators: the last one is the decimal",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "1,234,567.89",
+    "expected": "1234567.89",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "repeated separator is always thousands",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "1.234.567",
+    "expected": "1234567",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "space as thousands separator",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "1 234,56",
+    "expected": "1234.56",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "non-breaking space as thousands separator",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "1 234,56",
+    "expected": "1234.56",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "apostrophe as thousands separator (Swiss)",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "1'234.56",
+    "expected": "1234.56",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "ambiguous 1.234 with comma as decimal: dot is thousands",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "1.234",
+    "expected": "1234",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "ambiguous 1.234 with dot as decimal: dot is decimal",
+    "options": {
+      "ambiguousDecimal": ".",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "1.234",
+    "expected": "1.234",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "ambiguous 1,234 with comma as decimal: comma is decimal",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "1,234",
+    "expected": "1.234",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "ambiguous 1,234 with dot as decimal: comma is thousands",
+    "options": {
+      "ambiguousDecimal": ".",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "1,234",
+    "expected": "1234",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "not ambiguous: more than 3 digits before the separator",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "12345.678",
+    "expected": "12345.678",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "not ambiguous: leading zero before the separator",
+    "options": {
+      "ambiguousDecimal": ".",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "0,123",
+    "expected": "0.123",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "three decimals when both separators are present",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "12.345,678",
+    "expected": "12345.678",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "leading decimal separator",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": ",5",
+    "expected": "0.5",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "leading zeros are removed",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "007",
+    "expected": "7",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "negative with minus sign",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "-1.234,56",
+    "expected": "-1234.56",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "negative in parentheses (accounting)",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "(1.234,56)",
+    "expected": "-1234.56",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "minus before the currency",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "-€12,50",
+    "expected": "-12.50",
+    "expectedStatus": "valid",
+    "expectedCurrency": "EUR"
+  },
+  {
+    "description": "minus after the currency",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "€-12,50",
+    "expected": "-12.50",
+    "expectedStatus": "valid",
+    "expectedCurrency": "EUR"
+  },
+  {
+    "description": "plus sign is dropped",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "+12",
+    "expected": "12",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "surrounding spaces are ignored",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "  433,5 ",
+    "expected": "433.5",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "format COMMA",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "COMMA",
+      "twoDecimals": false
+    },
+    "input": "4.072,67",
+    "expected": "4072,67",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "format COMMA_GROUPED (Spain)",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "COMMA_GROUPED",
+      "twoDecimals": false
+    },
+    "input": "1234567.89",
+    "expected": "1.234.567,89",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "format DOT_GROUPED (US/UK)",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT_GROUPED",
+      "twoDecimals": false
+    },
+    "input": "-1234,5",
+    "expected": "-1,234.5",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "grouped format with fewer than 4 digits",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "COMMA_GROUPED",
+      "twoDecimals": false
+    },
+    "input": "999,5",
+    "expected": "999,5",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "two decimals: integer is padded",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": true
+    },
+    "input": "433",
+    "expected": "433.00",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "two decimals: one decimal is padded",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": true
+    },
+    "input": "0,5",
+    "expected": "0.50",
+    "expectedStatus": "valid",
+    "expectedCurrency": null
+  },
+  {
+    "description": "two decimals: more decimals are not rounded silently",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": true
+    },
+    "input": "1,2345",
+    "expected": "1,2345",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "invalid: wrong thousands grouping",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "1.23,45",
+    "expected": "1.23,45",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "invalid: repeated separator with bad groups",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "1,2,3",
+    "expected": "1,2,3",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "invalid: two decimal separators",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "12.34.5",
+    "expected": "12.34.5",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "invalid: trailing separator",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "12,",
+    "expected": "12,",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "invalid: two currencies",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "€12 USD",
+    "expected": "€12 USD",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "invalid: currency only",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "€",
+    "expected": "€",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "invalid: text",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "pendiente",
+    "expected": "pendiente",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "invalid: scientific notation",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "1e5",
+    "expected": "1e5",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "invalid: two signs",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "--12",
+    "expected": "--12",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "empty cell stays empty",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "",
+    "expected": "",
+    "expectedStatus": "empty"
+  },
+  {
+    "description": "whitespace-only cell is left untouched",
+    "options": {
+      "ambiguousDecimal": ",",
+      "format": "DOT",
+      "twoDecimals": false
+    },
+    "input": "  ",
+    "expected": "  ",
+    "expectedStatus": "empty"
+  }
+]
