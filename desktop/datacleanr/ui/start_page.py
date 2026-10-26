@@ -57,6 +57,10 @@ class DropZone(QFrame):
         self.button.setText(t.import_button)
         self.hint.setText(t.import_hint)
 
+    def set_loading(self, loading: bool) -> None:
+        self.button.setEnabled(not loading)
+        self.button.setText(self._i18n.t.import_loading if loading else self._i18n.t.import_button)
+
     def show_error(self, message: str | None) -> None:
         self.error.setText(message or "")
         self.error.setVisible(bool(message))
