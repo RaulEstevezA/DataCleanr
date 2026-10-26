@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { columnLabel, type Dataset } from '../core/dataset.ts'
 import { useI18n } from '../i18n/useI18n.ts'
 import './DatasetSummary.css'
@@ -12,6 +13,7 @@ interface DatasetSummaryProps {
   selectedColumn: number | null
   onSelectColumn: (index: number) => void
   onFindDuplicates: () => void
+  onLoadProfile: (file: File) => void
   canUndo: boolean
   canRedo: boolean
   onUndo: () => void
@@ -31,6 +33,7 @@ export function DatasetSummary({
   selectedColumn,
   onSelectColumn,
   onFindDuplicates,
+  onLoadProfile,
   canUndo,
   canRedo,
   onUndo,
@@ -39,6 +42,7 @@ export function DatasetSummary({
   onReset,
 }: DatasetSummaryProps) {
   const { t } = useI18n()
+  const profileInput = useRef<HTMLInputElement>(null)
 
   return (
     <section className="panel dataset-summary">
@@ -64,6 +68,20 @@ export function DatasetSummary({
           <button type="button" className="button" onClick={onFindDuplicates}>
             {t.findDuplicates}
           </button>
+          <button type="button" className="button" onClick={() => profileInput.current?.click()}>
+            {t.loadProfile}
+          </button>
+          <input
+            ref={profileInput}
+            type="file"
+            accept=".json,application/json"
+            hidden
+            onChange={(event) => {
+              const file = event.target.files?.[0]
+              if (file) onLoadProfile(file)
+              event.target.value = ''
+            }}
+          />
           <button type="button" className="button" onClick={onReset}>
             {t.importAnother}
           </button>

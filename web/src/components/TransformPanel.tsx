@@ -3,6 +3,7 @@ import { normalizeAmount, type AmountOptions } from '../core/amount.ts'
 import { applyColumnChanges, previewColumnChanges } from '../core/changes.ts'
 import { columnLabel, rowNumber, type Dataset } from '../core/dataset.ts'
 import type { CellAction } from '../core/operation.ts'
+import type { ProfileStep } from '../core/profile.ts'
 import { DEFAULT_TWO_DIGIT_YEAR_LIMIT, normalizeDate, type DateOptions } from '../core/date.ts'
 import type { PhoneOptions } from '../core/phone.ts'
 import { createReplaceTransform, type ReplaceOptions } from '../core/replace.ts'
@@ -52,7 +53,7 @@ const initialReplace: ReplaceOptions = { find: '', replacement: '', wholeCell: t
 interface TransformPanelProps {
   dataset: Dataset
   column: number
-  onApply: (dataset: Dataset, appliedCount: number, action: CellAction) => void
+  onApply: (dataset: Dataset, appliedCount: number, action: CellAction, step: ProfileStep) => void
 }
 
 export function TransformPanel({ dataset, column, onApply }: TransformPanelProps) {
@@ -93,21 +94,24 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
     [groupChoices, similarGroups],
   )
 
+  // Variant -> chosen value, for the groups the user kept
+  const similarMapping = useMemo(() => {
+    const mapping = new Map<string, string>()
+    similarGroups.forEach((group, g) => {
+      const { target, included } = choices[g]
+      if (!included || target === '') return
+      for (const { value } of group.variants) if (value !== target) mapping.set(value, target)
+    })
+    return mapping
+  }, [similarGroups, choices])
+
   const transform = useMemo(() => {
     if (normalize) return (value: string) => normalize(value).value
-    if (transformId === 'similar') {
-      const mapping = new Map<string, string>()
-      similarGroups.forEach((group, g) => {
-        const { target, included } = choices[g]
-        if (!included || target === '') return
-        for (const { value } of group.variants) if (value !== target) mapping.set(value, target)
-      })
-      return (value: string) => mapping.get(value) ?? value
-    }
+    if (transformId === 'similar') return (value: string) => similarMapping.get(value) ?? value
     if (transformId === 'custom') return createReplaceTransform(replace)
     if (transformId === 'phone' || transformId === 'date' || transformId === 'amount') return null
     return transformId ? transforms[transformId] : null
-  }, [normalize, transformId, replace, similarGroups, choices])
+  }, [normalize, transformId, replace, similarMapping])
   const changes = useMemo(
     () => (transform ? previewColumnChanges(dataset, column, transform) : []),
     [dataset, column, transform],
@@ -189,9 +193,28 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
     setRejected(rejected.size === 0 ? new Set(changes.map((change) => change.row)) : new Set())
   }
 
+  /** The applied step with its options, so it can be saved in a cleaning profile. */
+  function profileStep(action: CellAction): ProfileStep {
+    const name = dataset.columns[column]
+    switch (action) {
+      case 'custom':
+        return { type: 'replace', column: name, ...replace }
+      case 'phone':
+        return { type: 'phone', column: name, ...phoneOptions }
+      case 'date':
+        return { type: 'date', column: name, ...dateOptions }
+      case 'amount':
+        return { type: 'amount', column: name, ...amountOptions }
+      case 'similar':
+        return { type: 'map', column: name, mapping: [...similarMapping].map(([from, to]) => ({ from, to })) }
+      default:
+        return { type: 'transform', column: name, transform: action }
+    }
+  }
+
   function apply() {
     if (!transformId) return
-    onApply(applyColumnChanges(dataset, column, accepted), accepted.length, transformId)
+    onApply(applyColumnChanges(dataset, column, accepted), accepted.length, transformId, profileStep(transformId))
     setTransformId(null)
     setReplace(initialReplace)
     setGroupChoices(null)

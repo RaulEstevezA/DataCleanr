@@ -117,6 +117,8 @@ export interface StepResult {
   reason?: 'missingColumn' | 'unavailable'
   /** Cells changed, or rows removed for removeDuplicates. */
   count: number
+  /** Empty cells filled when merging duplicates. */
+  filled?: number
   /** Dataset after this step (the same object when nothing changed). */
   dataset: Dataset
 }
@@ -156,11 +158,16 @@ function runStep(dataset: Dataset, step: ProfileStep, deps: ProfileDependencies)
     const groups = findDuplicateRows(dataset.rows, { columns, ignoreCaseAndSpaces: step.ignoreCaseAndSpaces })
     const rows = [...dataset.rows]
     const remove = new Set<number>()
+    let filled = 0
     for (const group of groups) {
-      if (step.merge) rows[group[0]] = mergeRows(group.map((r) => dataset.rows[r]), 0).row
+      if (step.merge) {
+        const merged = mergeRows(group.map((r) => dataset.rows[r]), 0)
+        rows[group[0]] = merged.row
+        filled += merged.filled.length
+      }
       for (const row of group.slice(1)) remove.add(row)
     }
-    return { step, status: 'applied', count: remove.size, dataset: removeRows({ ...dataset, rows }, remove) }
+    return { step, status: 'applied', count: remove.size, filled, dataset: removeRows({ ...dataset, rows }, remove) }
   }
 
   const column = indexOf(step.column)

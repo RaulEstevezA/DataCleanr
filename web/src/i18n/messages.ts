@@ -18,6 +18,31 @@ const en = {
   importHint: 'or drag and drop it here',
   importAnother: 'Import another file',
   findDuplicates: 'Find duplicate rows',
+  loadProfile: 'Apply profile',
+  profileTitle: (name: string) => `Profile “${name}”`,
+  profileApplyHint:
+    'Each step is checked against the current data before applying anything. Every applied step is added to the history, so it can be undone.',
+  profileSkipped: { missingColumn: 'Skipped: column not found', unavailable: 'Skipped: not available' },
+  profileSummary: (effective: number, total: number) => `${formatEn(effective)} of ${formatEn(total)} steps will change data`,
+  profileApply: (n: number) => (n === 1 ? 'Apply 1 step' : `Apply ${formatEn(n)} steps`),
+  profileApplied: (name: string, n: number) => `Profile “${name}” applied (${n === 1 ? '1 step' : `${formatEn(n)} steps`}).`,
+  profileError: {
+    invalid: () => 'This file is not a DataCleanr profile.',
+    version: () => 'This profile was created with a newer version of DataCleanr.',
+    step: (n: number) => `The profile has an invalid step (step ${formatEn(n)}).`,
+  },
+  profileSaveLabel: 'Profile name',
+  profileDefaultName: 'My cleaning profile',
+  profileSave: (n: number) => (n === 1 ? 'Save profile (1 step)' : `Save profile (${formatEn(n)} steps)`),
+  profileNotReplayable: (n: number) =>
+    n === 1
+      ? '1 step cannot be saved in a profile (possible duplicates need a person to confirm them).'
+      : `${formatEn(n)} steps cannot be saved in a profile (possible duplicates need a person to confirm them).`,
+  profileSaveHint:
+    'A profile repeats each step on a whole column; changes rejected row by row are not remembered. Duplicates keep the first row.',
+  profileStepCells: (action: string, column: string) => `${action} in “${column}”`,
+  profileStepMap: (column: string, n: number) => `Replace values in “${column}” (${n === 1 ? '1 rule' : `${formatEn(n)} rules`})`,
+  profileStepDuplicates: (columns: string) => `Remove exact duplicates comparing ${columns}`,
   undo: 'Undo',
   redo: 'Redo',
   undoShortcut: 'Undo (Ctrl/Cmd+Z)',
@@ -219,6 +244,31 @@ const es: Messages = {
   importHint: 'o arrástralo aquí',
   importAnother: 'Importar otro archivo',
   findDuplicates: 'Buscar filas duplicadas',
+  loadProfile: 'Aplicar perfil',
+  profileTitle: (name: string) => `Perfil «${name}»`,
+  profileApplyHint:
+    'Antes de aplicar nada se comprueba cada paso con los datos actuales. Cada paso aplicado entra en el historial, así que se puede deshacer.',
+  profileSkipped: { missingColumn: 'Se salta: no existe la columna', unavailable: 'Se salta: no disponible' },
+  profileSummary: (effective: number, total: number) => `${formatEs(effective)} de ${formatEs(total)} pasos cambiarán datos`,
+  profileApply: (n: number) => (n === 1 ? 'Aplicar 1 paso' : `Aplicar ${formatEs(n)} pasos`),
+  profileApplied: (name: string, n: number) => `Perfil «${name}» aplicado (${n === 1 ? '1 paso' : `${formatEs(n)} pasos`}).`,
+  profileError: {
+    invalid: () => 'Este archivo no es un perfil de DataCleanr.',
+    version: () => 'Este perfil se creó con una versión más nueva de DataCleanr.',
+    step: (n: number) => `El perfil tiene un paso no válido (paso ${formatEs(n)}).`,
+  },
+  profileSaveLabel: 'Nombre del perfil',
+  profileDefaultName: 'Mi perfil de limpieza',
+  profileSave: (n: number) => (n === 1 ? 'Guardar perfil (1 paso)' : `Guardar perfil (${formatEs(n)} pasos)`),
+  profileNotReplayable: (n: number) =>
+    n === 1
+      ? '1 paso no se puede guardar en un perfil (los posibles duplicados necesitan que una persona los confirme).'
+      : `${formatEs(n)} pasos no se pueden guardar en un perfil (los posibles duplicados necesitan que una persona los confirme).`,
+  profileSaveHint:
+    'Un perfil repite cada paso sobre la columna entera; los cambios rechazados fila a fila no se recuerdan. En los duplicados se conserva la primera fila.',
+  profileStepCells: (action: string, column: string) => `${action} en «${column}»`,
+  profileStepMap: (column: string, n: number) => `Sustituir valores en «${column}» (${n === 1 ? '1 regla' : `${formatEs(n)} reglas`})`,
+  profileStepDuplicates: (columns: string) => `Eliminar duplicados exactos comparando ${columns}`,
   undo: 'Deshacer',
   redo: 'Rehacer',
   undoShortcut: 'Deshacer (Ctrl/Cmd+Z)',

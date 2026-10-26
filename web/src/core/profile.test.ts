@@ -54,3 +54,12 @@ describe('parseProfile', () => {
     expect(parseProfile(serializeProfile(profile))).toEqual(profile)
   })
 })
+
+describe('profileFileName', () => {
+  it('builds a safe file name', async () => {
+    const { profileFileName } = await import('./profileFile.ts')
+    expect(profileFileName('Clientes mensuales')).toBe('clientes-mensuales.datacleanr.json')
+    expect(profileFileName('Facturación 2024 / España')).toBe('facturacion-2024-espana.datacleanr.json')
+    expect(profileFileName('***')).toBe('profile.datacleanr.json')
+  })
+})

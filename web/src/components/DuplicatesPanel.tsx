@@ -7,6 +7,7 @@ import {
   type MergedRow,
   type SimilarRowsOptions,
 } from '../core/duplicates.ts'
+import type { ProfileStep } from '../core/profile.ts'
 import { useStoredState } from '../hooks/useStoredState.ts'
 import { useI18n } from '../i18n/useI18n.ts'
 import { VisibleText } from './VisibleText.tsx'
@@ -40,7 +41,8 @@ interface GroupPlan {
 
 interface DuplicatesPanelProps {
   dataset: Dataset
-  onRemove: (dataset: Dataset, removedCount: number, mode: Mode, filledCount: number) => void
+  /** `step` is null when the operation cannot be replayed in a profile (possible duplicates). */
+  onRemove: (dataset: Dataset, removedCount: number, mode: Mode, filledCount: number, step: ProfileStep | null) => void
   onClose: () => void
 }
 
@@ -84,7 +86,16 @@ export function DuplicatesPanel({ dataset, onRemove, onClose }: DuplicatesPanelP
   function apply() {
     const rows = [...dataset.rows]
     for (const plan of plans) if (plan?.merged) rows[plan.keep] = plan.merged.row
-    onRemove(removeRows({ ...dataset, rows }, toRemove), toRemove.size, mode, filledCount)
+    const step: ProfileStep | null =
+      mode === 'exact'
+        ? {
+            type: 'removeDuplicates',
+            columns: [...columns].sort((a, b) => a - b).map((c) => dataset.columns[c]),
+            ignoreCaseAndSpaces,
+            merge,
+          }
+        : null
+    onRemove(removeRows({ ...dataset, rows }, toRemove), toRemove.size, mode, filledCount, step)
   }
 
   function resetChoices() {

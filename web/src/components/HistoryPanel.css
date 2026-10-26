@@ -52,3 +52,38 @@
   font-family: var(--mono);
   text-align: right;
 }
+
+.history__save {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.history__save label {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 200px;
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+.history__save input {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--page-bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.875rem;
+}
+
+.history__save input:focus {
+  border-color: var(--accent);
+  outline: none;
+}
