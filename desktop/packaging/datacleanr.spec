@@ -5,6 +5,7 @@
 # Result in dist/: DataCleanr.app on macOS, a DataCleanr folder with DataCleanr.exe on Windows
 # and with the DataCleanr binary on Linux.
 
+import re
 import sys
 import tomllib
 from pathlib import Path
@@ -38,8 +39,9 @@ EXCLUDED = [
 ]
 
 # Qt libraries and plugins that come in through other plugins (the virtual keyboard brings
-# QML and Qt Quick, the PDF image plugin brings QtPdf). Matched against the bundled paths.
-UNUSED_QT = ["QtQml", "QtQuick", "QtVirtualKeyboard", "QtPdf", "QtNetwork", "QtOpenGL", "virtualkeyboard", "qpdf"]
+# QML and Qt Quick, the PDF image plugin brings QtPdf). Matched against the bundled paths:
+# QtQml.framework on macOS, Qt6Qml.dll on Windows, libQt6Qml.so.6 on Linux.
+UNUSED_QT = re.compile(r"Qt6?(Qml|Quick|VirtualKeyboard|Pdf)|virtualkeyboard|qpdf", re.IGNORECASE)
 
 analysis = Analysis(
     [str(HERE / "launcher.py")],
@@ -49,8 +51,8 @@ analysis = Analysis(
     hiddenimports=["PySide6.QtSvg"],
     excludes=EXCLUDED,
 )
-analysis.binaries = [b for b in analysis.binaries if not any(name in b[0] for name in UNUSED_QT)]
-analysis.datas = [d for d in analysis.datas if not any(name in d[0] for name in UNUSED_QT)]
+analysis.binaries = [b for b in analysis.binaries if not UNUSED_QT.search(b[0])]
+analysis.datas = [d for d in analysis.datas if not UNUSED_QT.search(d[0])]
 pyz = PYZ(analysis.pure)
 
 icon = str(HERE / ("icon.ico" if sys.platform == "win32" else "icon.icns"))
