@@ -27,6 +27,7 @@ class DatasetSummary(QFrame):
     import_another = Signal()
     undo = Signal()
     redo = Signal()
+    find_duplicates = Signal()
     column_selected = Signal(int)
     sheet_selected = Signal(str)
 
@@ -45,11 +46,14 @@ class DatasetSummary(QFrame):
         self.stats.setProperty("role", "muted")
         self.import_button = QPushButton()
         self.import_button.clicked.connect(self.import_another)
+        self.duplicates_button = QPushButton()
+        self.duplicates_button.clicked.connect(self.find_duplicates)
         self.undo_button = QPushButton()
         self.undo_button.clicked.connect(self.undo)
         self.redo_button = QPushButton()
         self.redo_button.clicked.connect(self.redo)
         self.modified = 0
+        self.removed = 0
 
         self.sheet_label = QLabel()
         self.sheet_label.setProperty("role", "label")
@@ -66,6 +70,7 @@ class DatasetSummary(QFrame):
         title.addStretch()
         title.addWidget(self.undo_button)
         title.addWidget(self.redo_button)
+        title.addWidget(self.duplicates_button)
         title.addWidget(self.import_button)
         sheet_row = QHBoxLayout()
         sheet_row.addWidget(self.sheet_label)
@@ -117,6 +122,7 @@ class DatasetSummary(QFrame):
         self.undo_button.setToolTip(f"{t.undo} (Ctrl/Cmd+Z)")
         self.redo_button.setText(t.redo)
         self.redo_button.setToolTip(f"{t.redo} (Ctrl/Cmd+Shift+Z)")
+        self.duplicates_button.setText(t.find_duplicates)
         self.sheet_label.setText(t.sheet.upper())
         self.columns_label.setText(t.detected_columns.upper())
         if self._dataset:
@@ -126,6 +132,8 @@ class DatasetSummary(QFrame):
             stats = f"{t.row_count(len(dataset.rows))} · {t.column_count(len(dataset.columns))} · {source}"
             if self.modified:
                 stats += f" · <span style='color:#3fb950'>{t.modified_cells(self.modified)}</span>"
+            if self.removed:
+                stats += f" · <span style='color:#3fb950'>{t.removed_rows(self.removed)}</span>"
             self.stats.setText(stats)
 
 
@@ -134,6 +142,7 @@ class WorkspacePage(QWidget):
     sheet_selected = Signal(str)
     undo = Signal()
     redo = Signal()
+    find_duplicates = Signal()
     # Updated dataset, applied count, action id, profile step
     applied = Signal(object, int, str, object)
 
@@ -146,6 +155,7 @@ class WorkspacePage(QWidget):
         self.summary.column_selected.connect(self.select_column)
         self.summary.undo.connect(self.undo)
         self.summary.redo.connect(self.redo)
+        self.summary.find_duplicates.connect(self.find_duplicates)
 
         self.panel = TransformPanel(i18n)
         self.panel.applied.connect(self.applied)
@@ -189,10 +199,16 @@ class WorkspacePage(QWidget):
         return self.model.selected_column
 
     def set_dataset(
-        self, dataset: Dataset, sheets: list[str] | None = None, modified: int = 0, keep_column: bool = False
+        self,
+        dataset: Dataset,
+        sheets: list[str] | None = None,
+        modified: int = 0,
+        keep_column: bool = False,
+        removed: int = 0,
     ) -> None:
         column = self.selected_column if keep_column else None
         self.summary.modified = modified
+        self.summary.removed = removed
         self.summary.set_dataset(dataset, sheets)
         self.model.empty_text = self._i18n.t.empty_cell
         self.model.set_dataset(dataset)

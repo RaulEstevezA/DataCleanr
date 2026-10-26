@@ -97,6 +97,31 @@ class Messages:
     similar_group_summary: Callable[[int, int], str]
     similar_choose_value: str
     similar_other: str
+    find_duplicates: str
+    duplicates_title: str
+    duplicates_exact: str
+    duplicates_similar: str
+    duplicates_compare: str
+    duplicates_compare_similar: str
+    duplicates_ignore_case: str
+    duplicates_hint: str
+    duplicates_similar_hint: str
+    duplicates_merge: str
+    duplicates_searching: str
+    duplicates_no_columns: str
+    duplicates_none: str
+    duplicates_group: Callable[[int], str]
+    duplicates_similar_group: Callable[[int], str]
+    duplicates_keep: str
+    duplicates_score: str
+    duplicates_result: str
+    duplicates_conflict: str
+    duplicates_truncated: Callable[[int, int], str]
+    duplicates_summary: Callable[[int, int], str]
+    duplicates_filled: Callable[[int], str]
+    duplicates_remove: Callable[[int], str]
+    rows_removed: Callable[[int, int], str]
+    removed_rows: Callable[[int], str]
 
 
 EN = Messages(
@@ -229,6 +254,47 @@ EN = Messages(
     ),
     similar_choose_value="Unify as:",
     similar_other="Other:",
+    find_duplicates="Find duplicate rows",
+    duplicates_title="Duplicate rows",
+    duplicates_exact="Exact",
+    duplicates_similar="Possible (similar)",
+    duplicates_compare="Columns to compare (two rows are duplicates if they match in all of them):",
+    duplicates_compare_similar=(
+        "Columns to compare (rows are scored by their average similarity; leave out columns that are "
+        "always different, like IDs):"
+    ),
+    duplicates_ignore_case="Ignore upper/lower case and extra spaces",
+    duplicates_hint="Rows with all compared columns empty are never treated as duplicates.",
+    duplicates_similar_hint=(
+        "Columns where one of the two rows is empty are skipped, and at least half of the compared columns "
+        "must have data. Groups are not selected by default: confirm the ones that are real duplicates."
+    ),
+    duplicates_merge="Combine rows: fill empty cells of the kept row with data from the removed ones",
+    duplicates_searching="Looking for duplicates...",
+    duplicates_no_columns="Select at least one column to compare.",
+    duplicates_none="No duplicate rows found.",
+    duplicates_group=lambda n: f"{_en(n)} identical rows",
+    duplicates_similar_group=lambda n: f"{_en(n)} similar rows",
+    duplicates_keep="Keep",
+    duplicates_score="Similarity",
+    duplicates_result="Result",
+    duplicates_conflict="The removed rows have different values here; the first one is used. Check it.",
+    duplicates_truncated=lambda shown, total: (
+        f"Showing the first {_en(shown)} of {_en(total)} groups. Hidden exact groups keep their first row; "
+        "hidden possible groups are not modified."
+    ),
+    duplicates_summary=lambda groups, rows: (
+        f"{'1 group' if groups == 1 else f'{_en(groups)} groups'} · "
+        f"{'1 row' if rows == 1 else f'{_en(rows)} rows'} will be removed"
+    ),
+    duplicates_filled=lambda n: "1 empty cell will be filled" if n == 1 else f"{_en(n)} empty cells will be filled",
+    duplicates_remove=lambda n: "Remove 1 row" if n == 1 else f"Remove {_en(n)} rows",
+    rows_removed=lambda n, filled: (
+        f"{'1 duplicate row removed' if n == 1 else f'{_en(n)} duplicate rows removed'}"
+        + (f" and {'1 empty cell' if filled == 1 else f'{_en(filled)} empty cells'} filled" if filled else "")
+        + "."
+    ),
+    removed_rows=lambda n: "1 row removed" if n == 1 else f"{_en(n)} rows removed",
 )
 
 ES = Messages(
@@ -363,6 +429,50 @@ ES = Messages(
     ),
     similar_choose_value="Unificar como:",
     similar_other="Otro:",
+    find_duplicates="Buscar filas duplicadas",
+    duplicates_title="Filas duplicadas",
+    duplicates_exact="Exactas",
+    duplicates_similar="Posibles (parecidas)",
+    duplicates_compare="Columnas a comparar (dos filas son duplicadas si coinciden en todas ellas):",
+    duplicates_compare_similar=(
+        "Columnas a comparar (se puntúa el parecido medio; quita las columnas que siempre son distintas, como los ID):"
+    ),
+    duplicates_ignore_case="Ignorar mayúsculas/minúsculas y espacios sobrantes",
+    duplicates_hint="Las filas con todas las columnas comparadas vacías nunca se consideran duplicadas.",
+    duplicates_similar_hint=(
+        "Las columnas en las que una de las dos filas está vacía no cuentan, y al menos la mitad de las columnas "
+        "comparadas deben tener datos. Los grupos no vienen seleccionados: confirma los que sean duplicados de verdad."
+    ),
+    duplicates_merge="Combinar filas: rellenar las celdas vacías de la fila conservada con los datos de las eliminadas",
+    duplicates_searching="Buscando duplicados...",
+    duplicates_no_columns="Selecciona al menos una columna para comparar.",
+    duplicates_none="No se han encontrado filas duplicadas.",
+    duplicates_group=lambda n: f"{_es(n)} filas iguales",
+    duplicates_similar_group=lambda n: f"{_es(n)} filas parecidas",
+    duplicates_keep="Conservar",
+    duplicates_score="Parecido",
+    duplicates_result="Resultado",
+    duplicates_conflict="Las filas eliminadas tienen valores distintos aquí; se usa el primero. Revísalo.",
+    duplicates_truncated=lambda shown, total: (
+        f"Se muestran los primeros {_es(shown)} de {_es(total)} grupos. En los exactos no mostrados se conserva "
+        "la primera fila; los posibles no mostrados no se modifican."
+    ),
+    duplicates_summary=lambda groups, rows: (
+        f"{'1 grupo' if groups == 1 else f'{_es(groups)} grupos'} · "
+        f"se {'eliminará 1 fila' if rows == 1 else f'eliminarán {_es(rows)} filas'}"
+    ),
+    duplicates_filled=lambda n: "se rellenará 1 celda vacía" if n == 1 else f"se rellenarán {_es(n)} celdas vacías",
+    duplicates_remove=lambda n: "Eliminar 1 fila" if n == 1 else f"Eliminar {_es(n)} filas",
+    rows_removed=lambda n, filled: (
+        f"{'1 fila duplicada eliminada' if n == 1 else f'{_es(n)} filas duplicadas eliminadas'}"
+        + (
+            f" y {'1 celda vacía rellenada' if filled == 1 else f'{_es(filled)} celdas vacías rellenadas'}"
+            if filled
+            else ""
+        )
+        + "."
+    ),
+    removed_rows=lambda n: "1 fila eliminada" if n == 1 else f"{_es(n)} filas eliminadas",
 )
 
 MESSAGES = {"en": EN, "es": ES}

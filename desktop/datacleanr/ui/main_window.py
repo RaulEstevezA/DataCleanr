@@ -22,8 +22,9 @@ from ..io.loader import ExcelReadError, LoadedFile, UnsupportedFileError, load_f
 from ..io.xlsx_file import EmptySheetError, XlsxSheet, sheet_to_dataset
 from ..io.xml_file import XmlImportError
 from .background import run_in_background
+from .duplicates_dialog import DuplicatesDialog
 from .i18n import MESSAGES, I18n
-from .session import CellsOperation, HistoryStep, ImportOperation
+from .session import CellsOperation, HistoryStep, ImportOperation, RemoveRowsOperation
 from .start_page import StartPage
 from .workspace import WorkspacePage
 
@@ -75,6 +76,7 @@ class MainWindow(QMainWindow):
         self.workspace.applied.connect(self.apply_cells)
         self.workspace.undo.connect(lambda: self.move_in_history(undo))
         self.workspace.redo.connect(lambda: self.move_in_history(redo))
+        self.workspace.find_duplicates.connect(self.find_duplicates)
         self.pages = QStackedWidget()
         self.pages.addWidget(self.start_page)
         self.pages.addWidget(self.workspace)
@@ -140,7 +142,8 @@ class MainWindow(QMainWindow):
         original = self.history.entries[0].dataset
         current = self.dataset
         sheets = [sheet.sheet for sheet in self.sheets] if self.sheets else None
-        self.workspace.set_dataset(current, sheets, count_modified_cells(original, current), keep_column)
+        removed = len(original.rows) - len(current.rows)
+        self.workspace.set_dataset(current, sheets, count_modified_cells(original, current), keep_column, removed)
         self.workspace.set_history_state(self.history.can_undo, self.history.can_redo)
 
     def apply_cells(self, updated: Dataset, count: int, action: str, profile_step: dict) -> None:
@@ -150,6 +153,19 @@ class MainWindow(QMainWindow):
         )
         self._refresh(keep_column=True)
         self.workspace.show_notice(self._i18n.t.changes_applied(count, column_label(updated, column)))
+
+    def find_duplicates(self) -> None:
+        if not self.dataset:
+            return
+        dialog = DuplicatesDialog(self._i18n, self.dataset, self)
+        if dialog.exec() and dialog.result:
+            self.apply_removal(dialog.result)
+
+    def apply_removal(self, result) -> None:
+        operation = RemoveRowsOperation(result.mode, result.removed, result.filled)
+        self.history = push_entry(self.history, HistoryStep(result.dataset, operation, result.profile_step))
+        self._refresh()
+        self.workspace.show_notice(self._i18n.t.rows_removed(result.removed, result.filled))
 
     def move_in_history(self, move) -> None:
         if not self.history or self.pages.currentWidget() is not self.workspace:
