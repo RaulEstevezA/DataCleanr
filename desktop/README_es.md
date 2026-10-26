@@ -26,6 +26,7 @@ python -m datacleanr               # ejecutar la aplicación
 ```
 datacleanr/
   core/          Lógica sin interfaz: cada módulo equivale a uno de web/src/core/
+  io/            Lectura y escritura de CSV, Excel, JSON y XML
 tests/           Tests con pytest, leyendo los casos de shared/test-cases/
 pyproject.toml   Dependencias y configuración
 ```

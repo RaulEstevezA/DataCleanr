@@ -26,6 +26,7 @@ python -m datacleanr               # run the application
 ```
 datacleanr/
   core/          Logic without UI: each module mirrors one in web/src/core/
+  io/            Reading and writing CSV, Excel, JSON and XML
 tests/           pytest tests, reading the cases in shared/test-cases/
 pyproject.toml   Dependencies and configuration
 ```
