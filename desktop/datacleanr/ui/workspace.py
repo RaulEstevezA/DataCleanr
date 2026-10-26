@@ -28,6 +28,7 @@ class DatasetSummary(QFrame):
     undo = Signal()
     redo = Signal()
     find_duplicates = Signal()
+    export = Signal()
     column_selected = Signal(int)
     sheet_selected = Signal(str)
 
@@ -46,6 +47,9 @@ class DatasetSummary(QFrame):
         self.stats.setProperty("role", "muted")
         self.import_button = QPushButton()
         self.import_button.clicked.connect(self.import_another)
+        self.export_button = QPushButton()
+        self.export_button.setProperty("primary", True)
+        self.export_button.clicked.connect(self.export)
         self.duplicates_button = QPushButton()
         self.duplicates_button.clicked.connect(self.find_duplicates)
         self.undo_button = QPushButton()
@@ -72,6 +76,7 @@ class DatasetSummary(QFrame):
         title.addWidget(self.redo_button)
         title.addWidget(self.duplicates_button)
         title.addWidget(self.import_button)
+        title.addWidget(self.export_button)
         sheet_row = QHBoxLayout()
         sheet_row.addWidget(self.sheet_label)
         sheet_row.addWidget(self.sheet_combo)
@@ -123,6 +128,7 @@ class DatasetSummary(QFrame):
         self.redo_button.setText(t.redo)
         self.redo_button.setToolTip(f"{t.redo} (Ctrl/Cmd+Shift+Z)")
         self.duplicates_button.setText(t.find_duplicates)
+        self.export_button.setText(t.export)
         self.sheet_label.setText(t.sheet.upper())
         self.columns_label.setText(t.detected_columns.upper())
         if self._dataset:
@@ -143,6 +149,7 @@ class WorkspacePage(QWidget):
     undo = Signal()
     redo = Signal()
     find_duplicates = Signal()
+    export = Signal()
     # Updated dataset, applied count, action id, profile step
     applied = Signal(object, int, str, object)
 
@@ -156,6 +163,7 @@ class WorkspacePage(QWidget):
         self.summary.undo.connect(self.undo)
         self.summary.redo.connect(self.redo)
         self.summary.find_duplicates.connect(self.find_duplicates)
+        self.summary.export.connect(self.export)
 
         self.panel = TransformPanel(i18n)
         self.panel.applied.connect(self.applied)

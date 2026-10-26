@@ -122,6 +122,22 @@ class Messages:
     duplicates_remove: Callable[[int], str]
     rows_removed: Callable[[int, int], str]
     removed_rows: Callable[[int], str]
+    export: str
+    export_title: str
+    export_delimiter: str
+    delimiter_names: dict[str, str]
+    export_csv_hint: str
+    export_types_hint: str
+    export_column: str
+    export_type: str
+    export_example: str
+    export_suggested: str
+    column_type_names: dict[str, str]
+    export_fallbacks: Callable[[int], str]
+    export_error: str
+    exporting: str
+    save_as: str
+    saved: Callable[[str], str]
 
 
 EN = Messages(
@@ -295,6 +311,25 @@ EN = Messages(
         + "."
     ),
     removed_rows=lambda n: "1 row removed" if n == 1 else f"{_en(n)} rows removed",
+    export="Export",
+    export_title="Export",
+    export_delimiter="Column separator",
+    delimiter_names={";": "Semicolon ( ; ), Excel in Spanish", ",": "Comma ( , ), international", "\t": "Tab"},
+    export_csv_hint="Saved as UTF-8 so accents display correctly in Excel and databases.",
+    export_types_hint=(
+        "Choose how each column is saved. The suggestion fits every value of the column; values that cannot be "
+        "converted without losing information (007, 1234,56, 13/07/2024...) are saved as text."
+    ),
+    export_column="Column",
+    export_type="Save as",
+    export_example="Example",
+    export_suggested="suggested",
+    column_type_names={"text": "Text", "number": "Number", "date": "Date", "boolean": "True/False"},
+    export_fallbacks=lambda n: "1 value will stay as text" if n == 1 else f"{_en(n)} values will stay as text",
+    export_error="The file could not be saved. Check that it is not open in another program and try again.",
+    exporting="Saving...",
+    save_as="Save as...",
+    saved=lambda path: f"Saved to {path}",
 )
 
 ES = Messages(
@@ -473,6 +508,29 @@ ES = Messages(
         + "."
     ),
     removed_rows=lambda n: "1 fila eliminada" if n == 1 else f"{_es(n)} filas eliminadas",
+    export="Exportar",
+    export_title="Exportar",
+    export_delimiter="Separador de columnas",
+    delimiter_names={";": "Punto y coma ( ; ), Excel en español", ",": "Coma ( , ), internacional", "\t": "Tabulador"},
+    export_csv_hint="Se guarda en UTF-8 para que las tildes se vean bien en Excel y en bases de datos.",
+    export_types_hint=(
+        "Elige cómo se guarda cada columna. La sugerencia encaja con todos los valores de la columna; los que no se "
+        "pueden convertir sin perder información (007, 1234,56, 13/07/2024...) se guardan como texto."
+    ),
+    export_column="Columna",
+    export_type="Guardar como",
+    export_example="Ejemplo",
+    export_suggested="sugerido",
+    column_type_names={"text": "Texto", "number": "Número", "date": "Fecha", "boolean": "Verdadero/Falso"},
+    export_fallbacks=lambda n: (
+        "1 valor se quedará como texto" if n == 1 else f"{_es(n)} valores se quedarán como texto"
+    ),
+    export_error=(
+        "No se ha podido guardar el archivo. Comprueba que no esté abierto en otro programa e inténtalo de nuevo."
+    ),
+    exporting="Guardando...",
+    save_as="Guardar como...",
+    saved=lambda path: f"Guardado en {path}",
 )
 
 MESSAGES = {"en": EN, "es": ES}

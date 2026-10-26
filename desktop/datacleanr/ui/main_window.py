@@ -23,6 +23,7 @@ from ..io.xlsx_file import EmptySheetError, XlsxSheet, sheet_to_dataset
 from ..io.xml_file import XmlImportError
 from .background import run_in_background
 from .duplicates_dialog import DuplicatesDialog
+from .export_dialog import ExportDialog
 from .i18n import MESSAGES, I18n
 from .session import CellsOperation, HistoryStep, ImportOperation, RemoveRowsOperation
 from .start_page import StartPage
@@ -77,6 +78,7 @@ class MainWindow(QMainWindow):
         self.workspace.undo.connect(lambda: self.move_in_history(undo))
         self.workspace.redo.connect(lambda: self.move_in_history(redo))
         self.workspace.find_duplicates.connect(self.find_duplicates)
+        self.workspace.export.connect(self.export)
         self.pages = QStackedWidget()
         self.pages.addWidget(self.start_page)
         self.pages.addWidget(self.workspace)
@@ -160,6 +162,13 @@ class MainWindow(QMainWindow):
         dialog = DuplicatesDialog(self._i18n, self.dataset, self)
         if dialog.exec() and dialog.result:
             self.apply_removal(dialog.result)
+
+    def export(self) -> None:
+        if not self.dataset:
+            return
+        dialog = ExportDialog(self._i18n, self.dataset, self)
+        if dialog.exec() and dialog.saved_path:
+            self.workspace.show_notice(self._i18n.t.saved(str(dialog.saved_path)))
 
     def apply_removal(self, result) -> None:
         operation = RemoveRowsOperation(result.mode, result.removed, result.filled)
