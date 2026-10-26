@@ -1,0 +1,257 @@
+[
+  {
+    "description": "with every column required, any empty cell makes the row incomplete",
+    "rows": [
+      [
+        "1",
+        "Ana Ruiz",
+        "ana@x.com",
+        "600111111",
+        "VIP"
+      ],
+      [
+        "2",
+        "Juan Pérez",
+        "",
+        "600222222",
+        ""
+      ],
+      [
+        "3",
+        "Laura Navarro",
+        "laura@x.com",
+        "  ",
+        ""
+      ],
+      [
+        "4",
+        "",
+        "pedro@x.com",
+        "600444444",
+        ""
+      ],
+      [
+        "5",
+        "Marta Gil",
+        "marta@x.com",
+        "600555555",
+        ""
+      ]
+    ],
+    "required": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "expected": {
+      "complete": [
+        0
+      ],
+      "incomplete": [
+        1,
+        2,
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "description": "optional columns are ignored (Notes is not required)",
+    "rows": [
+      [
+        "1",
+        "Ana Ruiz",
+        "ana@x.com",
+        "600111111",
+        "VIP"
+      ],
+      [
+        "2",
+        "Juan Pérez",
+        "",
+        "600222222",
+        ""
+      ],
+      [
+        "3",
+        "Laura Navarro",
+        "laura@x.com",
+        "  ",
+        ""
+      ],
+      [
+        "4",
+        "",
+        "pedro@x.com",
+        "600444444",
+        ""
+      ],
+      [
+        "5",
+        "Marta Gil",
+        "marta@x.com",
+        "600555555",
+        ""
+      ]
+    ],
+    "required": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "expected": {
+      "complete": [
+        0,
+        4
+      ],
+      "incomplete": [
+        1,
+        2,
+        3
+      ]
+    }
+  },
+  {
+    "description": "whitespace-only cells count as empty",
+    "rows": [
+      [
+        "1",
+        "Ana Ruiz",
+        "ana@x.com",
+        "600111111",
+        "VIP"
+      ],
+      [
+        "2",
+        "Juan Pérez",
+        "",
+        "600222222",
+        ""
+      ],
+      [
+        "3",
+        "Laura Navarro",
+        "laura@x.com",
+        "  ",
+        ""
+      ],
+      [
+        "4",
+        "",
+        "pedro@x.com",
+        "600444444",
+        ""
+      ],
+      [
+        "5",
+        "Marta Gil",
+        "marta@x.com",
+        "600555555",
+        ""
+      ]
+    ],
+    "required": [
+      3
+    ],
+    "expected": {
+      "complete": [
+        0,
+        1,
+        3,
+        4
+      ],
+      "incomplete": [
+        2
+      ]
+    }
+  },
+  {
+    "description": "with no required columns every row is complete",
+    "rows": [
+      [
+        "1",
+        "Ana Ruiz",
+        "ana@x.com",
+        "600111111",
+        "VIP"
+      ],
+      [
+        "2",
+        "Juan Pérez",
+        "",
+        "600222222",
+        ""
+      ],
+      [
+        "3",
+        "Laura Navarro",
+        "laura@x.com",
+        "  ",
+        ""
+      ],
+      [
+        "4",
+        "",
+        "pedro@x.com",
+        "600444444",
+        ""
+      ],
+      [
+        "5",
+        "Marta Gil",
+        "marta@x.com",
+        "600555555",
+        ""
+      ]
+    ],
+    "required": [],
+    "expected": {
+      "complete": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "incomplete": []
+    }
+  },
+  {
+    "description": "row order is kept in both parts",
+    "rows": [
+      [
+        "a",
+        ""
+      ],
+      [
+        "b",
+        "x"
+      ],
+      [
+        "",
+        "y"
+      ],
+      [
+        "c",
+        "z"
+      ]
+    ],
+    "required": [
+      0,
+      1
+    ],
+    "expected": {
+      "complete": [
+        1,
+        3
+      ],
+      "incomplete": [
+        0,
+        2
+      ]
+    }
+  }
+]
