@@ -12,7 +12,7 @@ Las funciones comunes a ambas versiones se especifican en `shared/test-cases/` (
 - [x] Transformaciones: trim, minúsculas, mayúsculas, Title Case, colapsar espacios
 - [x] Vista previa `original → propuesto` antes de aplicar
 - [x] Exportar CSV limpio
-- [ ] Despliegue en el portfolio (`raulesteveza.github.io/tools/DataCleanr/`)
+- [x] Despliegue en el portfolio (`raulesteveza.github.io/tools/DataCleanr/`)
 
 ## Más adelante
 - [x] Importar Excel (.xlsx), con selector de hoja
