@@ -22,7 +22,7 @@ Nothing is changed without the user seeing it first: every change is shown as `o
 The repository contains two versions of the same tool:
 
 - **[Web](./web/README_en.md)**: React + TypeScript + Vite. Everything runs in the browser. Available at [raulesteveza.github.io/tools/DataCleanr](https://raulesteveza.github.io/tools/DataCleanr/).
-- **[Desktop](./desktop/README_en.md)**: Python + PySide6 (in development).
+- **[Desktop](./desktop/README_en.md)**: Python + PySide6. Downloads for Windows, macOS and Linux in [Releases](https://github.com/RaulEstevezA/DataCleanr/releases/latest).
 
 Both versions share their expected behavior through language-neutral test cases in [`shared/`](./shared/README.md).
 

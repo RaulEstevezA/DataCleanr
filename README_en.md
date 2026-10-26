@@ -76,7 +76,7 @@ DataCleanr helps detect and fix these problems before loading the data into a da
 |---|---|---|
 | Technology | React + TypeScript + Vite | Python + PySide6 + OpenPyXL + RapidFuzz |
 | Runs in | The browser | Installable application (Windows, macOS, Linux) |
-| Status | Published: [raulesteveza.github.io/tools/DataCleanr](https://raulesteveza.github.io/tools/DataCleanr/) | In development |
+| Status | Published: [raulesteveza.github.io/tools/DataCleanr](https://raulesteveza.github.io/tools/DataCleanr/) | [Download](./desktop/README_en.md#download) (tested on macOS) |
 | Documentation | [web/README_en.md](./web/README_en.md) | [desktop/README_en.md](./desktop/README_en.md) |
 
 ## Shared behavior
@@ -91,7 +91,7 @@ The cleaning profile format is shared too: a profile saved in the web version ca
 web/                 Web version (React + TypeScript + Vite)
   src/core/          Logic without UI: transformations, normalization, duplicates, profiles...
   src/components/    React interface
-desktop/             Desktop version (Python), in development
+desktop/             Desktop version (Python + PySide6)
 shared/              Behavior common to both versions
   test-cases/        JSON test cases and sample files
 docs/                Roadmap and images
