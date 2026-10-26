@@ -35,7 +35,9 @@ function describe(t: Messages, step: HistoryStep): string {
     case 'cells':
       return t.historyCells(actionName(t, operation.action), columnLabel(dataset, operation.column), operation.count)
     case 'removeRows':
-      return operation.mode === 'exact' ? t.historyRemoveExact(operation.count) : t.historyRemoveSimilar(operation.count)
+      return operation.mode === 'exact'
+        ? t.historyRemoveExact(operation.count, operation.filled)
+        : t.historyRemoveSimilar(operation.count, operation.filled)
   }
 }
 

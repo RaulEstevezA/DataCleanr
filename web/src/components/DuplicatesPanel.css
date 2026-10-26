@@ -117,3 +117,20 @@
 .duplicates__removed td:nth-child(2) {
   text-decoration: none;
 }
+
+.duplicates__result td {
+  border-top: 1px dashed var(--border);
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.duplicates__result .duplicates__filled {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.duplicates__result .duplicates__conflict {
+  background: var(--warning-soft);
+  color: var(--warning);
+  cursor: help;
+}

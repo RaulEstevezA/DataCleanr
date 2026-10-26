@@ -1,6 +1,12 @@
 import { useMemo, useState } from 'react'
 import { columnLabel, removeRows, rowNumber, type Dataset } from '../core/dataset.ts'
-import { findDuplicateRows, findSimilarRows, type SimilarRowsOptions } from '../core/duplicates.ts'
+import {
+  findDuplicateRows,
+  findSimilarRows,
+  mergeRows,
+  type MergedRow,
+  type SimilarRowsOptions,
+} from '../core/duplicates.ts'
 import { useStoredState } from '../hooks/useStoredState.ts'
 import { useI18n } from '../i18n/useI18n.ts'
 import { VisibleText } from './VisibleText.tsx'
@@ -24,9 +30,17 @@ interface Group {
   scores?: number[]
 }
 
+/** What will happen to one included group. */
+interface GroupPlan {
+  keep: number
+  remove: number[]
+  /** Kept row after filling its empty cells; null when merging is off. */
+  merged: MergedRow | null
+}
+
 interface DuplicatesPanelProps {
   dataset: Dataset
-  onRemove: (dataset: Dataset, removedCount: number, mode: Mode) => void
+  onRemove: (dataset: Dataset, removedCount: number, mode: Mode, filledCount: number) => void
   onClose: () => void
 }
 
@@ -36,6 +50,8 @@ export function DuplicatesPanel({ dataset, onRemove, onClose }: DuplicatesPanelP
   const [mode, setMode] = useState<Mode>('exact')
   const [ignoreCaseAndSpaces, setIgnoreCaseAndSpaces] = useState(false)
   const [similarSettings, setSimilarSettings] = useStoredState('datacleanr.similarRows', defaultSimilarSettings)
+  // Filling empty cells only adds data, so it is on by default (and previewed per group)
+  const [merge, setMerge] = useStoredState('datacleanr.mergeDuplicates', () => true)
   // Per group: which row to keep (default: the first one) and whether the user flipped its inclusion.
   // Exact duplicates are included by default; possible duplicates must be confirmed one by one.
   const [kept, setKept] = useState<Record<number, number>>({})
@@ -51,15 +67,25 @@ export function DuplicatesPanel({ dataset, onRemove, onClose }: DuplicatesPanelP
     if (tooManyRows) return []
     return findSimilarRows(dataset.rows, { columns: sortedColumns, ...similarSettings })
   }, [dataset, columns, mode, ignoreCaseAndSpaces, similarSettings, tooManyRows])
-  const toRemove = useMemo(() => {
-    const indexes = new Set<number>()
-    groups.forEach(({ rows }, g) => {
-      if ((mode === 'exact') === flipped.has(g)) return
-      const keep = kept[g] ?? rows[0]
-      for (const row of rows) if (row !== keep) indexes.add(row)
-    })
-    return indexes
-  }, [groups, kept, flipped, mode])
+  // Indexed like `groups`; null for groups that are not included
+  const plans = useMemo<(GroupPlan | null)[]>(
+    () =>
+      groups.map(({ rows }, g) => {
+        if ((mode === 'exact') === flipped.has(g)) return null
+        const keep = kept[g] ?? rows[0]
+        const merged = merge ? mergeRows(rows.map((row) => dataset.rows[row]), rows.indexOf(keep)) : null
+        return { keep, remove: rows.filter((row) => row !== keep), merged }
+      }),
+    [groups, kept, flipped, mode, merge, dataset],
+  )
+  const toRemove = new Set(plans.flatMap((plan) => plan?.remove ?? []))
+  const filledCount = plans.reduce((sum, plan) => sum + (plan?.merged?.filled.length ?? 0), 0)
+
+  function apply() {
+    const rows = [...dataset.rows]
+    for (const plan of plans) if (plan?.merged) rows[plan.keep] = plan.merged.row
+    onRemove(removeRows({ ...dataset, rows }, toRemove), toRemove.size, mode, filledCount)
+  }
 
   function resetChoices() {
     setKept({})
@@ -153,6 +179,10 @@ export function DuplicatesPanel({ dataset, onRemove, onClose }: DuplicatesPanelP
             </label>
           </div>
         )}
+        <label className="transform-panel__check">
+          <input type="checkbox" checked={merge} onChange={(event) => setMerge(event.target.checked)} />
+          {t.duplicatesMerge}
+        </label>
         <p className="transform-panel__hint">{mode === 'exact' ? t.duplicatesHint : t.duplicatesSimilarHint}</p>
       </div>
 
@@ -170,6 +200,7 @@ export function DuplicatesPanel({ dataset, onRemove, onClose }: DuplicatesPanelP
             {groups.slice(0, MAX_VISIBLE_GROUPS).map(({ rows: group, scores }, g) => {
               const keep = kept[g] ?? group[0]
               const isExcluded = !isIncluded(g)
+              const merged = plans[g]?.merged
               return (
                 <li key={group[0]} className={`duplicates__group${isExcluded ? ' duplicates__group--excluded' : ''}`}>
                   <label className="transform-panel__check duplicates__group-title">
@@ -212,6 +243,24 @@ export function DuplicatesPanel({ dataset, onRemove, onClose }: DuplicatesPanelP
                             ))}
                           </tr>
                         ))}
+                        {merged && merged.filled.length > 0 && (
+                          <tr className="duplicates__result">
+                            <td colSpan={scores ? 3 : 2}>{t.duplicatesResult}</td>
+                            {merged.row.map((cell, c) => {
+                              const isFilled = merged.filled.includes(c)
+                              const isConflict = merged.conflicts.includes(c)
+                              return (
+                                <td
+                                  key={c}
+                                  className={isConflict ? 'duplicates__conflict' : isFilled ? 'duplicates__filled' : undefined}
+                                  title={isConflict ? t.duplicatesConflict : undefined}
+                                >
+                                  <VisibleText value={cell} />
+                                </td>
+                              )
+                            })}
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -227,13 +276,11 @@ export function DuplicatesPanel({ dataset, onRemove, onClose }: DuplicatesPanelP
             </p>
           )}
           <div className="transform-panel__actions">
-            <span className="transform-panel__info">{t.duplicatesSummary(groups.length, toRemove.size)}</span>
-            <button
-              type="button"
-              className="button button--primary"
-              disabled={toRemove.size === 0}
-              onClick={() => onRemove(removeRows(dataset, toRemove), toRemove.size, mode)}
-            >
+            <span className="transform-panel__info">
+              {t.duplicatesSummary(groups.length, toRemove.size)}
+              {filledCount > 0 && ` · ${t.duplicatesFilled(filledCount)}`}
+            </span>
+            <button type="button" className="button button--primary" disabled={toRemove.size === 0} onClick={apply}>
               {t.duplicatesRemove(toRemove.size)}
             </button>
           </div>

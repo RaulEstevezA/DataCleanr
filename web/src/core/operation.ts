@@ -10,4 +10,4 @@ export type CellAction = TransformId | 'custom' | 'phone' | 'date' | 'amount' | 
 export type Operation =
   | { kind: 'import' }
   | { kind: 'cells'; column: number; action: CellAction; count: number }
-  | { kind: 'removeRows'; mode: 'exact' | 'similar'; count: number }
+  | { kind: 'removeRows'; mode: 'exact' | 'similar'; count: number; filled: number }

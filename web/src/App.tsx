@@ -133,10 +133,10 @@ function App() {
     setNotice(null)
   }
 
-  function handleRemoveRows(updated: Dataset, removedCount: number, mode: 'exact' | 'similar') {
-    addStep({ dataset: updated, operation: { kind: 'removeRows', mode, count: removedCount } })
+  function handleRemoveRows(updated: Dataset, removedCount: number, mode: 'exact' | 'similar', filled: number) {
+    addStep({ dataset: updated, operation: { kind: 'removeRows', mode, count: removedCount, filled } })
     setPanel(null)
-    setNotice(() => (m: Messages) => m.rowsRemoved(removedCount))
+    setNotice(() => (m: Messages) => m.rowsRemoved(removedCount, filled))
   }
 
   function handleApply(updated: Dataset, appliedCount: number, action: CellAction) {

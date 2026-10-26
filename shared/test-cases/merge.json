@@ -1,0 +1,210 @@
+[
+  {
+    "description": "empty cells of the kept row are filled from the others",
+    "rows": [
+      [
+        "Ana Ruiz",
+        "ana@lnorte.es",
+        ""
+      ],
+      [
+        "Ana Ruíz",
+        "",
+        "944555666"
+      ]
+    ],
+    "keep": 0,
+    "expected": {
+      "row": [
+        "Ana Ruiz",
+        "ana@lnorte.es",
+        "944555666"
+      ],
+      "filled": [
+        2
+      ],
+      "conflicts": []
+    }
+  },
+  {
+    "description": "existing values are never overwritten",
+    "rows": [
+      [
+        "Ana Ruiz",
+        "ana@lnorte.es"
+      ],
+      [
+        "Ana Ruíz",
+        "otra@x.com"
+      ]
+    ],
+    "keep": 0,
+    "expected": {
+      "row": [
+        "Ana Ruiz",
+        "ana@lnorte.es"
+      ],
+      "filled": [],
+      "conflicts": []
+    }
+  },
+  {
+    "description": "the kept row can be any row of the group",
+    "rows": [
+      [
+        "Ana Ruiz",
+        "ana@lnorte.es",
+        ""
+      ],
+      [
+        "Ana Ruíz",
+        "",
+        "944555666"
+      ]
+    ],
+    "keep": 1,
+    "expected": {
+      "row": [
+        "Ana Ruíz",
+        "ana@lnorte.es",
+        "944555666"
+      ],
+      "filled": [
+        1
+      ],
+      "conflicts": []
+    }
+  },
+  {
+    "description": "whitespace-only cells count as empty",
+    "rows": [
+      [
+        "Juan",
+        "  "
+      ],
+      [
+        "Juan",
+        "600123456"
+      ]
+    ],
+    "keep": 0,
+    "expected": {
+      "row": [
+        "Juan",
+        "600123456"
+      ],
+      "filled": [
+        1
+      ],
+      "conflicts": []
+    }
+  },
+  {
+    "description": "different candidates: the first one in row order wins and it is reported",
+    "rows": [
+      [
+        "Juan",
+        ""
+      ],
+      [
+        "Juan",
+        "600111111"
+      ],
+      [
+        "Juan",
+        "600222222"
+      ]
+    ],
+    "keep": 0,
+    "expected": {
+      "row": [
+        "Juan",
+        "600111111"
+      ],
+      "filled": [
+        1
+      ],
+      "conflicts": [
+        1
+      ]
+    }
+  },
+  {
+    "description": "equal candidates are not a conflict",
+    "rows": [
+      [
+        "Juan",
+        ""
+      ],
+      [
+        "Juan",
+        "600111111"
+      ],
+      [
+        "Juan",
+        "600111111"
+      ]
+    ],
+    "keep": 0,
+    "expected": {
+      "row": [
+        "Juan",
+        "600111111"
+      ],
+      "filled": [
+        1
+      ],
+      "conflicts": []
+    }
+  },
+  {
+    "description": "candidates differing only in surrounding spaces are not a conflict",
+    "rows": [
+      [
+        "Juan",
+        ""
+      ],
+      [
+        "Juan",
+        "Valencia"
+      ],
+      [
+        "Juan",
+        " Valencia "
+      ]
+    ],
+    "keep": 0,
+    "expected": {
+      "row": [
+        "Juan",
+        "Valencia"
+      ],
+      "filled": [
+        1
+      ],
+      "conflicts": []
+    }
+  },
+  {
+    "description": "nothing to fill when every candidate is empty too",
+    "rows": [
+      [
+        "Juan",
+        ""
+      ],
+      [
+        "Juan",
+        ""
+      ]
+    ],
+    "keep": 0,
+    "expected": {
+      "row": [
+        "Juan",
+        ""
+      ],
+      "filled": [],
+      "conflicts": []
+    }
+  }
+]

@@ -137,3 +137,32 @@ export function findSimilarRows(
   })
   return groups.filter((group) => group.rows.length > 1)
 }
+
+export interface MergedRow {
+  row: string[]
+  /** Columns of the kept row that were empty and got a value from another row. */
+  filled: number[]
+  /** Filled columns where the other rows had different values (the first one was used). */
+  conflicts: number[]
+}
+
+/**
+ * Combines a group of duplicate rows into the kept one: its empty cells are filled
+ * with the first non-empty value found in the other rows (in row order). Values
+ * already in the kept row are never overwritten.
+ */
+export function mergeRows(rows: string[][], keep: number): MergedRow {
+  const row = [...rows[keep]]
+  const others = rows.filter((_, i) => i !== keep)
+  const filled: number[] = []
+  const conflicts: number[] = []
+  row.forEach((cell, c) => {
+    if (cell.trim() !== '') return
+    const candidates = others.map((other) => other[c]).filter((value) => value.trim() !== '')
+    if (candidates.length === 0) return
+    row[c] = candidates[0]
+    filled.push(c)
+    if (new Set(candidates.map((value) => value.trim())).size > 1) conflicts.push(c)
+  })
+  return { row, filled, conflicts }
+}

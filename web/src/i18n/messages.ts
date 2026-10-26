@@ -26,11 +26,16 @@ const en = {
   historyImport: (file: string) => `Import “${file}”`,
   historyCells: (action: string, column: string, count: number) =>
     `${action} in “${column}” (${count === 1 ? '1 cell' : `${formatEn(count)} cells`})`,
-  historyRemoveExact: (n: number) => `Remove exact duplicates (${n === 1 ? '1 row' : `${formatEn(n)} rows`})`,
-  historyRemoveSimilar: (n: number) => `Remove possible duplicates (${n === 1 ? '1 row' : `${formatEn(n)} rows`})`,
+  historyRemoveExact: (n: number, filled: number) =>
+    `Remove exact duplicates (${n === 1 ? '1 row' : `${formatEn(n)} rows`}${filled > 0 ? `, ${formatEn(filled)} filled` : ''})`,
+  historyRemoveSimilar: (n: number, filled: number) =>
+    `Remove possible duplicates (${n === 1 ? '1 row' : `${formatEn(n)} rows`}${filled > 0 ? `, ${formatEn(filled)} filled` : ''})`,
   historyHint: 'Click a step to go back to it. Applying a new change discards the steps after it.',
   removedRows: (n: number) => (n === 1 ? '1 row removed' : `${formatEn(n)} rows removed`),
-  rowsRemoved: (n: number) => (n === 1 ? '1 duplicate row removed.' : `${formatEn(n)} duplicate rows removed.`),
+  rowsRemoved: (n: number, filled: number) =>
+    `${n === 1 ? '1 duplicate row removed' : `${formatEn(n)} duplicate rows removed`}${
+      filled > 0 ? ` and ${filled === 1 ? '1 empty cell' : `${formatEn(filled)} empty cells`} filled` : ''
+    }.`,
   close: 'Close',
   duplicatesTitle: 'Duplicate rows',
   duplicatesMode: 'Kind of duplicates',
@@ -53,6 +58,10 @@ const en = {
   duplicatesNone: 'No duplicate rows found.',
   duplicatesGroup: (n: number) => `${formatEn(n)} identical rows`,
   duplicatesKeep: 'Keep',
+  duplicatesMerge: 'Combine rows: fill empty cells of the kept row with data from the removed ones',
+  duplicatesResult: 'Result',
+  duplicatesConflict: 'The removed rows have different values here; the first one is used. Check it.',
+  duplicatesFilled: (n: number) => (n === 1 ? '1 empty cell will be filled' : `${formatEn(n)} empty cells will be filled`),
   duplicatesKeepRow: (row: number) => `Keep row ${formatEn(row)}`,
   duplicatesTruncated: (shown: number, total: number) =>
     `Showing the first ${formatEn(shown)} of ${formatEn(total)} groups. Hidden groups keep their first row.`,
@@ -214,11 +223,16 @@ const es: Messages = {
   historyImport: (file: string) => `Importar «${file}»`,
   historyCells: (action: string, column: string, count: number) =>
     `${action} en «${column}» (${count === 1 ? '1 celda' : `${formatEs(count)} celdas`})`,
-  historyRemoveExact: (n: number) => `Eliminar duplicados exactos (${n === 1 ? '1 fila' : `${formatEs(n)} filas`})`,
-  historyRemoveSimilar: (n: number) => `Eliminar posibles duplicados (${n === 1 ? '1 fila' : `${formatEs(n)} filas`})`,
+  historyRemoveExact: (n: number, filled: number) =>
+    `Eliminar duplicados exactos (${n === 1 ? '1 fila' : `${formatEs(n)} filas`}${filled > 0 ? `, ${formatEs(filled)} rellenadas` : ''})`,
+  historyRemoveSimilar: (n: number, filled: number) =>
+    `Eliminar posibles duplicados (${n === 1 ? '1 fila' : `${formatEs(n)} filas`}${filled > 0 ? `, ${formatEs(filled)} rellenadas` : ''})`,
   historyHint: 'Haz clic en un paso para volver a él. Si aplicas un cambio nuevo, se descartan los pasos posteriores.',
   removedRows: (n: number) => (n === 1 ? '1 fila eliminada' : `${formatEs(n)} filas eliminadas`),
-  rowsRemoved: (n: number) => (n === 1 ? '1 fila duplicada eliminada.' : `${formatEs(n)} filas duplicadas eliminadas.`),
+  rowsRemoved: (n: number, filled: number) =>
+    `${n === 1 ? '1 fila duplicada eliminada' : `${formatEs(n)} filas duplicadas eliminadas`}${
+      filled > 0 ? ` y ${filled === 1 ? '1 celda vacía rellenada' : `${formatEs(filled)} celdas vacías rellenadas`}` : ''
+    }.`,
   close: 'Cerrar',
   duplicatesTitle: 'Filas duplicadas',
   duplicatesMode: 'Tipo de duplicados',
@@ -241,6 +255,10 @@ const es: Messages = {
   duplicatesNone: 'No se han encontrado filas duplicadas.',
   duplicatesGroup: (n: number) => `${formatEs(n)} filas iguales`,
   duplicatesKeep: 'Conservar',
+  duplicatesMerge: 'Combinar filas: rellenar las celdas vacías de la fila conservada con los datos de las eliminadas',
+  duplicatesResult: 'Resultado',
+  duplicatesConflict: 'Las filas eliminadas tienen valores distintos aquí; se usa el primero. Revísalo.',
+  duplicatesFilled: (n: number) => (n === 1 ? 'se rellenará 1 celda vacía' : `se rellenarán ${formatEs(n)} celdas vacías`),
   duplicatesKeepRow: (row: number) => `Conservar la fila ${formatEs(row)}`,
   duplicatesTruncated: (shown: number, total: number) =>
     `Se muestran los primeros ${formatEs(shown)} de ${formatEs(total)} grupos. En los no mostrados se conserva la primera fila.`,
