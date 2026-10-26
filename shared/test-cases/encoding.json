@@ -1,0 +1,38 @@
+[
+  {
+    "description": "plain UTF-8 with accents",
+    "bytes": "45 6D 70 72 65 73 61 3B 54 65 6C C3 A9 66 6F 6E 6F 0A 46 72 75 74 61 73 20 4D 61 72 74 C3 AD 6E 65 7A 3B 50 65 C3 B1 61 20 E2 82 AC 20 C3 BC",
+    "expectedText": "Empresa;Teléfono\nFrutas Martínez;Peña € ü",
+    "expectedEncoding": "utf-8"
+  },
+  {
+    "description": "UTF-8 with BOM (Excel 'CSV UTF-8'): BOM is removed",
+    "bytes": "EF BB BF 45 6D 70 72 65 73 61 3B 54 65 6C C3 A9 66 6F 6E 6F 0A 46 72 75 74 61 73 20 4D 61 72 74 C3 AD 6E 65 7A 3B 50 65 C3 B1 61 20 E2 82 AC 20 C3 BC",
+    "expectedText": "Empresa;Teléfono\nFrutas Martínez;Peña € ü",
+    "expectedEncoding": "utf-8"
+  },
+  {
+    "description": "Windows-1252 (Excel 'CSV' on Spanish Windows)",
+    "bytes": "45 6D 70 72 65 73 61 3B 54 65 6C E9 66 6F 6E 6F 0A 46 72 75 74 61 73 20 4D 61 72 74 ED 6E 65 7A 3B 50 65 F1 61 20 80 20 FC",
+    "expectedText": "Empresa;Teléfono\nFrutas Martínez;Peña € ü",
+    "expectedEncoding": "windows-1252"
+  },
+  {
+    "description": "UTF-16 LE with BOM (Excel 'Unicode text')",
+    "bytes": "FF FE 45 00 6D 00 70 00 72 00 65 00 73 00 61 00 3B 00 54 00 65 00 6C 00 E9 00 66 00 6F 00 6E 00 6F 00 0A 00 46 00 72 00 75 00 74 00 61 00 73 00 20 00 4D 00 61 00 72 00 74 00 ED 00 6E 00 65 00 7A 00 3B 00 50 00 65 00 F1 00 61 00 20 00 AC 20 20 00 FC 00",
+    "expectedText": "Empresa;Teléfono\nFrutas Martínez;Peña € ü",
+    "expectedEncoding": "utf-16le"
+  },
+  {
+    "description": "UTF-16 BE with BOM",
+    "bytes": "FE FF 00 45 00 6D 00 70 00 72 00 65 00 73 00 61 00 3B 00 54 00 65 00 6C 00 E9 00 66 00 6F 00 6E 00 6F 00 0A 00 46 00 72 00 75 00 74 00 61 00 73 00 20 00 4D 00 61 00 72 00 74 00 ED 00 6E 00 65 00 7A 00 3B 00 50 00 65 00 F1 00 61 00 20 20 AC 00 20 00 FC",
+    "expectedText": "Empresa;Teléfono\nFrutas Martínez;Peña € ü",
+    "expectedEncoding": "utf-16be"
+  },
+  {
+    "description": "pure ASCII is reported as UTF-8",
+    "bytes": "61 3B 62 0A 31 3B 32",
+    "expectedText": "a;b\n1;2",
+    "expectedEncoding": "utf-8"
+  }
+]

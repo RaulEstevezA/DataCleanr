@@ -41,7 +41,7 @@ describe('serializeCsv', () => {
   })
 
   it('quotes values containing the delimiter, quotes or line breaks', () => {
-    const csv = serializeCsv({ fileName: 'a.csv', delimiter: ',', columns: ['a'], rows: [['x,y'], ['say "hi"'], ['l1\nl2']] })
+    const csv = serializeCsv({ fileName: 'a.csv', delimiter: ',', encoding: 'utf-8', columns: ['a'], rows: [['x,y'], ['say "hi"'], ['l1\nl2']] })
     expect(csv).toBe('﻿a\r\n"x,y"\r\n"say ""hi"""\r\n"l1\nl2"')
   })
 

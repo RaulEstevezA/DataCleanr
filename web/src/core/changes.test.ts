@@ -6,6 +6,7 @@ import { transforms } from './transforms.ts'
 const dataset: Dataset = {
   fileName: 'test.csv',
   delimiter: ',',
+  encoding: 'utf-8',
   columns: ['Empresa', 'Ciudad'],
   rows: [
     ['  TRANSGRAU ', ' Valencia'],

@@ -2,6 +2,8 @@
  * In-memory table loaded from a file. Rows are kept as arrays (not objects)
  * so column order is preserved and duplicate header names are allowed.
  */
+import type { TextEncodingName } from './encoding.ts'
+
 export interface Dataset {
   fileName: string
   /** Header names exactly as they appear in the file (may be empty). */
@@ -9,6 +11,8 @@ export interface Dataset {
   rows: string[][]
   /** Delimiter detected on import, reused on export. */
   delimiter: string
+  /** Encoding detected on import. Export is always UTF-8. */
+  encoding: TextEncodingName
 }
 
 /** Name to display for a column; empty headers get a positional fallback. */

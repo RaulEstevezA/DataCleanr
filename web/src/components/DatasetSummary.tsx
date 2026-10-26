@@ -28,7 +28,8 @@ export function DatasetSummary({
         <div>
           <h2 className="dataset-summary__file">{dataset.fileName}</h2>
           <p className="dataset-summary__stats">
-            {t.rowCount(format(dataset.rows.length))} · {t.columnCount(format(dataset.columns.length))}
+            {t.rowCount(format(dataset.rows.length))} · {t.columnCount(format(dataset.columns.length))} ·{' '}
+            {dataset.encoding.toUpperCase()}
             {modifiedCells > 0 && (
               <span className="dataset-summary__modified"> · {t.modifiedCells(format(modifiedCells))}</span>
             )}

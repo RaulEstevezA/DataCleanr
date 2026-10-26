@@ -1,5 +1,6 @@
 import Papa from 'papaparse'
 import type { Dataset } from './dataset.ts'
+import { decodeText, type TextEncodingName } from './encoding.ts'
 
 export class CsvParseError extends Error {}
 
@@ -7,21 +8,22 @@ export class CsvParseError extends Error {}
 const UTF8_BOM = '﻿'
 
 /** Parses CSV text. The delimiter is auto-detected and values are kept exactly as written. */
-export function parseCsvText(text: string, fileName: string): Dataset {
+export function parseCsvText(text: string, fileName: string, encoding: TextEncodingName = 'utf-8'): Dataset {
   const { data, meta } = Papa.parse<string[]>(text.replace(/^﻿/, ''), { skipEmptyLines: 'greedy' })
   const [header, ...rows] = data
   if (!header) throw new CsvParseError('empty')
   // Pad or trim each row so every row has exactly one cell per column
   const normalizedRows = rows.map((row) => header.map((_, i) => row[i] ?? ''))
-  return { fileName, columns: header, rows: normalizedRows, delimiter: meta.delimiter }
+  return { fileName, columns: header, rows: normalizedRows, delimiter: meta.delimiter, encoding }
 }
 
-/** Reads and parses a CSV file entirely in the browser. */
+/** Reads and parses a CSV file entirely in the browser, detecting its text encoding. */
 export async function parseCsvFile(file: File): Promise<Dataset> {
-  return parseCsvText(await file.text(), file.name)
+  const { text, encoding } = decodeText(new Uint8Array(await file.arrayBuffer()))
+  return parseCsvText(text, file.name, encoding)
 }
 
-/** Serializes the dataset back to CSV using its original delimiter. */
+/** Serializes the dataset back to CSV using its original delimiter. Always UTF-8, whatever the input encoding. */
 export function serializeCsv(dataset: Dataset): string {
   return (
     UTF8_BOM +
