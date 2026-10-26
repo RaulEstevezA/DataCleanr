@@ -94,12 +94,12 @@ def test_no_changes_message(window, tmp_path):
 
 
 def test_normalizers_show_issues_and_preview(window, tmp_path):
-    from PySide6.QtCore import QSettings
-
-    QSettings().setValue("phoneOptions", '{"defaultCountry": "ES", "format": "E164"}')
     window._i18n.set_language("es")
     load(window, tmp_path, "Teléfono;Fecha;Importe\n600 123 456;13/07/2024;€12,50\nno tiene;31/04/2024;$3.99\n")
     panel = window.workspace.panel
+    # The default country comes from the system (US on the GitHub runners)
+    country = panel.forms["phone"].country
+    country.setCurrentIndex(country.findData("ES"))
 
     window.workspace.select_column(0)
     panel.select_action("phone")
