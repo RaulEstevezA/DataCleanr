@@ -162,6 +162,24 @@
       }
     },
     {
+      "description": "dates before 1900 stay as text (Excel cannot store them)",
+      "value": "1899-12-31",
+      "type": "date",
+      "expected": {
+        "type": "text",
+        "value": "1899-12-31"
+      }
+    },
+    {
+      "description": "1900-01-01 is the first date Excel can store",
+      "value": "1900-01-01",
+      "type": "date",
+      "expected": {
+        "type": "date",
+        "value": "1900-01-01"
+      }
+    },
+    {
       "description": "TRUE",
       "value": "TRUE",
       "type": "boolean",
@@ -186,6 +204,15 @@
       "expected": {
         "type": "text",
         "value": "sí"
+      }
+    },
+    {
+      "description": "text that looks like a formula stays text",
+      "value": "=1+1",
+      "type": "text",
+      "expected": {
+        "type": "text",
+        "value": "=1+1"
       }
     }
   ],

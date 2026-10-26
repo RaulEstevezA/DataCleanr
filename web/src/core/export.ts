@@ -14,6 +14,8 @@ const NUMBER = /^-?(0|[1-9]\d*)(\.\d+)?$/
 const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})(?: (\d{2}):(\d{2}):(\d{2}))?$/
 // Excel (like JavaScript and Python floats) keeps 15 significant digits safely
 const MAX_SIGNIFICANT_DIGITS = 15
+// Excel's date system starts on 1900-01-01: earlier dates cannot be stored as dates
+const FIRST_EXCEL_YEAR = 1900
 
 function toNumber(value: string): number | null {
   if (!NUMBER.test(value)) return null
@@ -23,13 +25,14 @@ function toNumber(value: string): number | null {
   return significant.length - trailingZeros > MAX_SIGNIFICANT_DIGITS ? null : Number(value)
 }
 
-function isIsoDate(value: string): boolean {
+function isExcelDate(value: string): boolean {
   const match = ISO_DATE.exec(value)
   if (!match) return false
   const [year, month, day, hours = 0, minutes = 0, seconds = 0] = match
     .slice(1)
     .filter((part) => part !== undefined)
     .map(Number)
+  if (year < FIRST_EXCEL_YEAR) return false
   // Round-trip through Date: impossible dates (Feb 29 2023, 25:00...) come back different
   const date = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds))
   return (
@@ -58,7 +61,7 @@ export function toTypedCell(value: string, type: ColumnType): TypedCell {
     const number = toNumber(value)
     if (number !== null) return { type: 'number', value: number }
   }
-  if (type === 'date' && isIsoDate(value)) return { type: 'date', value }
+  if (type === 'date' && isExcelDate(value)) return { type: 'date', value }
   if (type === 'boolean') {
     const boolean = toBoolean(value)
     if (boolean !== null) return { type: 'boolean', value: boolean }
