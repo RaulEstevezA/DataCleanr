@@ -253,6 +253,28 @@
     "expectedStatus": "invalid"
   },
   {
+    "description": "invalid: year 0 does not exist",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "0000-01-01",
+    "expected": "0000-01-01",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "years below 100 use their own leap rule (year 4 is a leap year)",
+    "options": {
+      "inputOrder": "DMY",
+      "format": "ISO",
+      "twoDigitYearLimit": 29
+    },
+    "input": "0004-02-29",
+    "expected": "0004-02-29",
+    "expectedStatus": "valid"
+  },
+  {
     "description": "invalid: day 31 in a 30-day month",
     "options": {
       "inputOrder": "DMY",

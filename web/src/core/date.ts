@@ -30,10 +30,14 @@ function expandYear(year: string, limit: number): number {
   return value <= limit ? 2000 + value : 1900 + value
 }
 
+const isLeapYear = (year: number) => (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0
+
+const DAYS_IN_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+/** Plain calendar arithmetic: JavaScript's Date maps years 0-99 to 1900-1999, which would break year 0 and leap days. */
 function isRealDate(year: number, month: number, day: number): boolean {
-  if (month < 1 || month > 12 || day < 1) return false
-  // Day 0 of the next month is the last day of this one
-  const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate()
+  if (year < 1 || month < 1 || month > 12 || day < 1) return false
+  const daysInMonth = month === 2 && isLeapYear(year) ? 29 : DAYS_IN_MONTH[month - 1]
   return day <= daysInMonth
 }
 
