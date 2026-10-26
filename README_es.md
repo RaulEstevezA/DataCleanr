@@ -97,6 +97,10 @@ shared/              Comportamiento común a ambas versiones
 docs/                Roadmap e imágenes
 ```
 
+## Sugerencias
+
+Ideas de mejora, errores o algún formato que te gustaría que DataCleanr admitiera: escríbeme a [contact.raulesteveza@gmail.com](mailto:contact.raulesteveza@gmail.com).
+
 ## Desarrollador
 
 **Raul Estevez**

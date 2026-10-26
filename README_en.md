@@ -97,6 +97,10 @@ shared/              Behavior common to both versions
 docs/                Roadmap and images
 ```
 
+## Suggestions
+
+Ideas for improvements, bugs or a format you would like DataCleanr to support: write to [contact.raulesteveza@gmail.com](mailto:contact.raulesteveza@gmail.com).
+
 ## Developer
 
 **Raul Estevez**

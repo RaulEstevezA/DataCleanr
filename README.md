@@ -26,6 +26,10 @@ The repository contains two versions of the same tool:
 
 Both versions share their expected behavior through language-neutral test cases in [`shared/`](./shared/README.md).
 
+## Suggestions
+
+Ideas for improvements, bugs or a format you would like DataCleanr to support: write to [contact.raulesteveza@gmail.com](mailto:contact.raulesteveza@gmail.com).
+
 ## Developer
 
 **Raul Estevez**
