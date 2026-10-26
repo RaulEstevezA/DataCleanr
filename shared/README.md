@@ -10,6 +10,10 @@ JSON test cases that define the expected behavior of every feature available in 
 
 When adding a feature that exists in both versions, add its cases here first. Features exclusive to one version keep their tests in that version only.
 
+## Cleaning profiles
+
+A profile is a JSON file with the steps to repeat on another file (`"format": "datacleanr-profile"`, `"version": 1`). Both versions read and write the same format; `test-cases/profile.json` has a full example with every step type. Columns are referenced by name, and steps whose column is missing are skipped.
+
 ## How it maps to each version
 
 Shared logic lives in a `core/` folder in each version, with no UI dependencies:

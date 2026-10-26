@@ -1,0 +1,253 @@
+{
+  "run": [
+    {
+      "description": "every step type, in order, on a small file",
+      "columns": [
+        "ID",
+        "Empresa",
+        "Contacto",
+        "Teléfono",
+        "Fecha alta",
+        "Importe",
+        "Email"
+      ],
+      "rows": [
+        [
+          "1",
+          "  TRANSGRAU ",
+          "laura   NAVARRO",
+          "600 123 456",
+          "13/07/2024",
+          "4.072,67",
+          "laura@x.com"
+        ],
+        [
+          "2",
+          "Trans Grau SL",
+          "  juan pérez",
+          "+34611222333",
+          "2024-01-12",
+          "12063.99 €",
+          ""
+        ],
+        [
+          "3",
+          "Logística Norte",
+          "ANA RUIZ",
+          "no tiene",
+          "31/04/2024",
+          "€8512",
+          "ana@x.com"
+        ],
+        [
+          "4",
+          "  TRANSGRAU ",
+          "laura   NAVARRO",
+          "",
+          "13/07/2024",
+          "4.072,67",
+          "laura@x.com"
+        ]
+      ],
+      "profile": {
+        "format": "datacleanr-profile",
+        "version": 1,
+        "name": "Clientes mensuales",
+        "steps": [
+          {
+            "type": "transform",
+            "column": "Empresa",
+            "transform": "trim"
+          },
+          {
+            "type": "transform",
+            "column": "Contacto",
+            "transform": "trim"
+          },
+          {
+            "type": "transform",
+            "column": "Contacto",
+            "transform": "collapseSpaces"
+          },
+          {
+            "type": "transform",
+            "column": "Contacto",
+            "transform": "titleCase"
+          },
+          {
+            "type": "map",
+            "column": "Empresa",
+            "mapping": [
+              {
+                "from": "TRANSGRAU",
+                "to": "TransGrau S.L."
+              },
+              {
+                "from": "Trans Grau SL",
+                "to": "TransGrau S.L."
+              }
+            ]
+          },
+          {
+            "type": "phone",
+            "column": "Teléfono",
+            "defaultCountry": "ES",
+            "format": "E164"
+          },
+          {
+            "type": "date",
+            "column": "Fecha alta",
+            "inputOrder": "DMY",
+            "format": "ISO",
+            "twoDigitYearLimit": 29
+          },
+          {
+            "type": "amount",
+            "column": "Importe",
+            "ambiguousDecimal": ",",
+            "format": "DOT",
+            "twoDecimals": true
+          },
+          {
+            "type": "replace",
+            "column": "Email",
+            "find": "@x.com",
+            "replacement": "@ejemplo.com",
+            "wholeCell": false,
+            "ignoreCase": true
+          },
+          {
+            "type": "transform",
+            "column": "Ciudad",
+            "transform": "trim"
+          },
+          {
+            "type": "removeDuplicates",
+            "columns": [
+              "Empresa",
+              "Contacto",
+              "Email"
+            ],
+            "ignoreCaseAndSpaces": false,
+            "merge": true
+          }
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "status": "applied",
+            "count": 2
+          },
+          {
+            "status": "applied",
+            "count": 1
+          },
+          {
+            "status": "applied",
+            "count": 2
+          },
+          {
+            "status": "applied",
+            "count": 4
+          },
+          {
+            "status": "applied",
+            "count": 3
+          },
+          {
+            "status": "applied",
+            "count": 1
+          },
+          {
+            "status": "applied",
+            "count": 2
+          },
+          {
+            "status": "applied",
+            "count": 4
+          },
+          {
+            "status": "applied",
+            "count": 3
+          },
+          {
+            "status": "skipped",
+            "reason": "missingColumn",
+            "count": 0
+          },
+          {
+            "status": "applied",
+            "count": 1
+          }
+        ],
+        "rows": [
+          [
+            "1",
+            "TransGrau S.L.",
+            "Laura Navarro",
+            "+34600123456",
+            "2024-07-13",
+            "4072.67",
+            "laura@ejemplo.com"
+          ],
+          [
+            "2",
+            "TransGrau S.L.",
+            "Juan Pérez",
+            "+34611222333",
+            "2024-01-12",
+            "12063.99",
+            ""
+          ],
+          [
+            "3",
+            "Logística Norte",
+            "Ana Ruiz",
+            "no tiene",
+            "31/04/2024",
+            "8512.00",
+            "ana@ejemplo.com"
+          ]
+        ],
+        "rowIds": [
+          0,
+          1,
+          2
+        ]
+      }
+    }
+  ],
+  "invalid": [
+    {
+      "description": "not JSON",
+      "input": "hola",
+      "reason": "invalid"
+    },
+    {
+      "description": "JSON that is not a profile",
+      "input": "{\"steps\": []}",
+      "reason": "invalid"
+    },
+    {
+      "description": "a profile from a newer version",
+      "input": "{\"format\": \"datacleanr-profile\", \"version\": 2, \"name\": \"x\", \"steps\": []}",
+      "reason": "version"
+    },
+    {
+      "description": "unknown step type",
+      "input": "{\"format\": \"datacleanr-profile\", \"version\": 1, \"name\": \"x\", \"steps\": [{\"type\": \"magic\", \"column\": \"A\"}]}",
+      "reason": "step"
+    },
+    {
+      "description": "unknown transform",
+      "input": "{\"format\": \"datacleanr-profile\", \"version\": 1, \"name\": \"x\", \"steps\": [{\"type\": \"transform\", \"column\": \"A\", \"transform\": \"reverse\"}]}",
+      "reason": "step"
+    },
+    {
+      "description": "missing option",
+      "input": "{\"format\": \"datacleanr-profile\", \"version\": 1, \"name\": \"x\", \"steps\": [{\"type\": \"date\", \"column\": \"A\", \"inputOrder\": \"DMY\", \"format\": \"ISO\"}]}",
+      "reason": "step"
+    }
+  ]
+}
