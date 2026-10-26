@@ -1,0 +1,24 @@
+.language-switcher {
+  display: flex;
+  gap: 4px;
+}
+
+.language-switcher__option {
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: none;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.language-switcher__option:hover {
+  color: var(--text);
+}
+
+.language-switcher__option[aria-pressed='true'] {
+  border-color: var(--border);
+  background: var(--surface-raised);
+  color: var(--text);
+}

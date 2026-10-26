@@ -32,3 +32,10 @@
   color: var(--success);
   font-size: 0.8125rem;
 }
+
+.app-header__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
