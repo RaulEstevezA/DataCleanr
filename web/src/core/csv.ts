@@ -40,7 +40,10 @@ export function serializeCsv(dataset: Dataset): string {
   )
 }
 
-/** "clientes.csv" (or .xlsx, .json, .xml) -> "clientes_clean.csv" (or .xlsx) */
-export function cleanFileName(fileName: string, extension: 'csv' | 'xlsx' = 'csv'): string {
-  return fileName.replace(/(\.(csv|xlsx|json|xml))?$/i, `_clean.${extension}`)
+/**
+ * "clientes.csv" (or .xlsx, .json, .xml) -> "clientes_clean.csv" (or .xlsx).
+ * With a part: "clientes_clean_complete.csv". Suffixes are in English so file names don't depend on the language.
+ */
+export function cleanFileName(fileName: string, extension: 'csv' | 'xlsx' = 'csv', part?: string): string {
+  return fileName.replace(/(\.(csv|xlsx|json|xml))?$/i, `_clean${part ? `_${part}` : ''}.${extension}`)
 }

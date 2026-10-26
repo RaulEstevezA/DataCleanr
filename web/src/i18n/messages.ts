@@ -122,6 +122,17 @@ const en = {
   columnTypeNames: { text: 'Text', number: 'Number', date: 'Date', boolean: 'True/False' } satisfies Record<ColumnType, string>,
   exportFallbacks: (n: number) => (n === 1 ? '1 value will stay as text' : `${formatEn(n)} values will stay as text`),
   exportError: 'The file could not be created. Try again.',
+  exportSplit: 'Separate complete and incomplete rows',
+  exportRequired: 'Required columns (a row is complete when all of them have a value):',
+  splitCounts: (complete: number, incomplete: number) =>
+    `${complete === 1 ? '1 complete row' : `${formatEn(complete)} complete rows`} · ${
+      incomplete === 1 ? '1 incomplete row' : `${formatEn(incomplete)} incomplete rows`
+    }`,
+  splitSinglePart: 'One of the parts is empty, so only the other one will be exported.',
+  exportSplitCsvHint: 'Two files are downloaded. Your browser may ask for permission to download several files.',
+  exportSplitXlsxHint: 'One Excel file with two sheets: “Complete” and “Incomplete”.',
+  sheetComplete: 'Complete',
+  sheetIncomplete: 'Incomplete',
   exporting: 'Creating file...',
   download: 'Download',
   modifiedCells: (n: number) => (n === 1 ? '1 cell modified' : `${formatEn(n)} cells modified`),
@@ -361,6 +372,17 @@ const es: Messages = {
   columnTypeNames: { text: 'Texto', number: 'Número', date: 'Fecha', boolean: 'Verdadero/Falso' },
   exportFallbacks: (n: number) => (n === 1 ? '1 valor se quedará como texto' : `${formatEs(n)} valores se quedarán como texto`),
   exportError: 'No se ha podido crear el archivo. Inténtalo de nuevo.',
+  exportSplit: 'Separar filas completas e incompletas',
+  exportRequired: 'Columnas obligatorias (una fila está completa cuando todas tienen valor):',
+  splitCounts: (complete: number, incomplete: number) =>
+    `${complete === 1 ? '1 fila completa' : `${formatEs(complete)} filas completas`} · ${
+      incomplete === 1 ? '1 fila incompleta' : `${formatEs(incomplete)} filas incompletas`
+    }`,
+  splitSinglePart: 'Una de las dos partes está vacía, así que solo se exportará la otra.',
+  exportSplitCsvHint: 'Se descargan dos archivos. El navegador puede pedirte permiso para descargar varios archivos.',
+  exportSplitXlsxHint: 'Un archivo Excel con dos hojas: «Completas» e «Incompletas».',
+  sheetComplete: 'Completas',
+  sheetIncomplete: 'Incompletas',
   exporting: 'Creando archivo...',
   download: 'Descargar',
   modifiedCells: (n: number) => (n === 1 ? '1 celda modificada' : `${formatEs(n)} celdas modificadas`),
