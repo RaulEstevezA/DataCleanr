@@ -1,16 +1,27 @@
 import { useId, useMemo, useState } from 'react'
 import { applyColumnChanges, previewColumnChanges } from '../core/changes.ts'
 import { columnLabel, type Dataset } from '../core/dataset.ts'
+import type { PhoneOptions } from '../core/phone.ts'
 import { createReplaceTransform, type ReplaceOptions } from '../core/replace.ts'
 import { transformIds, transforms, type TransformId } from '../core/transforms.ts'
+import { useStoredState } from '../hooks/useStoredState.ts'
 import { useI18n } from '../i18n/useI18n.ts'
+import { PhoneForm } from './PhoneForm.tsx'
 import { VisibleText } from './VisibleText.tsx'
 import './TransformPanel.css'
 
 // Rendering thousands of rows at once would freeze the page
 const MAX_PREVIEW_ROWS = 200
 
-type Selection = TransformId | 'custom'
+type Selection = TransformId | 'custom' | 'phone'
+
+// Loaded on demand: phone metadata for every country is large and most sessions never need it
+type PhoneModule = typeof import('../core/phone.ts')
+
+function defaultPhoneOptions(): PhoneOptions {
+  const region = navigator.language.split('-')[1]?.toUpperCase()
+  return { defaultCountry: (region || 'ES') as PhoneOptions['defaultCountry'], format: 'E164' }
+}
 
 const initialReplace: ReplaceOptions = { find: '', replacement: '', wholeCell: true, ignoreCase: true }
 
@@ -24,14 +35,28 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
   const { t, language } = useI18n()
   const [transformId, setTransformId] = useState<Selection | null>(null)
   const [replace, setReplace] = useState<ReplaceOptions>(initialReplace)
+  const [phoneOptions, setPhoneOptions] = useStoredState('datacleanr.phoneOptions', defaultPhoneOptions)
+  const [phoneModule, setPhoneModule] = useState<PhoneModule | null>(null)
+  const [phoneLoadFailed, setPhoneLoadFailed] = useState(false)
   // Store rejections (not acceptances) so every change is accepted by default
   const [rejected, setRejected] = useState<Set<number>>(new Set())
 
-  const changes = useMemo(() => {
-    if (!transformId) return []
-    const transform = transformId === 'custom' ? createReplaceTransform(replace) : transforms[transformId]
-    return previewColumnChanges(dataset, column, transform)
-  }, [dataset, column, transformId, replace])
+  const transform = useMemo(() => {
+    if (transformId === 'custom') return createReplaceTransform(replace)
+    if (transformId === 'phone') return phoneModule?.createPhoneTransform(phoneOptions) ?? null
+    return transformId ? transforms[transformId] : null
+  }, [transformId, replace, phoneModule, phoneOptions])
+  const changes = useMemo(
+    () => (transform ? previewColumnChanges(dataset, column, transform) : []),
+    [dataset, column, transform],
+  )
+  // Phone values that could not be normalized: listed so the user can fix them by hand
+  const phoneIssues = useMemo(() => {
+    if (transformId !== 'phone' || !phoneModule) return []
+    return dataset.rows
+      .map((row, index) => ({ row: index, value: row[column] }))
+      .filter(({ value }) => phoneModule.normalizePhone(value, phoneOptions).status === 'invalid')
+  }, [dataset, column, transformId, phoneModule, phoneOptions])
   // Distinct values of the column, offered as suggestions in the "find" field
   const columnValues = useMemo(
     () => [...new Set(dataset.rows.map((row) => row[column].trim()))].filter(Boolean).sort(),
@@ -43,6 +68,15 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
 
   function selectTransform(id: Selection) {
     setTransformId(id)
+    setRejected(new Set())
+    if (id === 'phone' && !phoneModule) {
+      setPhoneLoadFailed(false)
+      import('../core/phone.ts').then(setPhoneModule, () => setPhoneLoadFailed(true))
+    }
+  }
+
+  function updatePhoneOptions(options: PhoneOptions) {
+    setPhoneOptions(options)
     setRejected(new Set())
   }
 
@@ -93,7 +127,35 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
         >
           {t.customReplace}
         </button>
+        <button
+          type="button"
+          className="button"
+          aria-pressed={transformId === 'phone'}
+          onClick={() => selectTransform('phone')}
+        >
+          {t.normalizePhone}
+        </button>
       </div>
+
+      {transformId === 'phone' && phoneModule && (
+        <PhoneForm options={phoneOptions} countries={phoneModule.phoneCountries} onChange={updatePhoneOptions} />
+      )}
+      {transformId === 'phone' && !phoneModule && (
+        <p className="transform-panel__info">{phoneLoadFailed ? t.phoneLoadError : t.phoneLoading}</p>
+      )}
+      {phoneIssues.length > 0 && (
+        <details className="transform-panel__issues">
+          <summary>{t.phoneIssues(format(phoneIssues.length))}</summary>
+          <ul>
+            {phoneIssues.slice(0, MAX_PREVIEW_ROWS).map(({ row, value }) => (
+              <li key={row}>
+                <span className="transform-panel__index">{row + 1}</span>
+                <VisibleText value={value} />
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
 
       {transformId === 'custom' && (
         <div className="transform-panel__custom">
@@ -142,7 +204,7 @@ export function TransformPanel({ dataset, column, onApply }: TransformPanelProps
         </div>
       )}
 
-      {transformId && changes.length === 0 && (transformId !== 'custom' || replace.find.trim() !== '') && (
+      {transform && changes.length === 0 && (transformId !== 'custom' || replace.find.trim() !== '') && (
         <p className="transform-panel__info">{transformId === 'custom' ? t.noMatches : t.noChanges}</p>
       )}
 

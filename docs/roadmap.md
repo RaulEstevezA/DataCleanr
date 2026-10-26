@@ -17,7 +17,8 @@ Las funciones comunes a ambas versiones se especifican en `shared/test-cases/` (
 ## Más adelante
 - Importar Excel y JSON
 - Detección de duplicados y fuzzy matching
-- Normalización de teléfonos y fechas
+- [x] Normalización de teléfonos
+- Normalización de fechas
 - Perfiles/reglas de limpieza
 - Historial de transformaciones, undo/redo
 - Versión desktop en Python

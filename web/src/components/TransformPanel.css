@@ -46,7 +46,80 @@
   font-size: 0.875rem;
 }
 
-.transform-panel__custom input[type='text']:focus {
+.transform-panel__custom select {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--page-bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.875rem;
+}
+
+.transform-panel__formats {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.transform-panel__formats legend {
+  margin-bottom: 4px;
+  padding: 0;
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+.transform-panel__formats code {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+}
+
+.transform-panel__hint {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+.transform-panel__issues {
+  padding: 10px 14px;
+  border: 1px solid var(--warning);
+  border-radius: var(--radius);
+  background: var(--warning-soft);
+  font-size: 0.875rem;
+}
+
+.transform-panel__issues summary {
+  color: var(--warning);
+  cursor: pointer;
+}
+
+.transform-panel__issues ul {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 200px;
+  margin: 10px 0 0;
+  padding: 0;
+  overflow: auto;
+  list-style: none;
+  font-size: 0.8125rem;
+}
+
+.transform-panel__issues li {
+  display: flex;
+  gap: 12px;
+}
+
+.transform-panel__issues .transform-panel__index {
+  min-width: 3ch;
+}
+
+.transform-panel__custom input[type='text']:focus,
+.transform-panel__custom select:focus {
   border-color: var(--accent);
   outline: none;
 }
@@ -186,7 +259,8 @@
   margin-right: auto;
 }
 
-.transform-panel input[type='checkbox'] {
+.transform-panel input[type='checkbox'],
+.transform-panel input[type='radio'] {
   accent-color: var(--accent);
   cursor: pointer;
 }

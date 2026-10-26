@@ -1,3 +1,4 @@
+import type { PhoneFormat } from '../core/phone.ts'
 import type { TransformId } from '../core/transforms.ts'
 
 const en = {
@@ -40,6 +41,19 @@ const en = {
   wholeCell: 'Match whole cell',
   ignoreCase: 'Ignore upper/lower case',
   noMatches: 'No cell matches the text you are looking for.',
+  normalizePhone: 'Normalize phone numbers',
+  phoneCountry: 'Default country (numbers without prefix)',
+  phoneFormat: 'Output format',
+  phoneFormatNames: {
+    E164: 'E.164 (databases)',
+    INTERNATIONAL: 'International',
+    NATIONAL: 'National',
+  } satisfies Record<PhoneFormat, string>,
+  phoneHint:
+    'Numbers that already have a prefix (+33, +44...) keep their country. In national format, foreign numbers stay international so their country is not lost.',
+  phoneLoading: 'Loading phone number rules...',
+  phoneLoadError: 'Phone number rules could not be loaded. Check your connection and try again.',
+  phoneIssues: (n: string) => `${n} values could not be normalized and will be left unchanged. Review them by hand.`,
   noChanges: 'Nothing to change: this column is already clean for this transformation.',
   original: 'Original',
   proposed: 'Proposed',
@@ -97,6 +111,19 @@ const es: Messages = {
   wholeCell: 'Coincidir con la celda completa',
   ignoreCase: 'Ignorar mayúsculas/minúsculas',
   noMatches: 'Ninguna celda coincide con el texto buscado.',
+  normalizePhone: 'Normalizar teléfonos',
+  phoneCountry: 'País por defecto (números sin prefijo)',
+  phoneFormat: 'Formato de salida',
+  phoneFormatNames: {
+    E164: 'E.164 (bases de datos)',
+    INTERNATIONAL: 'Internacional',
+    NATIONAL: 'Nacional',
+  },
+  phoneHint:
+    'Los números que ya tienen prefijo (+33, +44...) mantienen su país. En formato nacional, los extranjeros se dejan en internacional para no perder su país.',
+  phoneLoading: 'Cargando reglas de teléfonos...',
+  phoneLoadError: 'No se han podido cargar las reglas de teléfonos. Revisa tu conexión e inténtalo de nuevo.',
+  phoneIssues: (n: string) => `${n} valores no se pueden normalizar y se dejarán sin cambios. Revísalos a mano.`,
   noChanges: 'No hay nada que cambiar: esta columna ya está limpia para esta transformación.',
   original: 'Original',
   proposed: 'Propuesto',

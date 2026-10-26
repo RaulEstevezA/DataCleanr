@@ -1,0 +1,232 @@
+[
+  {
+    "description": "E.164: plain national number",
+    "options": {
+      "defaultCountry": "ES",
+      "format": "E164"
+    },
+    "input": "600123456",
+    "expected": "+34600123456",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "E.164: spaces",
+    "options": {
+      "defaultCountry": "ES",
+      "format": "E164"
+    },
+    "input": "600 123 456",
+    "expected": "+34600123456",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "E.164: hyphens",
+    "options": {
+      "defaultCountry": "ES",
+      "format": "E164"
+    },
+    "input": "600-12-34-56",
+    "expected": "+34600123456",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "E.164: parentheses",
+    "options": {
+      "defaultCountry": "ES",
+      "format": "E164"
+    },
+    "input": "(663) 476198",
+    "expected": "+34663476198",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "E.164: '00' international prefix",
+    "options": {
+      "defaultCountry": "ES",
+      "format": "E164"
+    },
+    "input": "0034 600 12 34 56",
+    "expected": "+34600123456",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "E.164: already normalized",
+    "options": {
+      "defaultCountry": "ES",
+      "format": "E164"
+    },
+    "input": "+34600123456",
+    "expected": "+34600123456",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "E.164: surrounding spaces",
+    "options": {
+      "defaultCountry": "ES",
+      "format": "E164"
+    },
+    "input": "  +34 600 12 34 56 ",
+    "expected": "+34600123456",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "E.164: landline",
+    "options": {
+      "defaultCountry": "ES",
+      "format": "E164"
+    },
+    "input": "912345678",
+    "expected": "+34912345678",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "E.164: foreign number keeps its own country",
+    "options": {
+      "defaultCountry": "ES",
+      "format": "E164"
+    },
+    "input": "+33 6 12 34 56 78",
+    "expected": "+33612345678",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "E.164: other default country",
+    "options": {
+      "defaultCountry": "FR",
+      "format": "E164"
+    },
+    "input": "06 12 34 56 78",
+    "expected": "+33612345678",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "international: Spanish mobile",
+    "options": {
+      "defaultCountry": "ES",
+      "format": "INTERNATIONAL"
+    },
+    "input": "600123456",
+    "expected": "+34 600 12 34 56",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "international: Spanish landline",
+    "options": {
+      "defaultCountry": "ES",
+      "format": "INTERNATIONAL"
+    },
+    "input": "912345678",
+    "expected": "+34 912 34 56 78",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "international: UK mobile",
+    "options": {
+      "defaultCountry": "ES",
+      "format": "INTERNATIONAL"
+    },
+    "input": "+44 7911 123456",
+    "expected": "+44 7911 123456",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "national: number from the default country",
+    "options": {
+      "defaultCountry": "ES",
+      "format": "NATIONAL"
+    },
+    "input": "+34600123456",
+    "expected": "600 12 34 56",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "national: foreign number falls back to international so the country is not lost",
+    "options": {
+      "defaultCountry": "ES",
+      "format": "NATIONAL"
+    },
+    "input": "+33612345678",
+    "expected": "+33 6 12 34 56 78",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "invalid: too short",
+    "options": {
+      "defaultCountry": "ES",
+      "format": "E164"
+    },
+    "input": "600 123",
+    "expected": "600 123",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "invalid: too long",
+    "options": {
+      "defaultCountry": "ES",
+      "format": "E164"
+    },
+    "input": "6001234567",
+    "expected": "6001234567",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "invalid: not a phone number",
+    "options": {
+      "defaultCountry": "ES",
+      "format": "E164"
+    },
+    "input": "no tiene",
+    "expected": "no tiene",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "invalid: two numbers in one cell",
+    "options": {
+      "defaultCountry": "ES",
+      "format": "E164"
+    },
+    "input": "600123456 / 611222333",
+    "expected": "600123456 / 611222333",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "extension: kept as is in E.164 (it cannot hold extensions)",
+    "options": {
+      "defaultCountry": "ES",
+      "format": "E164"
+    },
+    "input": "+34 600 12 34 56 ext. 12",
+    "expected": "+34 600 12 34 56 ext. 12",
+    "expectedStatus": "invalid"
+  },
+  {
+    "description": "extension: kept in international format",
+    "options": {
+      "defaultCountry": "ES",
+      "format": "INTERNATIONAL"
+    },
+    "input": "+34600123456 ext. 12",
+    "expected": "+34 600 12 34 56 ext. 12",
+    "expectedStatus": "valid"
+  },
+  {
+    "description": "empty cell stays empty",
+    "options": {
+      "defaultCountry": "ES",
+      "format": "E164"
+    },
+    "input": "",
+    "expected": "",
+    "expectedStatus": "empty"
+  },
+  {
+    "description": "whitespace-only cell is left untouched",
+    "options": {
+      "defaultCountry": "ES",
+      "format": "E164"
+    },
+    "input": "   ",
+    "expected": "   ",
+    "expectedStatus": "empty"
+  }
+]
