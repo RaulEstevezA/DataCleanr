@@ -4,13 +4,15 @@
 }
 
 .language-switcher__option {
-  padding: 4px 8px;
-  border: 1px solid transparent;
-  border-radius: 6px;
+  padding: 2px 8px;
+  border: none;
+  border-radius: 4px;
   background: none;
   color: var(--muted);
-  font-size: 0.8125rem;
+  font-size: 0.9rem;
+  font-weight: 500;
   cursor: pointer;
+  transition: color 0.15s;
 }
 
 .language-switcher__option:hover {
@@ -18,7 +20,7 @@
 }
 
 .language-switcher__option[aria-pressed='true'] {
-  border-color: var(--border);
   background: var(--surface-raised);
   color: var(--text);
+  font-weight: 700;
 }

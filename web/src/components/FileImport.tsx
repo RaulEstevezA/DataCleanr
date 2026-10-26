@@ -30,7 +30,7 @@ export function FileImport({ onFile, loading, error }: FileImportProps) {
       onDragLeave={() => setDragging(false)}
       onDrop={handleDrop}
     >
-      <h1>{t.emptyTitle}</h1>
+      <h2>{t.emptyTitle}</h2>
       <p>{t.emptyDescription}</p>
       <button
         type="button"

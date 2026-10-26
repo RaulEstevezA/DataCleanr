@@ -9,7 +9,16 @@ const formatEs = (n: number) => n.toLocaleString('es')
 
 const en = {
   tagline: 'Clean, normalize and unify tabular data',
-  privacyNotice: 'Processed locally. Your files are never sent to a server.',
+  privacyShort: 'Processed locally',
+  introDescription:
+    'Load a messy file, review every change as original → proposed and export clean data: trims, case, phone numbers, dates, amounts, different spellings of the same value (Raúl Estévez / RAUL ESTEVEZ / raul estévez) and duplicate rows.',
+  introPrivacyTitle: 'Your data never leaves this browser',
+  introPrivacyPoints: [
+    'Files are read and processed on your device. There is no server and nothing is uploaded.',
+    'Nothing changes without your confirmation, and every step can be undone.',
+    'The original file is never modified: you download a cleaned copy.',
+  ],
+  introCode: 'Source code',
   languageLabel: 'Language',
   emptyTitle: 'Import a file to get started',
   emptyDescription: 'Load a CSV, Excel (.xlsx), JSON or XML file to preview its data, pick a column and clean it.',
@@ -235,7 +244,16 @@ export type Messages = typeof en
 
 const es: Messages = {
   tagline: 'Limpia, normaliza y unifica datos tabulares',
-  privacyNotice: 'Procesado en local. Tus archivos nunca se envían a ningún servidor.',
+  privacyShort: 'Procesado en local',
+  introDescription:
+    'Carga un archivo sucio, revisa cada cambio como original → propuesto y exporta los datos limpios: espacios, mayúsculas, teléfonos, fechas, importes, distintas formas de escribir lo mismo (Raúl Estévez / RAUL ESTEVEZ / raul estévez) y filas duplicadas.',
+  introPrivacyTitle: 'Tus datos no salen de este navegador',
+  introPrivacyPoints: [
+    'Los archivos se leen y se procesan en tu dispositivo. No hay servidor y no se sube nada.',
+    'Nada cambia sin tu confirmación, y cualquier paso se puede deshacer.',
+    'El archivo original nunca se modifica: descargas una copia limpia.',
+  ],
+  introCode: 'Código fuente',
   languageLabel: 'Idioma',
   emptyTitle: 'Importa un archivo para empezar',
   emptyDescription: 'Carga un archivo CSV, Excel (.xlsx), JSON o XML para ver sus datos, elegir una columna y limpiarla.',

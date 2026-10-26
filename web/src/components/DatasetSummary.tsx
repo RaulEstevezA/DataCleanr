@@ -48,7 +48,12 @@ export function DatasetSummary({
     <section className="panel dataset-summary">
       <div className="dataset-summary__header">
         <div>
-          <h2 className="dataset-summary__file">{dataset.fileName}</h2>
+          <div className="dataset-summary__title">
+            <h2 className="dataset-summary__file">{dataset.fileName}</h2>
+            <span className="dataset-summary__privacy" role="note">
+              {t.privacyShort}
+            </span>
+          </div>
           <p className="dataset-summary__stats">
             {t.rowCount(dataset.rows.length)} · {t.columnCount(dataset.columns.length)} ·{' '}
             {dataset.format === 'csv' ? dataset.encoding.toUpperCase() : formatNames[dataset.format]}

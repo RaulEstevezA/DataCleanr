@@ -1,22 +1,17 @@
-import { useI18n } from '../i18n/useI18n.ts'
 import { LanguageSwitcher } from './LanguageSwitcher.tsx'
 import './AppHeader.css'
 
-export function AppHeader() {
-  const { t } = useI18n()
-
+/** Same navigation bar as the portfolio, so moving between the website and the tool feels seamless. */
+export function AppHeader({ wide }: { wide: boolean }) {
+  // Matches the width of the content below: the intro card, or the wider workspace once a file is loaded
   return (
-    <header className="app-header">
-      <div className="app-header__brand">
-        <span className="app-header__name">DataCleanr</span>
-        <span className="app-header__tagline">{t.tagline}</span>
-      </div>
-      <div className="app-header__actions">
-        <p className="app-header__privacy" role="note">
-          {t.privacyNotice}
-        </p>
+    <header className={`app-header${wide ? ' app-header--wide' : ''}`}>
+      <nav className="app-header__nav">
+        <a href="https://raulesteveza.github.io/" className="app-header__logo">
+          Raúl Estévez
+        </a>
         <LanguageSwitcher />
-      </div>
+      </nav>
     </header>
   )
 }

@@ -8,6 +8,7 @@ import { DuplicatesPanel } from './components/DuplicatesPanel.tsx'
 import { ExportPanel } from './components/ExportPanel.tsx'
 import { ProfilePanel } from './components/ProfilePanel.tsx'
 import { FileImport } from './components/FileImport.tsx'
+import { IntroPanel } from './components/IntroPanel.tsx'
 import { HistoryPanel, type HistoryStep } from './components/HistoryPanel.tsx'
 import { TransformPanel } from './components/TransformPanel.tsx'
 import type { Messages } from './i18n/messages.ts'
@@ -227,8 +228,8 @@ function App() {
 
   return (
     <div className="app">
-      <AppHeader />
-      <main className="app__main">
+      <AppHeader wide={dataset !== null} />
+      <main className={`app__main${dataset ? ' app__main--wide' : ''}`}>
         {history && dataset ? (
           <div className="app__workspace">
             <DatasetSummary
@@ -286,7 +287,9 @@ function App() {
             />
           </div>
         ) : (
-          <FileImport onFile={handleFile} loading={loading} error={error} />
+          <IntroPanel>
+            <FileImport onFile={handleFile} loading={loading} error={error} />
+          </IntroPanel>
         )}
       </main>
       <AppFooter />

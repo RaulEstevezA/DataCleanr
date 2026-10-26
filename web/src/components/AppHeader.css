@@ -1,41 +1,33 @@
 .app-header {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px 24px 8px;
+}
+
+.app-header--wide {
+  max-width: 1200px;
+}
+
+.app-header__nav {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px 24px;
-  padding: 16px 24px;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
 }
 
-.app-header__brand {
-  display: flex;
-  flex-direction: column;
-}
-
-.app-header__name {
-  font-size: 1.25rem;
+.app-header__logo {
+  color: var(--text);
   font-weight: 600;
+  transition: opacity 0.15s;
 }
 
-.app-header__tagline {
-  color: var(--muted);
-  font-size: 0.875rem;
+.app-header__logo:hover {
+  opacity: 0.75;
+  text-decoration: none;
 }
 
-.app-header__privacy {
-  padding: 6px 12px;
-  border: 1px solid var(--success);
-  border-radius: 999px;
-  background: var(--success-soft);
-  color: var(--success);
-  font-size: 0.8125rem;
-}
-
-.app-header__actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
+@media (max-width: 600px) {
+  .app-header {
+    padding: 16px 16px 4px;
+  }
 }
