@@ -1,6 +1,6 @@
 # DataCleanr · Escritorio
 
-Versión de escritorio de DataCleanr: Python + PySide6 + Pandas + OpenPyXL + RapidFuzz.
+Versión de escritorio de DataCleanr: Python + PySide6 + OpenPyXL + RapidFuzz.
 
 > [!NOTE]
 > **En desarrollo.** Se construirá después de la versión web, con el mismo comportamiento: implementará los casos de prueba de [`shared/test-cases/`](../shared/README.md) y leerá los mismos perfiles de limpieza.

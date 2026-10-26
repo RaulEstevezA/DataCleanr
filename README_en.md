@@ -74,7 +74,7 @@ DataCleanr helps detect and fix these problems before loading the data into a da
 
 | | Web | Desktop |
 |---|---|---|
-| Technology | React + TypeScript + Vite | Python + PySide6 + Pandas + OpenPyXL + RapidFuzz |
+| Technology | React + TypeScript + Vite | Python + PySide6 + OpenPyXL + RapidFuzz |
 | Runs in | The browser | Installable application (Windows, macOS, Linux) |
 | Status | Published: [raulesteveza.github.io/tools/DataCleanr](https://raulesteveza.github.io/tools/DataCleanr/) | In development |
 | Documentation | [web/README_en.md](./web/README_en.md) | [desktop/README_en.md](./desktop/README_en.md) |

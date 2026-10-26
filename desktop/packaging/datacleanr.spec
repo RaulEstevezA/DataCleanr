@@ -31,7 +31,6 @@ EXCLUDED = [
     "PySide6.QtSql",
     "PySide6.QtTest",
     "tkinter",
-    "pandas",
     # openpyxl imports it only to embed images in sheets
     "PIL",
 ]

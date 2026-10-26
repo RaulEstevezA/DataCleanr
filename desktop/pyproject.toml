@@ -12,7 +12,7 @@ authors = [{ name = "Raul Estevez" }]
 requires-python = ">=3.11"
 dependencies = [
   "PySide6>=6.12",
-  "pandas>=3.1",
+  "numpy>=2.0",
   "openpyxl>=3.1.5",
   "rapidfuzz>=3.14",
   "phonenumbers>=9.0",
