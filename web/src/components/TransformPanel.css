@@ -222,6 +222,12 @@
   text-align: right !important;
 }
 
+.transform-panel__original,
+.transform-panel__proposed {
+  width: 50%;
+  word-break: break-word;
+}
+
 .transform-panel__original {
   color: var(--muted);
 }
@@ -259,4 +265,17 @@
 .transform-panel input[type='radio'] {
   accent-color: var(--accent);
   cursor: pointer;
+}
+
+/* Long values wrap inside the cell (spaces stay visible as dots) instead of pushing "Proposed" off screen */
+.transform-panel__preview .visible-text {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+@media (max-width: 600px) {
+  .transform-panel__preview th,
+  .transform-panel__preview td {
+    padding: 6px 6px;
+  }
 }

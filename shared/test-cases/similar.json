@@ -343,6 +343,67 @@
           "suggested": "Madrid"
         }
       ]
+    },
+    {
+      "description": "the suggestion is the most frequent clean variant (no extra spaces), even if a dirty one is more frequent",
+      "options": {
+        "threshold": 85,
+        "ignoreLegalForms": true
+      },
+      "values": [
+        "  talleres ruiz",
+        "  talleres ruiz",
+        "  talleres ruiz",
+        "Talleres  Ruíz",
+        "Talleres  Ruíz",
+        "Talleres Ruiz"
+      ],
+      "expected": [
+        {
+          "variants": [
+            {
+              "value": "  talleres ruiz",
+              "count": 3
+            },
+            {
+              "value": "Talleres  Ruíz",
+              "count": 2
+            },
+            {
+              "value": "Talleres Ruiz",
+              "count": 1
+            }
+          ],
+          "suggested": "Talleres Ruiz"
+        }
+      ]
+    },
+    {
+      "description": "if no variant is clean, the most frequent one is suggested",
+      "options": {
+        "threshold": 85,
+        "ignoreLegalForms": true
+      },
+      "values": [
+        " Bilbao",
+        " Bilbao",
+        "bilbao "
+      ],
+      "expected": [
+        {
+          "variants": [
+            {
+              "value": " Bilbao",
+              "count": 2
+            },
+            {
+              "value": "bilbao ",
+              "count": 1
+            }
+          ],
+          "suggested": " Bilbao"
+        }
+      ]
     }
   ]
 }

@@ -13,7 +13,7 @@ export interface Variant {
 export interface SimilarGroup {
   /** Most frequent first. */
   variants: Variant[]
-  /** Proposed value to unify the group: the most frequent variant. */
+  /** Proposed value: the most frequent clean variant (no surrounding or repeated spaces), else the most frequent. */
   suggested: string
 }
 
@@ -114,6 +114,7 @@ export function groupSimilarValues(values: string[], { threshold, ignoreLegalFor
     .sort((a, b) => total(b.variants) - total(a.variants) || byCodePoint(a.leader, b.leader))
     .map(({ variants }) => {
       const sorted = [...variants].sort((a, b) => b.count - a.count || byCodePoint(a.value, b.value))
-      return { variants: sorted, suggested: sorted[0].value }
+      const clean = sorted.find(({ value }) => value === value.trim() && !/\s{2,}/.test(value))
+      return { variants: sorted, suggested: (clean ?? sorted[0]).value }
     })
 }
