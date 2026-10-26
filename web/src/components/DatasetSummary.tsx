@@ -45,7 +45,7 @@ export function DatasetSummary({
           <h2 className="dataset-summary__file">{dataset.fileName}</h2>
           <p className="dataset-summary__stats">
             {t.rowCount(dataset.rows.length)} · {t.columnCount(dataset.columns.length)} ·{' '}
-            {dataset.format === 'xlsx' ? 'Excel' : dataset.encoding.toUpperCase()}
+            {dataset.format === 'xlsx' ? 'Excel' : dataset.format === 'json' ? 'JSON' : dataset.encoding.toUpperCase()}
             {modifiedCells > 0 && (
               <span className="dataset-summary__modified"> · {t.modifiedCells(modifiedCells)}</span>
             )}

@@ -1,0 +1,193 @@
+[
+  {
+    "description": "array of objects: columns in order of first appearance",
+    "input": "[{\"nombre\": \"Ana\", \"ciudad\": \"Bilbao\"}, {\"nombre\": \"Juan\", \"email\": \"juan@x.com\", \"ciudad\": \"Valencia\"}]",
+    "expected": {
+      "columns": [
+        "nombre",
+        "ciudad",
+        "email"
+      ],
+      "rows": [
+        [
+          "Ana",
+          "Bilbao",
+          ""
+        ],
+        [
+          "Juan",
+          "Valencia",
+          "juan@x.com"
+        ]
+      ]
+    }
+  },
+  {
+    "description": "array of arrays: first row is the header, short rows are padded",
+    "input": "[[\"nombre\", \"ciudad\"], [\"Ana\", \"Bilbao\"], [\"Juan\"]]",
+    "expected": {
+      "columns": [
+        "nombre",
+        "ciudad"
+      ],
+      "rows": [
+        [
+          "Ana",
+          "Bilbao"
+        ],
+        [
+          "Juan",
+          ""
+        ]
+      ]
+    }
+  },
+  {
+    "description": "object with a single array inside (typical API export)",
+    "input": "{\"clientes\": [{\"nombre\": \"Ana\"}]}",
+    "expected": {
+      "columns": [
+        "nombre"
+      ],
+      "rows": [
+        [
+          "Ana"
+        ]
+      ]
+    }
+  },
+  {
+    "description": "nested objects are flattened with dots",
+    "input": "[{\"nombre\": \"Ana\", \"direccion\": {\"ciudad\": \"Bilbao\", \"cp\": \"48001\"}}]",
+    "expected": {
+      "columns": [
+        "nombre",
+        "direccion.ciudad",
+        "direccion.cp"
+      ],
+      "rows": [
+        [
+          "Ana",
+          "Bilbao",
+          "48001"
+        ]
+      ]
+    }
+  },
+  {
+    "description": "arrays inside a cell are kept as JSON text",
+    "input": "[{\"nombre\": \"Ana\", \"tags\": [\"vip\", \"2024\"]}]",
+    "expected": {
+      "columns": [
+        "nombre",
+        "tags"
+      ],
+      "rows": [
+        [
+          "Ana",
+          "[\"vip\",\"2024\"]"
+        ]
+      ]
+    }
+  },
+  {
+    "description": "value types become text like in Excel import",
+    "input": "[{\"texto\": \"  TRANSGRAU \", \"entero\": 433, \"decimal\": 5837.32, \"activo\": true, \"inactivo\": false, \"nulo\": null}]",
+    "expected": {
+      "columns": [
+        "texto",
+        "entero",
+        "decimal",
+        "activo",
+        "inactivo",
+        "nulo"
+      ],
+      "rows": [
+        [
+          "  TRANSGRAU ",
+          "433",
+          "5837.32",
+          "TRUE",
+          "FALSE",
+          ""
+        ]
+      ]
+    }
+  },
+  {
+    "description": "big integers keep every digit",
+    "input": "[{\"id\": 12345678901234567890}]",
+    "expected": {
+      "columns": [
+        "id"
+      ],
+      "rows": [
+        [
+          "12345678901234567890"
+        ]
+      ]
+    }
+  },
+  {
+    "description": "numbers keep how they were written",
+    "input": "[{\"a\": 1.50, \"b\": 1e3, \"c\": -0.1}]",
+    "expected": {
+      "columns": [
+        "a",
+        "b",
+        "c"
+      ],
+      "rows": [
+        [
+          "1.50",
+          "1e3",
+          "-0.1"
+        ]
+      ]
+    }
+  },
+  {
+    "description": "accents and escapes",
+    "input": "[{\"nombre\": \"Pe\\u00f1a \\u20ac\", \"nota\": \"l\\u00ednea 1\\nl\\u00ednea 2\"}]",
+    "expected": {
+      "columns": [
+        "nombre",
+        "nota"
+      ],
+      "rows": [
+        [
+          "Peña €",
+          "línea 1\nlínea 2"
+        ]
+      ]
+    }
+  },
+  {
+    "description": "invalid: not JSON",
+    "input": "nombre,ciudad",
+    "expected": {
+      "error": "invalid"
+    }
+  },
+  {
+    "description": "invalid: an object without a single array",
+    "input": "{\"a\": [1], \"b\": [2]}",
+    "expected": {
+      "error": "unsupported"
+    }
+  },
+  {
+    "description": "invalid: a list of plain values",
+    "input": "[\"Ana\", \"Juan\"]",
+    "expected": {
+      "error": "unsupported"
+    }
+  },
+  {
+    "description": "invalid: empty list",
+    "input": "[]",
+    "expected": {
+      "error": "empty"
+    }
+  }
+]

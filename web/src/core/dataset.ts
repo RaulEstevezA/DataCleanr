@@ -6,7 +6,7 @@ import type { TextEncodingName } from './encoding.ts'
 
 export interface Dataset {
   fileName: string
-  format: 'csv' | 'xlsx'
+  format: 'csv' | 'xlsx' | 'json'
   /** Sheet name for Excel files; null for CSV. */
   sheet: string | null
   /** Header names exactly as they appear in the file (may be empty). */

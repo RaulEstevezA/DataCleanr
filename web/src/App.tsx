@@ -12,6 +12,7 @@ import { TransformPanel } from './components/TransformPanel.tsx'
 import type { Messages } from './i18n/messages.ts'
 import { useI18n } from './i18n/useI18n.ts'
 import { parseCsvFile } from './core/csv.ts'
+import { JsonImportError, parseJsonFile } from './core/json.ts'
 import { columnLabel, countModifiedCells, type Dataset } from './core/dataset.ts'
 import { canRedo, canUndo, createHistory, currentEntry, goTo, pushEntry, redo, undo, type History } from './core/history.ts'
 import type { CellAction } from './core/operation.ts'
@@ -48,7 +49,7 @@ function App() {
       setError(t.errorOldExcel)
       return
     }
-    if (!name.endsWith('.csv') && !name.endsWith('.xlsx')) {
+    if (!name.endsWith('.csv') && !name.endsWith('.xlsx') && !name.endsWith('.json')) {
       setError(t.errorUnsupported)
       return
     }
@@ -58,6 +59,9 @@ function App() {
       if (name.endsWith('.csv')) {
         setSheets(null)
         startWith(await parseCsvFile(file))
+      } else if (name.endsWith('.json')) {
+        setSheets(null)
+        startWith(await parseJsonFile(file))
       } else {
         const workbook = await readWorkbook(file)
         // Open the first sheet that has data
@@ -66,8 +70,9 @@ function App() {
         setSheets(workbook)
         startWith(sheetToDataset(first, file.name))
       }
-    } catch {
-      setError(name.endsWith('.csv') ? t.errorParse : t.errorParseExcel)
+    } catch (error) {
+      if (error instanceof JsonImportError) setError(t.errorParseJson[error.reason])
+      else setError(name.endsWith('.csv') ? t.errorParse : t.errorParseExcel)
     } finally {
       setLoading(false)
     }

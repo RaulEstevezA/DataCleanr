@@ -58,5 +58,6 @@ describe('cleanFileName', () => {
     expect(cleanFileName('clientes')).toBe('clientes_clean.csv')
     expect(cleanFileName('clientes.xlsx')).toBe('clientes_clean.csv')
     expect(cleanFileName('clientes.csv', 'xlsx')).toBe('clientes_clean.xlsx')
+    expect(cleanFileName('clientes.json')).toBe('clientes_clean.csv')
   })
 })

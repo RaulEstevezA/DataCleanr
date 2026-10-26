@@ -19,7 +19,7 @@ interface ExportPanelProps {
 
 export function ExportPanel({ dataset, onClose }: ExportPanelProps) {
   const { t } = useI18n()
-  const [format, setFormat] = useState<Format>(dataset.format)
+  const [format, setFormat] = useState<Format>(dataset.format === 'xlsx' ? 'xlsx' : 'csv')
   const [delimiter, setDelimiter] = useState(DELIMITERS.includes(dataset.delimiter) ? dataset.delimiter : ',')
   const columnValues = useMemo(
     () => dataset.columns.map((_, c) => dataset.rows.map((row) => row[c])),
