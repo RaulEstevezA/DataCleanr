@@ -1,39 +1,111 @@
 # DataCleanr
 
-[Back](README.md) · [Español](README_es.md)
+Tool for cleaning, normalizing and deduplicating CSV, Excel, JSON and XML data **without sending files to any server**.
 
-Client-side web tool for cleaning, normalizing and deduplicating CSV/Excel data without sending files to a server.
+**Try it online:** [raulesteveza.github.io/tools/DataCleanr](https://raulesteveza.github.io/tools/DataCleanr/)
 
-> **Your data is processed locally.** No file is ever sent to a server.
+<p align="center">
+  <a href="https://raulesteveza.github.io/tools/DataCleanr/">
+    <img src="docs/images/web_app.png" alt="DataCleanr web version unifying different spellings of the same name" width="720">
+  </a>
+</p>
 
-## What does it do?
+## What it is for
 
-DataCleanr helps you clean, normalize and unify messy or inconsistent data before loading it into a database or another system:
+Data coming from spreadsheets, forms or exports from other systems is often messy: extra spaces, mixed case, phone numbers and dates written in many ways, repeated rows, and values that mean the same thing but are written differently:
 
-- Extra whitespace, inconsistent upper/lower case
-- Equivalent values written differently (`TRANSGRAU`, `Trans Grau SL`, `Transgrau S.L.`)
-- Dates, phone numbers and numbers in different formats
-- Empty values, duplicates and possible duplicates
+```text
+Raúl Estévez
+RAUL ESTEVEZ
+raul estévez
+Estévez, Raúl
+```
 
-**Philosophy:** nothing is changed without the user seeing it. Every change is shown as `original value → proposed value` and the user decides whether to accept it. Original data is preserved until export.
+DataCleanr helps detect and fix these problems before loading the data into a database or another system.
+
+## Philosophy
+
+- **Nothing changes without the user seeing it.** Every transformation first shows an `original value → proposed value` preview, and each change can be accepted or rejected row by row.
+- **Doubtful values are not guessed.** If a value is ambiguous (`03/04/2024`, `1.234`) or cannot be converted without losing information (`007`, a phone number with an extension), it is left as is and flagged for manual review.
+- **The original is preserved** until export, and everything can be undone.
+- **Data never leaves the device.** There is no server: all processing happens locally.
+
+## What it does
+
+### Import
+
+| Format | Details |
+|---|---|
+| **CSV** | Detects the delimiter (`,` `;` tab) and the encoding (UTF-8, UTF-16, Windows-1252 from Excel in Western locales) |
+| **Excel (.xlsx)** | Sheet selector. Dates, numbers and booleans become unambiguous text |
+| **JSON** | Lists of objects or of lists, nested objects (`contact.email`). Numbers are kept exactly |
+| **XML** | Detects which element is each row. Attributes as `@id`, nested elements as `address.city` |
+
+### Clean a column
+
+| Transformation | Example |
+|---|---|
+| Trim spaces | `"  Raúl Estévez "` → `"Raúl Estévez"` |
+| Collapse repeated spaces | `"laura   NAVARRO"` → `"laura NAVARRO"` |
+| lowercase, UPPERCASE, Title Case | `"jean-luc PÉREZ"` → `"Jean-Luc Pérez"` |
+| Custom replace | `"Estévez, Raúl"` → `"Raúl Estévez"`, with suggestions from the column values |
+| Normalize phone numbers | `"600 123 456"` → `"+34600123456"` (E.164, international or national) |
+| Normalize dates | `"13/07/2024"` → `"2024-07-13"`, choosing the input order and how to read two-digit years |
+| Normalize amounts | `"4.072,67"`, `"12063.99 €"` → `"4072.67"`, detecting on its own only the unambiguous cases |
+| Unify similar values | Groups `Raúl Estévez`, `RAUL ESTEVEZ`, `raul estévez`… and the user picks or types the final value |
+
+### Rows
+
+- **Exact duplicates**, comparing every column or only the selected ones.
+- **Possible duplicates**: nearly identical rows (`Juan Pérez` / `juan perez` / `Juan Peres`), scored by similarity. The user confirms each group.
+- **Combine rows**: when removing duplicates, the kept row is completed with the data it was missing from the removed ones, without overwriting anything.
+
+### History and profiles
+
+- **Undo and redo** any step (also with `Ctrl/Cmd+Z`) and jump back to any point in the history.
+- **Cleaning profiles**: the steps are saved as a JSON file and can be applied to another file, such as next month's. Before applying, the number of changes of each step is shown.
+
+### Export
+
+- **CSV** in UTF-8, choosing the delimiter.
+- **Excel (.xlsx)**, choosing for each column whether it is saved as text, number, date or boolean. Values that cannot be converted without losing information (`007`, `1234,56`) are saved as text.
+
+## Versions
+
+| | Web | Desktop |
+|---|---|---|
+| Technology | React + TypeScript + Vite | Python + PySide6 + Pandas + OpenPyXL + RapidFuzz |
+| Runs in | The browser | Installable application (Windows, macOS, Linux) |
+| Status | Published: [raulesteveza.github.io/tools/DataCleanr](https://raulesteveza.github.io/tools/DataCleanr/) | In development |
+| Documentation | [web/README_en.md](./web/README_en.md) | [desktop/README_en.md](./desktop/README_en.md) |
+
+## Shared behavior
+
+The two versions are written separately (TypeScript and Python), but **they behave the same**: the [`shared/`](./shared/README.md) folder contains JSON test cases (and sample files) that define what each feature must do. The web and desktop tests read the same files, so if one version behaves differently, its tests fail.
+
+The cleaning profile format is shared too: a profile saved in the web version can be used in the desktop version and vice versa.
 
 ## Repository structure
 
-```text
-DataCleanr/
-├── web/       # Web version (React + TypeScript + Vite) — GitHub Pages
-├── desktop/   # Desktop version (Python + PySide6 + Pandas)
-├── shared/    # Test cases shared by both versions (JSON)
-└── docs/      # Documentation and design notes
+```
+web/                 Web version (React + TypeScript + Vite)
+  src/core/          Logic without UI: transformations, normalization, duplicates, profiles...
+  src/components/    React interface
+desktop/             Desktop version (Python), in development
+shared/              Behavior common to both versions
+  test-cases/        JSON test cases and sample files
+docs/                Roadmap and images
 ```
 
-- [Web version](web/README_en.md)
-- [Desktop version](desktop/README_en.md)
+## Developer
 
-## Status
+**Raul Estevez**
 
-Early development. The first release focuses on the web version: CSV import and basic text transformations.
+- [Personal Website](https://raulesteveza.github.io/)
+- [LinkedIn Profile](https://www.linkedin.com/in/raulesteveza/)
 
 ## License
 
-[MIT](LICENSE)
+[MIT](./LICENSE)
+
+[Back to main README](./README.md)
