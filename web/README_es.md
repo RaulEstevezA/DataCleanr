@@ -17,4 +17,5 @@ npm run dev       # servidor de desarrollo en http://localhost:5173
 npm run build     # comprobación de tipos y build de producción en dist/
 npm run preview   # sirve el build de producción en local
 npm run lint      # análisis con oxlint
+npm test          # tests unitarios (Vitest)
 ```

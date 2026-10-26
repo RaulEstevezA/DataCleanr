@@ -17,4 +17,5 @@ npm run dev       # dev server at http://localhost:5173
 npm run build     # type-check and production build in dist/
 npm run preview   # serve the production build locally
 npm run lint      # lint with oxlint
+npm test          # run unit tests (Vitest)
 ```
