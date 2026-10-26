@@ -6,6 +6,8 @@ Language-neutral resources used by both the web (TypeScript) and desktop (Python
 
 JSON test cases that define the expected behavior of every feature available in both versions. The Vitest suite (`web/`) and the pytest suite (`desktop/`) load the same files, so if one implementation behaves differently, its tests fail.
 
+`test-cases/files/` holds sample input files (e.g. `sample.xlsx`, generated with OpenPyXL) used by those cases.
+
 When adding a feature that exists in both versions, add its cases here first. Features exclusive to one version keep their tests in that version only.
 
 ## How it maps to each version

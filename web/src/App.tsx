@@ -14,7 +14,9 @@ import { cleanFileName, parseCsvFile, serializeCsv } from './core/csv.ts'
 import { columnLabel, countModifiedCells, type Dataset } from './core/dataset.ts'
 import { canRedo, canUndo, createHistory, currentEntry, goTo, pushEntry, redo, undo, type History } from './core/history.ts'
 import type { CellAction } from './core/operation.ts'
+import { EmptySheetError, sheetToDataset, type XlsxSheet } from './core/xlsx.ts'
 import { downloadTextFile } from './utils/download.ts'
+import { readWorkbook } from './utils/readWorkbook.ts'
 
 function App() {
   const { t } = useI18n()
@@ -26,26 +28,58 @@ function App() {
   // Stored as a function of the messages so it follows language changes
   const [notice, setNotice] = useState<((t: Messages) => string) | null>(null)
   const [showDuplicates, setShowDuplicates] = useState(false)
+  // All sheets of the imported Excel file, to switch between them; null for CSV
+  const [sheets, setSheets] = useState<XlsxSheet[] | null>(null)
 
   const dataset = history ? currentEntry(history).dataset : null
   const original = history ? history.entries[0].dataset : null
 
+  function startWith(loaded: Dataset) {
+    setHistory(createHistory<HistoryStep>({ dataset: loaded, operation: { kind: 'import' } }))
+    setSelectedColumn(null)
+    setShowDuplicates(false)
+    setNotice(null)
+  }
+
   async function handleFile(file: File) {
-    if (!file.name.toLowerCase().endsWith('.csv')) {
-      setError(t.errorNotCsv)
+    const name = file.name.toLowerCase()
+    if (name.endsWith('.xls')) {
+      setError(t.errorOldExcel)
+      return
+    }
+    if (!name.endsWith('.csv') && !name.endsWith('.xlsx')) {
+      setError(t.errorUnsupported)
       return
     }
     setLoading(true)
     setError(null)
     try {
-      const loaded = await parseCsvFile(file)
-      setHistory(createHistory<HistoryStep>({ dataset: loaded, operation: { kind: 'import' } }))
-      setSelectedColumn(null)
-      setNotice(null)
+      if (name.endsWith('.csv')) {
+        setSheets(null)
+        startWith(await parseCsvFile(file))
+      } else {
+        const workbook = await readWorkbook(file)
+        // Open the first sheet that has data
+        const first = workbook.find((sheet) => sheet.data.some((row) => row.some((cell) => cell !== null)))
+        if (!first) throw new EmptySheetError(file.name)
+        setSheets(workbook)
+        startWith(sheetToDataset(first, file.name))
+      }
     } catch {
-      setError(t.errorParse)
+      setError(name.endsWith('.csv') ? t.errorParse : t.errorParseExcel)
     } finally {
       setLoading(false)
+    }
+  }
+
+  function selectSheet(name: string) {
+    const sheet = sheets?.find(({ sheet }) => sheet === name)
+    if (!sheet || !dataset) return
+    if (hasChanges && !window.confirm(t.confirmDiscardSheet)) return
+    try {
+      startWith(sheetToDataset(sheet, dataset.fileName))
+    } catch {
+      setNotice(() => (m: Messages) => m.emptySheet(name))
     }
   }
 
@@ -114,6 +148,7 @@ function App() {
   function handleReset() {
     if (hasChanges && !window.confirm(t.confirmDiscard)) return
     setHistory(null)
+    setSheets(null)
     setSelectedColumn(null)
     setShowDuplicates(false)
     setNotice(null)
@@ -129,6 +164,8 @@ function App() {
               dataset={dataset}
               modifiedCells={modifiedCells}
               removedRows={removedRows}
+              sheets={sheets?.map(({ sheet }) => sheet) ?? null}
+              onSelectSheet={selectSheet}
               selectedColumn={selectedColumn}
               onSelectColumn={selectColumn}
               onFindDuplicates={openDuplicates}

@@ -6,6 +6,9 @@ interface DatasetSummaryProps {
   dataset: Dataset
   modifiedCells: number
   removedRows: number
+  /** Sheet names when the file is an Excel workbook. */
+  sheets: string[] | null
+  onSelectSheet: (sheet: string) => void
   selectedColumn: number | null
   onSelectColumn: (index: number) => void
   onFindDuplicates: () => void
@@ -21,6 +24,8 @@ export function DatasetSummary({
   dataset,
   modifiedCells,
   removedRows,
+  sheets,
+  onSelectSheet,
   selectedColumn,
   onSelectColumn,
   onFindDuplicates,
@@ -40,7 +45,7 @@ export function DatasetSummary({
           <h2 className="dataset-summary__file">{dataset.fileName}</h2>
           <p className="dataset-summary__stats">
             {t.rowCount(dataset.rows.length)} · {t.columnCount(dataset.columns.length)} ·{' '}
-            {dataset.encoding.toUpperCase()}
+            {dataset.format === 'xlsx' ? 'Excel' : dataset.encoding.toUpperCase()}
             {modifiedCells > 0 && (
               <span className="dataset-summary__modified"> · {t.modifiedCells(modifiedCells)}</span>
             )}
@@ -65,6 +70,18 @@ export function DatasetSummary({
           </button>
         </div>
       </div>
+      {sheets && sheets.length > 1 && (
+        <label className="dataset-summary__sheet">
+          <span className="dataset-summary__label">{t.sheet}</span>
+          <select value={dataset.sheet ?? ''} onChange={(event) => onSelectSheet(event.target.value)}>
+            {sheets.map((sheet) => (
+              <option key={sheet} value={sheet}>
+                {sheet}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
       <h3 className="dataset-summary__label">{t.detectedColumns}</h3>
       <ul className="dataset-summary__columns">
         {dataset.columns.map((_, i) => (

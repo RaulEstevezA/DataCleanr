@@ -15,7 +15,9 @@ Las funciones comunes a ambas versiones se especifican en `shared/test-cases/` (
 - [ ] Despliegue en el portfolio (`raulesteveza.github.io/tools/DataCleanr/`)
 
 ## Más adelante
-- Importar Excel y JSON
+- [x] Importar Excel (.xlsx), con selector de hoja
+- Exportar a Excel (.xlsx)
+- Importar JSON
 - [x] Unificar valores parecidos en una columna (fuzzy matching)
 - [x] Filas duplicadas exactas
 - [x] Posibles filas duplicadas (fuzzy entre varias columnas)

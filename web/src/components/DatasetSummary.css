@@ -41,6 +41,22 @@
   text-transform: uppercase;
 }
 
+.dataset-summary__sheet {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dataset-summary__sheet select {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--page-bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.875rem;
+}
+
 .dataset-summary__columns {
   display: flex;
   flex-wrap: wrap;

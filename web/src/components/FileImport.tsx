@@ -49,7 +49,7 @@ export function FileImport({ onFile, loading, error }: FileImportProps) {
       <input
         ref={inputRef}
         type="file"
-        accept=".csv,text/csv"
+        accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         hidden
         onChange={(event) => {
           const file = event.target.files?.[0]

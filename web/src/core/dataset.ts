@@ -6,12 +6,15 @@ import type { TextEncodingName } from './encoding.ts'
 
 export interface Dataset {
   fileName: string
+  format: 'csv' | 'xlsx'
+  /** Sheet name for Excel files; null for CSV. */
+  sheet: string | null
   /** Header names exactly as they appear in the file (may be empty). */
   columns: string[]
   rows: string[][]
   /** Position of each row in the imported file (0-based). Stays stable when rows are removed. */
   rowIds: number[]
-  /** Delimiter detected on import, reused on export. */
+  /** Delimiter detected on import, reused on CSV export (comma for Excel files). */
   delimiter: string
   /** Encoding detected on import. Export is always UTF-8. */
   encoding: TextEncodingName

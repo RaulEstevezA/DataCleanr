@@ -41,7 +41,7 @@ describe('serializeCsv', () => {
   })
 
   it('quotes values containing the delimiter, quotes or line breaks', () => {
-    const csv = serializeCsv({ fileName: 'a.csv', delimiter: ',', encoding: 'utf-8', columns: ['a'], rows: [['x,y'], ['say "hi"'], ['l1\nl2']], rowIds: [0, 1, 2] })
+    const csv = serializeCsv({ fileName: 'a.csv', format: 'csv', sheet: null, delimiter: ',', encoding: 'utf-8', columns: ['a'], rows: [['x,y'], ['say "hi"'], ['l1\nl2']], rowIds: [0, 1, 2] })
     expect(csv).toBe('﻿a\r\n"x,y"\r\n"say ""hi"""\r\n"l1\nl2"')
   })
 
@@ -56,5 +56,6 @@ describe('cleanFileName', () => {
     expect(cleanFileName('clientes.csv')).toBe('clientes_clean.csv')
     expect(cleanFileName('Clientes.CSV')).toBe('Clientes_clean.csv')
     expect(cleanFileName('clientes')).toBe('clientes_clean.csv')
+    expect(cleanFileName('clientes.xlsx')).toBe('clientes_clean.csv')
   })
 })

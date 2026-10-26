@@ -16,6 +16,8 @@ export function parseCsvText(text: string, fileName: string, encoding: TextEncod
   const normalizedRows = rows.map((row) => header.map((_, i) => row[i] ?? ''))
   return {
     fileName,
+    format: 'csv',
+    sheet: null,
     columns: header,
     rows: normalizedRows,
     rowIds: normalizedRows.map((_, i) => i),
@@ -38,7 +40,7 @@ export function serializeCsv(dataset: Dataset): string {
   )
 }
 
-/** "clientes.csv" -> "clientes_clean.csv" */
+/** "clientes.csv" or "clientes.xlsx" -> "clientes_clean.csv" */
 export function cleanFileName(fileName: string): string {
-  return fileName.replace(/(\.csv)?$/i, '_clean.csv')
+  return fileName.replace(/(\.(csv|xlsx))?$/i, '_clean.csv')
 }
