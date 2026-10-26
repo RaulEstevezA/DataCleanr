@@ -1,0 +1,34 @@
+.app-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.app-header__brand {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header__name {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.app-header__tagline {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.app-header__privacy {
+  padding: 6px 12px;
+  border: 1px solid var(--success);
+  border-radius: 999px;
+  background: var(--success-soft);
+  color: var(--success);
+  font-size: 0.8125rem;
+}
