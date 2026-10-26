@@ -22,6 +22,7 @@ from ..core.profile import Profile, serialize_profile
 from . import theme
 from .i18n import I18n
 from .labels import describe_step
+from .paths import in_downloads
 from .session import HistoryStep
 
 
@@ -113,7 +114,10 @@ class HistoryDialog(QDialog):
     def _save_profile(self) -> None:
         profile = self.profile()
         path, _ = QFileDialog.getSaveFileName(
-            self, self.i18n.t.profile_save(len(profile.steps)), profile_file_name(profile.name), "JSON (*.json)"
+            self,
+            self.i18n.t.profile_save(len(profile.steps)),
+            in_downloads(profile_file_name(profile.name)),
+            "JSON (*.json)",
         )
         if path:
             Path(path).write_text(serialize_profile(profile), encoding="utf-8")

@@ -27,6 +27,7 @@ from . import theme
 from .background import run_in_background
 from .flow_layout import FlowLayout
 from .i18n import I18n
+from .paths import in_downloads
 
 DELIMITERS = [";", ",", "\t"]
 COLUMN_TYPES = ["text", "number", "date", "boolean"]
@@ -230,7 +231,7 @@ class ExportDialog(QDialog):
         t = self.i18n.t
         suggested = clean_file_name(self.dataset.file_name, self.file_format)
         pattern = "CSV (*.csv)" if self.file_format == "csv" else "Excel (*.xlsx)"
-        path, _ = QFileDialog.getSaveFileName(self, t.save_as, suggested, pattern)
+        path, _ = QFileDialog.getSaveFileName(self, t.save_as, in_downloads(suggested), pattern)
         if not path:
             return
         self.save_button.setEnabled(False)

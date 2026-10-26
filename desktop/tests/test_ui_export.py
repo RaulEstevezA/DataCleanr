@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from openpyxl import load_workbook
 
 from datacleanr.core.dataset import Dataset
@@ -77,3 +79,15 @@ def test_split_skips_an_empty_part(window, tmp_path):
     dialog.split.setChecked(True)
     assert dialog.split_hint.text().startswith("Una de las dos partes está vacía")
     assert [p.name for p in write_file(dialog.parts(), tmp_path / "x.csv", "csv", ";", [])] == ["x_complete.csv"]
+
+
+def test_save_dialog_starts_in_downloads(window, monkeypatch):
+    from PySide6.QtCore import QStandardPaths
+
+    from datacleanr.ui import export_dialog
+
+    asked = []
+    monkeypatch.setattr(export_dialog.QFileDialog, "getSaveFileName", lambda *args: asked.append(args) or ("", ""))
+    ExportDialog(window._i18n, DATASET, window)._save()
+    downloads = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DownloadLocation)
+    assert asked[0][2] == str(Path(downloads) / "clientes_clean.csv")
