@@ -21,12 +21,23 @@ ruff check .                       # análisis estático
 python -m datacleanr               # ejecutar la aplicación
 ```
 
+## Crear el ejecutable
+
+```bash
+pip install -e ".[build]"
+pyinstaller packaging/datacleanr.spec
+```
+
+El resultado queda en `dist/`: `DataCleanr.app` en macOS y una carpeta `DataCleanr` con el ejecutable en Windows y Linux. PyInstaller no compila para otros sistemas: cada uno se crea en su propio sistema operativo.
+
 ## Estructura
 
 ```
 datacleanr/
   core/          Lógica sin interfaz: cada módulo equivale a uno de web/src/core/
   io/            Lectura y escritura de CSV, Excel, JSON y XML
+  ui/            Interfaz con PySide6
+packaging/       Configuración de PyInstaller e iconos de la aplicación
 tests/           Tests con pytest, leyendo los casos de shared/test-cases/
 pyproject.toml   Dependencias y configuración
 ```

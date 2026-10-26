@@ -21,6 +21,8 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=9.1", "ruff>=0.17"]
+# Packaging the app (packaging/datacleanr.spec); Pillow only regenerates the icons
+build = ["pyinstaller>=6.22", "pillow>=13.0"]
 
 [project.scripts]
 datacleanr = "datacleanr.__main__:main"
