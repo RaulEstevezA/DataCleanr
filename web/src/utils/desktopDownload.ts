@@ -3,21 +3,31 @@
 export const RELEASES_URL = 'https://github.com/RaulEstevezA/DataCleanr/releases/latest'
 
 export type DesktopPlatform = 'macOS' | 'Windows' | 'Linux'
+export type Architecture = 'x64' | 'arm64'
 
-const ASSETS: Record<DesktopPlatform, string> = {
-  macOS: 'DataCleanr-macOS.dmg',
-  Windows: 'DataCleanr-Windows.zip',
-  Linux: 'DataCleanr-Linux.tar.gz',
+const ASSETS: Record<DesktopPlatform, Partial<Record<Architecture, string>>> = {
+  // Apple Silicon only
+  macOS: { arm64: 'DataCleanr-macOS.dmg' },
+  Windows: { x64: 'DataCleanr-Windows.zip', arm64: 'DataCleanr-Windows-ARM64.zip' },
+  Linux: { x64: 'DataCleanr-Linux.tar.gz', arm64: 'DataCleanr-Linux-ARM64.tar.gz' },
 }
 
-export function downloadUrl(platform: DesktopPlatform): string {
-  return `${RELEASES_URL}/download/${ASSETS[platform]}`
+/** Whether the platform has one build per architecture, so the visitor may need to pick one. */
+export function hasArchitectureChoice(platform: DesktopPlatform): boolean {
+  return Object.keys(ASSETS[platform]).length > 1
+}
+
+export function downloadUrl(platform: DesktopPlatform, architecture: Architecture = 'x64'): string {
+  const assets = ASSETS[platform]
+  return `${RELEASES_URL}/download/${assets[architecture] ?? Object.values(assets)[0]}`
 }
 
 interface NavigatorInfo {
   userAgent: string
   platform?: string
   maxTouchPoints?: number
+  // User-Agent Client Hints: only in Chromium browsers (Chrome, Edge...)
+  userAgentData?: { getHighEntropyValues(hints: string[]): Promise<{ architecture?: string }> }
 }
 
 /** The visitor's desktop system, or null on phones, tablets and anything unknown. Only reads
@@ -29,5 +39,20 @@ export function detectPlatform({ userAgent, platform = '', maxTouchPoints = 0 }:
   if (/mac/i.test(text)) return maxTouchPoints > 1 ? null : 'macOS'
   if (/win/i.test(text)) return 'Windows'
   if (/linux|x11/i.test(text) && !/cros/i.test(text)) return 'Linux'
+  return null
+}
+
+/** The processor architecture, or null when the browser doesn't tell. Windows browsers always
+ * claim x64 in the user agent, so only Client Hints can tell an ARM laptop; Firefox on Linux
+ * names it in the user agent. Safari and Firefox on Windows don't give it at all. */
+export async function detectArchitecture({ userAgent, platform = '', userAgentData }: NavigatorInfo): Promise<Architecture | null> {
+  if (/aarch64|arm64/i.test(`${platform} ${userAgent}`)) return 'arm64'
+  try {
+    const { architecture } = (await userAgentData?.getHighEntropyValues(['architecture'])) ?? {}
+    if (architecture === 'arm') return 'arm64'
+    if (architecture === 'x86') return 'x64'
+  } catch {
+    // The browser refused the hint: same as not knowing
+  }
   return null
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { detectPlatform, downloadUrl } from './desktopDownload.ts'
+import { detectArchitecture, detectPlatform, downloadUrl, hasArchitectureChoice } from './desktopDownload.ts'
 
 describe('detectPlatform', () => {
   it.each([
@@ -21,10 +21,39 @@ describe('detectPlatform', () => {
   })
 })
 
+describe('detectArchitecture', () => {
+  const hints = (architecture: string) => ({ getHighEntropyValues: async () => ({ architecture }) })
+
+  it('reads ARM64 from the user agent', async () => {
+    expect(await detectArchitecture({ platform: 'Linux aarch64', userAgent: 'Mozilla/5.0 (X11; Linux aarch64; rv:140.0)' })).toBe('arm64')
+  })
+
+  it('reads the architecture from Client Hints', async () => {
+    const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+    expect(await detectArchitecture({ platform: 'Win32', userAgent, userAgentData: hints('arm') })).toBe('arm64')
+    expect(await detectArchitecture({ platform: 'Win32', userAgent, userAgentData: hints('x86') })).toBe('x64')
+  })
+
+  it('returns null when the browser does not tell', async () => {
+    // Windows on ARM also claims x64 in the user agent
+    expect(await detectArchitecture({ platform: 'Win32', userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' })).toBeNull()
+    const refused = { getHighEntropyValues: () => Promise.reject(new Error('NotAllowedError')) }
+    expect(await detectArchitecture({ userAgent: '', userAgentData: refused })).toBeNull()
+  })
+})
+
 describe('downloadUrl', () => {
+  const latest = 'https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/'
+
   it('points to the asset of the latest release', () => {
-    expect(downloadUrl('macOS')).toBe(
-      'https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-macOS.dmg',
-    )
+    expect(downloadUrl('Windows')).toBe(`${latest}DataCleanr-Windows.zip`)
+    expect(downloadUrl('Windows', 'arm64')).toBe(`${latest}DataCleanr-Windows-ARM64.zip`)
+    expect(downloadUrl('Linux', 'arm64')).toBe(`${latest}DataCleanr-Linux-ARM64.tar.gz`)
+  })
+
+  it('uses the only macOS build for any architecture', () => {
+    expect(downloadUrl('macOS')).toBe(`${latest}DataCleanr-macOS.dmg`)
+    expect(hasArchitectureChoice('macOS')).toBe(false)
+    expect(hasArchitectureChoice('Windows')).toBe(true)
   })
 })

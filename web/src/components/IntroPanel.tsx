@@ -1,15 +1,38 @@
-import type { ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { useI18n } from '../i18n/useI18n.ts'
-import { detectPlatform, downloadUrl, RELEASES_URL } from '../utils/desktopDownload.ts'
+import {
+  detectArchitecture,
+  detectPlatform,
+  downloadUrl,
+  hasArchitectureChoice,
+  RELEASES_URL,
+  type Architecture,
+} from '../utils/desktopDownload.ts'
 import './IntroPanel.css'
 
 const TOOLS_URL = 'https://raulesteveza.github.io/tools/'
 const SOURCE_URL = 'https://github.com/RaulEstevezA/DataCleanr'
 const platform = detectPlatform(navigator)
+const ARCHITECTURE_NAMES: Record<Architecture, string> = { x64: 'x64', arm64: 'ARM64' }
 
 /** Presentation card shown before a file is loaded, styled like the portfolio's project windows. */
 export function IntroPanel({ children }: { children: ReactNode }) {
   const { t } = useI18n()
+  // x64 until the browser says otherwise; the note always links the other one in case it guessed wrong
+  const [architecture, setArchitecture] = useState<Architecture>('x64')
+  const choice = platform !== null && hasArchitectureChoice(platform)
+  const otherArchitecture: Architecture = architecture === 'x64' ? 'arm64' : 'x64'
+
+  useEffect(() => {
+    if (!choice) return
+    let active = true
+    void detectArchitecture(navigator).then((detected) => {
+      if (active && detected) setArchitecture(detected)
+    })
+    return () => {
+      active = false
+    }
+  }, [choice])
 
   return (
     <section className="intro window">
@@ -32,8 +55,8 @@ export function IntroPanel({ children }: { children: ReactNode }) {
 
       <div className="intro__actions">
         {platform ? (
-          <a className="button" href={downloadUrl(platform)}>
-            {t.introDownloadFor(platform)}
+          <a className="button" href={downloadUrl(platform, architecture)}>
+            {t.introDownloadFor(architecture === 'arm64' && choice ? `${platform} ${ARCHITECTURE_NAMES.arm64}` : platform)}
           </a>
         ) : (
           <a className="button" href={RELEASES_URL} target="_blank" rel="noopener">
@@ -53,6 +76,12 @@ export function IntroPanel({ children }: { children: ReactNode }) {
         <a href={t.introHowToOpenUrl} target="_blank" rel="noopener">
           {t.introHowToOpen}
         </a>
+        {platform && choice && (
+          <>
+            {' · '}
+            <a href={downloadUrl(platform, otherArchitecture)}>{t.introOtherArchitecture(ARCHITECTURE_NAMES[otherArchitecture])}</a>
+          </>
+        )}
         {platform && (
           <>
             {' · '}
