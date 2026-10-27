@@ -1,9 +1,10 @@
 # Compila la versión de escritorio para Windows, macOS y Linux con PyInstaller.
+# Windows y Linux tienen dos versiones: x64 y ARM64.
 #
-# - Ejecución manual (Actions → Release desktop → Run workflow): compila los tres
+# - Ejecución manual (Actions → Release desktop → Run workflow): compila todos los
 #   sistemas y deja los archivos como artefactos del workflow, sin publicar nada.
 # - Etiqueta v* (git tag v0.1.0 && git push origin v0.1.0): además crea la release
-#   de GitHub con los tres archivos. La etiqueta tiene que coincidir con la versión
+#   de GitHub con todos los archivos. La etiqueta tiene que coincidir con la versión
 #   de desktop/pyproject.toml.
 #
 # Los nombres de los archivos no llevan versión, así que
@@ -30,6 +31,8 @@ jobs:
         include:
           - os: windows-latest
             asset: DataCleanr-Windows.zip
+          - os: windows-11-arm
+            asset: DataCleanr-Windows-ARM64.zip
           # Apple Silicon. Los Mac Intel necesitarían otro build en un runner Intel.
           - os: macos-latest
             asset: DataCleanr-macOS.dmg
@@ -37,6 +40,9 @@ jobs:
           # una glibc igual o más nueva que la del sistema donde se compila.
           - os: ubuntu-22.04
             asset: DataCleanr-Linux.tar.gz
+          # PySide6 para ARM64 solo se publica para glibc 2.39 o más nueva (Ubuntu 24.04)
+          - os: ubuntu-24.04-arm
+            asset: DataCleanr-Linux-ARM64.tar.gz
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
