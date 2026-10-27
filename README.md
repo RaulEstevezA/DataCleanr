@@ -4,7 +4,7 @@ Client-side tool for cleaning, normalizing and deduplicating CSV, Excel, JSON an
 
 **Try it online:** [raulesteveza.github.io/tools/DataCleanr](https://raulesteveza.github.io/tools/DataCleanr/)
 
-**Download for desktop:** [macOS](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-macOS.dmg) · [Windows](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Windows.zip) · [Linux](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Linux.tar.gz) ([how to open it](./desktop/README_en.md#opening-it-the-first-time))
+**Download for desktop:** [macOS](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-macOS.dmg) · Windows ([x64](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Windows.zip), [ARM64](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Windows-ARM64.zip)) · Linux ([x64](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Linux.tar.gz), [ARM64](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Linux-ARM64.tar.gz)) ([how to open it](./desktop/README_en.md#opening-it-the-first-time))
 
 - 🇬🇧 **English:** [Full documentation](./README_en.md)
 - 🇪🇸 **Español:** [Documentación completa](./README_es.md)

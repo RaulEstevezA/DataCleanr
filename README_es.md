@@ -4,7 +4,7 @@ Herramienta para limpiar, normalizar y deduplicar datos CSV, Excel, JSON y XML *
 
 **Pruébala online:** [raulesteveza.github.io/tools/DataCleanr](https://raulesteveza.github.io/tools/DataCleanr/)
 
-**Descargar para escritorio:** [macOS](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-macOS.dmg) · [Windows](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Windows.zip) · [Linux](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Linux.tar.gz) ([cómo abrirla](./desktop/README_es.md#abrirla-la-primera-vez))
+**Descargar para escritorio:** [macOS](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-macOS.dmg) · Windows ([x64](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Windows.zip), [ARM64](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Windows-ARM64.zip)) · Linux ([x64](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Linux.tar.gz), [ARM64](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Linux-ARM64.tar.gz)) ([cómo abrirla](./desktop/README_es.md#abrirla-la-primera-vez))
 
 <p align="center">
   <a href="https://raulesteveza.github.io/tools/DataCleanr/">
@@ -78,7 +78,7 @@ DataCleanr ayuda a detectar y corregir estos problemas antes de cargar los datos
 |---|---|---|
 | Tecnología | React + TypeScript + Vite | Python + PySide6 + OpenPyXL + RapidFuzz |
 | Dónde se ejecuta | En el navegador | Aplicación instalable (Windows, macOS, Linux) |
-| Estado | Publicada: [raulesteveza.github.io/tools/DataCleanr](https://raulesteveza.github.io/tools/DataCleanr/) | [Descargar](./desktop/README_es.md#descargar) (probada en macOS y Windows) |
+| Estado | Publicada: [raulesteveza.github.io/tools/DataCleanr](https://raulesteveza.github.io/tools/DataCleanr/) | [Descargar](./desktop/README_es.md#descargar) (probada en macOS y Windows x64) |
 | Documentación | [web/README_es.md](./web/README_es.md) | [desktop/README_es.md](./desktop/README_es.md) |
 
 ## Comportamiento compartido

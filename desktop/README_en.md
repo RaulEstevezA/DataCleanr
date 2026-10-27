@@ -11,17 +11,19 @@ What the tool does and its philosophy are described in the [main README](../READ
 | System | File |
 |---|---|
 | macOS (Apple Silicon) | [DataCleanr-macOS.dmg](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-macOS.dmg) |
-| Windows | [DataCleanr-Windows.zip](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Windows.zip) |
-| Linux | [DataCleanr-Linux.tar.gz](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Linux.tar.gz) |
+| Windows (x64) | [DataCleanr-Windows.zip](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Windows.zip) |
+| Windows (ARM64) | [DataCleanr-Windows-ARM64.zip](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Windows-ARM64.zip) |
+| Linux (x64) | [DataCleanr-Linux.tar.gz](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Linux.tar.gz) |
+| Linux (ARM64, Ubuntu 24.04 or newer) | [DataCleanr-Linux-ARM64.tar.gz](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Linux-ARM64.tar.gz) |
 
 Every version is in [Releases](https://github.com/RaulEstevezA/DataCleanr/releases).
 
 > [!NOTE]
-> Tested on **macOS** and **Windows**, where it works perfectly. The Linux version is built and passes the tests and an automatic startup check, but nobody has used it on a real computer yet. If you find a problem, write to [contact.raulesteveza@gmail.com](mailto:contact.raulesteveza@gmail.com).
+> Tested on **macOS** and **Windows x64**, where it works perfectly. The Windows ARM64 and Linux versions are built and pass the tests and an automatic startup check, but nobody has used them on a real computer yet. If you find a problem, write to [contact.raulesteveza@gmail.com](mailto:contact.raulesteveza@gmail.com).
 
 - **macOS:** open the `.dmg` and drag DataCleanr to Applications.
 - **Windows:** unzip the `.zip` and run `DataCleanr.exe` inside the `DataCleanr` folder.
-- **Linux:** extract with `tar -xzf DataCleanr-Linux.tar.gz` and run `DataCleanr/DataCleanr`. Some distributions need `libxcb-cursor0` installed.
+- **Linux:** extract with `tar -xzf DataCleanr-Linux.tar.gz` (or `DataCleanr-Linux-ARM64.tar.gz`) and run `DataCleanr/DataCleanr`. Some distributions need `libxcb-cursor0` installed. The ARM64 version needs a distribution from 2024 or newer (glibc 2.39, like Ubuntu 24.04).
 
 ### Opening it the first time
 

@@ -4,7 +4,7 @@ Tool for cleaning, normalizing and deduplicating CSV, Excel, JSON and XML data *
 
 **Try it online:** [raulesteveza.github.io/tools/DataCleanr](https://raulesteveza.github.io/tools/DataCleanr/)
 
-**Download for desktop:** [macOS](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-macOS.dmg) · [Windows](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Windows.zip) · [Linux](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Linux.tar.gz) ([how to open it](./desktop/README_en.md#opening-it-the-first-time))
+**Download for desktop:** [macOS](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-macOS.dmg) · Windows ([x64](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Windows.zip), [ARM64](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Windows-ARM64.zip)) · Linux ([x64](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Linux.tar.gz), [ARM64](https://github.com/RaulEstevezA/DataCleanr/releases/latest/download/DataCleanr-Linux-ARM64.tar.gz)) ([how to open it](./desktop/README_en.md#opening-it-the-first-time))
 
 <p align="center">
   <a href="https://raulesteveza.github.io/tools/DataCleanr/">
@@ -78,7 +78,7 @@ DataCleanr helps detect and fix these problems before loading the data into a da
 |---|---|---|
 | Technology | React + TypeScript + Vite | Python + PySide6 + OpenPyXL + RapidFuzz |
 | Runs in | The browser | Installable application (Windows, macOS, Linux) |
-| Status | Published: [raulesteveza.github.io/tools/DataCleanr](https://raulesteveza.github.io/tools/DataCleanr/) | [Download](./desktop/README_en.md#download) (tested on macOS and Windows) |
+| Status | Published: [raulesteveza.github.io/tools/DataCleanr](https://raulesteveza.github.io/tools/DataCleanr/) | [Download](./desktop/README_en.md#download) (tested on macOS and Windows x64) |
 | Documentation | [web/README_en.md](./web/README_en.md) | [desktop/README_en.md](./desktop/README_en.md) |
 
 ## Shared behavior
