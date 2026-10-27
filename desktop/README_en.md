@@ -19,7 +19,7 @@ What the tool does and its philosophy are described in the [main README](../READ
 Every version is in [Releases](https://github.com/RaulEstevezA/DataCleanr/releases).
 
 > [!NOTE]
-> Tested on **macOS** and **Windows x64**, where it works perfectly. The Windows ARM64 and Linux versions are built and pass the tests and an automatic startup check, but nobody has used them on a real computer yet. If you find a problem, write to [contact.raulesteveza@gmail.com](mailto:contact.raulesteveza@gmail.com).
+> Tested on **macOS**, **Windows x64** and **Linux ARM64**, where it works perfectly. The Windows ARM64 and Linux x64 versions are built and pass the tests and an automatic startup check, but nobody has used them on a real computer yet. If you find a problem, write to [contact.raulesteveza@gmail.com](mailto:contact.raulesteveza@gmail.com).
 
 - **macOS:** open the `.dmg` and drag DataCleanr to Applications.
 - **Windows:** unzip the `.zip` and run `DataCleanr.exe` inside the `DataCleanr` folder.
