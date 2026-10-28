@@ -1,7 +1,8 @@
-"""Main window: header with the language switcher and the current page."""
+"""Main window: header with the language switcher, the current page and the credit."""
 
 from pathlib import Path
 
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction, QKeySequence
 from PySide6.QtWidgets import (
     QButtonGroup,
@@ -32,7 +33,10 @@ from .i18n import MESSAGES, I18n
 from .profile_dialog import ProfileDialog
 from .session import CellsOperation, HistoryStep, ImportOperation, RemoveRowsOperation
 from .start_page import StartPage
+from .theme import ACCENT
 from .workspace import WorkspacePage
+
+PORTFOLIO_URL = "https://raulesteveza.github.io/"
 
 
 class LanguageSwitcher(QWidget):
@@ -108,7 +112,23 @@ class MainWindow(QMainWindow):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addLayout(header)
         layout.addWidget(self.pages)
+
+        # Credit at the bottom, outside the pages so it shows with and without a file; the name opens the portfolio
+        self.credit = QLabel()
+        self.credit.setProperty("role", "muted")
+        self.credit.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.credit.setOpenExternalLinks(True)
+        self.credit.setTextFormat(Qt.TextFormat.RichText)
+        self.credit.setContentsMargins(0, 8, 0, 16)
+        layout.addWidget(self.credit)
         self.setCentralWidget(central)
+
+        i18n.changed.connect(self._retranslate)
+        self._retranslate()
+
+    def _retranslate(self) -> None:
+        link = f'<a href="{PORTFOLIO_URL}" style="color: {ACCENT}; text-decoration: none;">Raúl Estévez</a>'
+        self.credit.setText(f"{self._i18n.t.developed_by} {link}")
 
     # The whole window accepts dropped files, on any screen and also while it is in the background
 

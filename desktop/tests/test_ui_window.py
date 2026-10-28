@@ -37,6 +37,23 @@ def test_dropping_a_bad_file_on_the_workspace_shows_a_warning(window, tmp_path):
     assert ".xls" in window.workspace.notice.text()
 
 
+def test_credit_links_to_the_portfolio_on_every_page(window, tmp_path):
+    assert "Raúl Estévez" in window.credit.text()
+    assert 'href="https://raulesteveza.github.io/"' in window.credit.text()
+    assert window.credit.isVisible()
+    path = tmp_path / "a.csv"
+    path.write_text("a,b\n1,2\n", encoding="utf-8")
+    drop(window, path)
+    assert window.credit.isVisible()
+
+
+def test_credit_follows_the_language(window):
+    window._i18n.set_language("es")
+    assert window.credit.text().startswith("Desarrollado por ")
+    window._i18n.set_language("en")
+    assert window.credit.text().startswith("Developed by ")
+
+
 def test_window_can_shrink(window):
     minimum = window.minimumSizeHint()
     assert minimum.height() < 400

@@ -33,6 +33,7 @@ class Messages:
     language_label: str
     privacy_short: str
     import_another: str
+    developed_by: str
     sheet: str
     detected_columns: str
     empty_cell: str
@@ -196,6 +197,7 @@ EN = Messages(
     language_label="Language",
     privacy_short="Processed locally",
     import_another="Import another file",
+    developed_by="Developed by",
     sheet="Sheet",
     detected_columns="Detected columns",
     empty_cell="empty",
@@ -451,6 +453,7 @@ ES = Messages(
     language_label="Idioma",
     privacy_short="Procesado en local",
     import_another="Importar otro archivo",
+    developed_by="Desarrollado por",
     sheet="Hoja",
     detected_columns="Columnas detectadas",
     empty_cell="vacío",
