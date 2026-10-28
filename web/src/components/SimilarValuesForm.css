@@ -102,5 +102,4 @@
 
 .similar__custom:focus {
   border-color: var(--accent);
-  outline: none;
 }

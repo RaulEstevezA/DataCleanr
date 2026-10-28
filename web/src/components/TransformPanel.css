@@ -106,7 +106,6 @@
 
 .transform-panel__year-limit-input input:focus {
   border-color: var(--accent);
-  outline: none;
 }
 
 .transform-panel__hint {
@@ -161,7 +160,6 @@
 .transform-panel__custom input[type='text']:focus,
 .transform-panel__custom select:focus {
   border-color: var(--accent);
-  outline: none;
 }
 
 .transform-panel__custom-options {

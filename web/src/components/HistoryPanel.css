@@ -85,5 +85,4 @@
 
 .history__save input:focus {
   border-color: var(--accent);
-  outline: none;
 }
