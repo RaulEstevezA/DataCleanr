@@ -4,6 +4,10 @@ Notable changes to DataCleanr, the web and the desktop version together. The for
 
 ## [Unreleased]
 
+### Added
+
+- Web: privacy-first traffic and page-view measurement with Cloudflare Web Analytics.
+
 ## [0.1.2] - 2026-10-28
 
 ### Added
