@@ -37,7 +37,10 @@ export function IntroPanel({ children }: { children: ReactNode }) {
   return (
     <section className="intro window">
       <div className="intro__text">
-        <h1>DataCleanr</h1>
+        <h1 className="intro__name">
+          <img className="intro__icon" src={`${import.meta.env.BASE_URL}favicon.svg`} width="32" height="32" alt="" />
+          DataCleanr
+        </h1>
         <p className="intro__subtitle">{t.tagline}</p>
         <p className="intro__description">{t.introDescription}</p>
       </div>
