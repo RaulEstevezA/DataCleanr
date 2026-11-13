@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { flushSync } from 'react-dom'
 import './App.css'
 import { AppFooter } from './components/AppFooter.tsx'
 import { AppHeader } from './components/AppHeader.tsx'
@@ -43,11 +44,30 @@ function App() {
   const dataset = history ? currentEntry(history).dataset : null
   const original = history ? history.entries[0].dataset : null
 
-  function startWith(loaded: Dataset) {
-    setHistory(createHistory<HistoryStep>({ dataset: loaded, operation: { kind: 'import' }, profileStep: null }))
-    setSelectedColumn(null)
-    setPanel(null)
-    setNotice(null)
+  /**
+   * Commits a screen change through the browser's native fade when available.
+   * Unsupported browsers and reduced-motion users receive the same change instantly.
+   */
+  function transitionScreen(update: () => void) {
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    if (!document.startViewTransition || reduceMotion) {
+      update()
+      return
+    }
+
+    document.startViewTransition(() => flushSync(update))
+  }
+
+  function startWith(loaded: Dataset, animate = false) {
+    const showWorkspace = () => {
+      setHistory(createHistory<HistoryStep>({ dataset: loaded, operation: { kind: 'import' }, profileStep: null }))
+      setSelectedColumn(null)
+      setPanel(null)
+      setNotice(null)
+    }
+
+    if (animate) transitionScreen(showWorkspace)
+    else showWorkspace()
   }
 
   async function handleFile(file: File) {
@@ -65,20 +85,20 @@ function App() {
     try {
       if (name.endsWith('.csv')) {
         setSheets(null)
-        startWith(await parseCsvFile(file))
+        startWith(await parseCsvFile(file), true)
       } else if (name.endsWith('.json')) {
         setSheets(null)
-        startWith(await parseJsonFile(file))
+        startWith(await parseJsonFile(file), true)
       } else if (name.endsWith('.xml')) {
         setSheets(null)
-        startWith(await parseXmlFile(file))
+        startWith(await parseXmlFile(file), true)
       } else {
         const workbook = await readWorkbook(file)
         // Open the first sheet that has data
         const first = workbook.find((sheet) => sheet.data.some((row) => row.some((cell) => cell !== null)))
         if (!first) throw new EmptySheetError(file.name)
         setSheets(workbook)
-        startWith(sheetToDataset(first, file.name))
+        startWith(sheetToDataset(first, file.name), true)
       }
     } catch (error) {
       if (error instanceof JsonImportError) setError(t.errorParseJson[error.reason])
@@ -219,11 +239,13 @@ function App() {
 
   function handleReset() {
     if (hasChanges && !window.confirm(t.confirmDiscard)) return
-    setHistory(null)
-    setSheets(null)
-    setSelectedColumn(null)
-    setPanel(null)
-    setNotice(null)
+    transitionScreen(() => {
+      setHistory(null)
+      setSheets(null)
+      setSelectedColumn(null)
+      setPanel(null)
+      setNotice(null)
+    })
   }
 
   return (

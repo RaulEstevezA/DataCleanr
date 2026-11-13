@@ -8,6 +8,7 @@ Notable changes to DataCleanr, the web and the desktop version together. The for
 
 - Web: the tool's icon next to its name in the introduction.
 - Web: privacy-first traffic and page-view measurement with Cloudflare Web Analytics.
+- Web: the portfolio fade when entering and leaving the page and when moving between import and workspace, with reduced-motion support.
 
 ## [0.1.2] - 2026-10-28
 
